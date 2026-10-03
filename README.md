@@ -161,6 +161,16 @@ Vchange/
 支持。视频编码下拉框中可选择 `h264_nvenc`（N 卡）、`h264_qsv`（Intel 核显）、`h264_amf`（A 卡）等硬件编码器。
 </details>
 
+## ⭐ Star History
+
+<a href="https://www.star-history.com/?repos=andydot-ui%2Fvchange&type=date&releases=&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=andydot-ui/vchange&type=date&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=andydot-ui/vchange&type=date&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=andydot-ui/vchange&type=date&legend=bottom-right" />
+ </picture>
+</a>
+
 ## 📄 许可证
 
 本项目基于 [MIT License](LICENSE) 开源。
