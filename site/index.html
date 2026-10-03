@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Andydot 工作室 · 产品下载中心</title>
+<style>
+/* ============================================================
+   Andydot 产品下载中心 —— DJI 风格深色站点
+   新增项目：复制 .project-card 区块 + 对应的 .project-detail 区块
+   ============================================================ */
+:root{
+  --bg:#0b0d12; --panel:#12151c; --panel2:#171b24;
+  --border:rgba(255,255,255,.08); --border-hover:rgba(255,255,255,.18);
+  --text:#eaeef7; --muted:#98a2b3; --muted2:#6b7385;
+  --accent:#0a84ff; --accent2:#4aa8ff;
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Segoe UI",sans-serif;
+  -webkit-font-smoothing:antialiased; line-height:1.6;
+}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* 顶部导航 */
+.topbar{
+  position:sticky; top:0; z-index:100;
+  backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  background:rgba(11,13,18,.72); border-bottom:1px solid var(--border);
+}
+.topbar-inner{
+  max-width:1180px; margin:0 auto; padding:14px 24px;
+  display:flex; align-items:center; gap:12px;
+}
+.brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:17px; letter-spacing:.3px}
+.brand img{width:26px;height:26px}
+.nav{margin-left:auto; display:flex; gap:26px; font-size:14px; color:var(--muted)}
+.nav a:hover{color:var(--text)}
+
+/* Hero */
+.hero{
+  position:relative; overflow:hidden;
+  padding:110px 24px 90px; text-align:center;
+}
+.hero::before{
+  content:""; position:absolute; inset:-40% 0 auto 50%; transform:translateX(-50%);
+  width:900px; height:620px; pointer-events:none;
+  background:radial-gradient(closest-side, rgba(10,132,255,.28), transparent 70%);
+  filter:blur(10px);
+}
+.hero>*{position:relative}
+.hero-logo{width:88px;height:88px;margin:0 auto 26px}
+.hero h1{
+  font-size:56px; font-weight:800; letter-spacing:-1px; line-height:1.1;
+  background:linear-gradient(135deg,#fff 30%,#9cc9ff);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+.hero p{color:var(--muted); font-size:17px; margin-top:18px}
+.hero-badges{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:26px}
+.badge{
+  font-size:12.5px; color:var(--muted); padding:6px 14px;
+  border:1px solid var(--border); border-radius:999px; background:rgba(255,255,255,.03);
+}
+.hero-actions{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-top:34px}
+.btn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:13px 30px; border-radius:12px; font-size:15px; font-weight:600;
+  transition:.18s; border:1px solid transparent; cursor:pointer;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--accent2),var(--accent));
+  color:#fff; box-shadow:0 8px 28px rgba(10,132,255,.35);
+}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 12px 34px rgba(10,132,255,.5)}
+.btn-ghost{border-color:var(--border-hover); color:var(--text); background:rgba(255,255,255,.03)}
+.btn-ghost:hover{background:rgba(255,255,255,.08)}
+
+/* 通用区块 */
+.section{max-width:1180px; margin:0 auto; padding:78px 24px}
+.section-title{font-size:30px; font-weight:700; text-align:center}
+.section-sub{color:var(--muted); text-align:center; margin-top:10px; font-size:14.5px}
+.section-head{margin-bottom:44px}
+
+/* 项目卡片 */
+.projects{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:22px}
+.project-card{
+  background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:1px solid var(--border); border-radius:var(--radius);
+  padding:28px; transition:.2s;
+}
+.project-card:hover{border-color:var(--border-hover); transform:translateY(-3px)}
+.project-card .pc-head{display:flex; align-items:center; gap:14px; margin-bottom:14px}
+.project-card .pc-head img{width:44px;height:44px}
+.project-card .pc-name{font-size:19px; font-weight:700}
+.project-card .pc-tag{font-size:12px; color:var(--accent2); margin-top:2px}
+.project-card .pc-desc{color:var(--muted); font-size:14px; min-height:66px}
+.project-card .pc-actions{display:flex; gap:10px; margin-top:18px}
+.pc-btn{
+  flex:1; text-align:center; padding:10px 0; border-radius:10px; font-size:13.5px; font-weight:600;
+  border:1px solid var(--border-hover); transition:.18s;
+}
+.pc-btn:hover{background:rgba(255,255,255,.07)}
+.pc-btn.primary{background:linear-gradient(135deg,var(--accent2),var(--accent)); border:none; color:#fff}
+.pc-btn.primary:hover{opacity:.9}
+.project-card.coming{opacity:.55; border-style:dashed}
+
+/* 特性 */
+.features{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:18px}
+.feature{
+  background:var(--panel); border:1px solid var(--border);
+  border-radius:14px; padding:24px; transition:.2s;
+}
+.feature:hover{border-color:var(--border-hover)}
+.feature .f-icon{font-size:26px}
+.feature .f-title{font-weight:700; margin-top:12px; font-size:15.5px}
+.feature .f-desc{color:var(--muted); font-size:13.5px; margin-top:8px}
+
+/* 预览图 */
+.shots{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px}
+.shots img{border-radius:14px; border:1px solid var(--border); background:var(--panel)}
+
+/* 下载区 */
+.download-panel{
+  background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:1px solid var(--border); border-radius:var(--radius);
+  padding:34px; max-width:880px; margin:0 auto;
+}
+.dl-meta{display:flex; flex-wrap:wrap; gap:26px; justify-content:center; margin-bottom:26px}
+.dl-meta .m{text-align:center}
+.dl-meta .m .k{font-size:12px; color:var(--muted2)}
+.dl-meta .m .v{font-size:18px; font-weight:700; margin-top:4px}
+.dl-buttons{display:flex; gap:14px; justify-content:center; flex-wrap:wrap}
+.hash{
+  margin-top:26px; padding:14px 18px; border-radius:10px;
+  background:rgba(0,0,0,.35); border:1px solid var(--border);
+  font-family:Consolas,monospace; font-size:12px; color:var(--muted);
+  word-break:break-all; line-height:1.8;
+}
+.hash b{color:var(--text); font-weight:600; display:block; margin-bottom:4px}
+.tip{color:var(--muted2); font-size:12.5px; text-align:center; margin-top:16px}
+
+/* 关于 */
+.about-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; max-width:880px; margin:0 auto}
+.about-card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:24px}
+.about-card .a-title{font-weight:700; margin-bottom:8px}
+.about-card .a-body{color:var(--muted); font-size:13.5px}
+.about-card a{color:var(--accent2)}
+
+/* 页脚 */
+footer{border-top:1px solid var(--border); margin-top:60px}
+.footer-inner{
+  max-width:1180px; margin:0 auto; padding:34px 24px;
+  display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:space-between;
+  color:var(--muted2); font-size:13px;
+}
+.footer-inner a{color:var(--muted)}
+.footer-inner a:hover{color:var(--text)}
+
+@media (max-width:640px){
+  .hero h1{font-size:38px}
+  .hero{padding:80px 20px 64px}
+  .section{padding:56px 20px}
+  .nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ======================= 顶部导航 ======================= -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#top">
+      <img src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-dark-theme.png" alt="logo">
+      <span>Andydot 工作室</span>
+    </a>
+    <nav class="nav">
+      <a href="#projects">项目</a>
+      <a href="#features">特性</a>
+      <a href="#downloads">下载</a>
+      <a href="#about">关于</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ======================= Hero ======================= -->
+<section class="hero" id="top">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-dark-theme.png">
+    <img class="hero-logo" src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-light-theme.png" alt="Vchange">
+  </picture>
+  <h1>Vchange</h1>
+  <p>简洁美观的 Windows 视频转换器 · 单文件免安装 · 内置完整 ffmpeg</p>
+  <div class="hero-badges">
+    <span class="badge">✨ 向导式转换流程</span>
+    <span class="badge">🌓 深浅色主题自适应</span>
+    <span class="badge">🪟 亚克力毛玻璃界面</span>
+    <span class="badge">📦 开箱即用</span>
+  </div>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="#downloads">⬇ 立即下载</a>
+    <a class="btn btn-ghost" href="https://github.com/Andydot-ui/Vchange" target="_blank" rel="noopener">GitHub 项目主页</a>
+  </div>
+</section>
+
+<!-- ======================= 项目列表 ======================= -->
+<!-- 新增项目：复制 <a class="project-card"> ... </a> 整块并修改内容 -->
+<section class="section" id="projects">
+  <div class="section-head">
+    <h2 class="section-title">项目</h2>
+    <p class="section-sub">持续开发中的桌面工具，全部免费、绿色、开箱即用</p>
+  </div>
+  <div class="projects">
+
+    <!-- 项目卡片：Vchange -->
+    <div class="project-card">
+      <div class="pc-head">
+        <img src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-dark-theme.png" alt="Vchange">
+        <div>
+          <div class="pc-name">Vchange</div>
+          <div class="pc-tag">视频转换器 · Windows</div>
+        </div>
+      </div>
+      <div class="pc-desc">向导式视频转换工具，支持格式 / 编码 / 分辨率 / 帧率 / 码率的可视化调整，内置完整版 ffmpeg，单文件免安装。</div>
+      <div class="pc-actions">
+        <a class="pc-btn primary" href="#downloads">下载</a>
+        <a class="pc-btn" href="https://github.com/Andydot-ui/Vchange" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+
+    <!-- 占位：未来项目复制上面的卡片并修改 -->
+    <div class="project-card coming">
+      <div class="pc-head">
+        <img src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-dark-theme.png" alt="coming" style="opacity:.4">
+        <div>
+          <div class="pc-name">下一个项目</div>
+          <div class="pc-tag">敬请期待</div>
+        </div>
+      </div>
+      <div class="pc-desc">新的桌面工具正在开发中……<br>本页面模板已预留扩展位，新增项目只需复制一个卡片区块。</div>
+      <div class="pc-actions">
+        <a class="pc-btn" href="https://github.com/Andydot-ui" target="_blank" rel="noopener">关注 GitHub</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ======================= Vchange 特性 ======================= -->
+<section class="section" id="features">
+  <div class="section-head">
+    <h2 class="section-title">为什么选择 Vchange</h2>
+    <p class="section-sub">为日常视频转换而生的现代桌面工具</p>
+  </div>
+  <div class="features">
+    <div class="feature"><div class="f-icon">🎬</div><div class="f-title">向导式流程</div><div class="f-desc">选择文件 → 输出格式 → 视频参数 → 码率 → 转换，步骤清晰、随时可改。</div></div>
+    <div class="feature"><div class="f-icon">🎛</div><div class="f-title">灵活参数</div><div class="f-desc">编码 / 分辨率 / 帧率可分别选择「与原视频相同」，码率自动推荐。</div></div>
+    <div class="feature"><div class="f-icon">⚡</div><div class="f-title">硬件加速</div><div class="f-desc">支持 NVENC / QSV / AMF 等硬件编码器，转换又快又省电。</div></div>
+    <div class="feature"><div class="f-icon">🌓</div><div class="f-title">主题自适应</div><div class="f-desc">深色 / 浅色界面跟随系统实时切换，亚克力毛玻璃质感。</div></div>
+    <div class="feature"><div class="f-icon">📊</div><div class="f-title">实时进度</div><div class="f-desc">百分比 + 转换速度实时显示，ffmpeg 日志一目了然。</div></div>
+    <div class="feature"><div class="f-icon">📦</div><div class="f-title">开箱即用</div><div class="f-desc">单文件绿色版，无需安装 .NET 运行时，无需单独下载 ffmpeg。</div></div>
+  </div>
+</section>
+
+<!-- ======================= 界面预览 ======================= -->
+<section class="section">
+  <div class="section-head">
+    <h2 class="section-title">界面预览</h2>
+    <p class="section-sub">简洁、现代、专注转换本身</p>
+  </div>
+  <div class="shots">
+    <img src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/screenshots/1-file.png" alt="选择文件" loading="lazy">
+    <img src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/screenshots/3-params.png" alt="视频参数" loading="lazy">
+    <img src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/screenshots/6-done.png" alt="转换完成" loading="lazy">
+  </div>
+</section>
+
+<!-- ======================= 下载 ======================= -->
+<section class="section" id="downloads">
+  <div class="section-head">
+    <h2 class="section-title">下载 Vchange</h2>
+    <p class="section-sub">选择任意线路下载，文件完全一致</p>
+  </div>
+  <div class="download-panel">
+    <div class="dl-meta">
+      <div class="m"><div class="k">最新版本</div><div class="v">v1.0.0</div></div>
+      <div class="m"><div class="k">文件大小</div><div class="v">149.8 MB</div></div>
+      <div class="m"><div class="k">更新日期</div><div class="v">2026-10-03</div></div>
+      <div class="m"><div class="k">运行环境</div><div class="v">Windows 10 / 11</div></div>
+    </div>
+    <div class="dl-buttons">
+      <a class="btn btn-primary" href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-j3adv" target="_blank" rel="noopener">🚀 高速下载（123 云盘）</a>
+      <a class="btn btn-ghost" href="https://github.com/Andydot-ui/Vchange/releases/download/v1.0.0/Vchange.exe" target="_blank" rel="noopener">GitHub 官方下载</a>
+      <a class="btn btn-ghost" href="https://github.com/Andydot-ui/Vchange/releases" target="_blank" rel="noopener">历史版本</a>
+    </div>
+    <div class="hash">
+      <b>SHA512 · Vchange.exe</b>
+      9D47733FCCE13F276B74EDBFD6FE83A22FC60E5051BE621CE0449A0E0E291CFD987816DB3B4DEC044CDF68B32EC6430011131D8FA7CB463D84FAA6D89AB82B2E
+    </div>
+    <p class="tip">首次启动转换时会自动释放内置的 ffmpeg（约需几秒），之后无需等待。</p>
+  </div>
+</section>
+
+<!-- ======================= 关于 ======================= -->
+<section class="section" id="about">
+  <div class="section-head">
+    <h2 class="section-title">关于</h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-card">
+      <div class="a-title">📮 联系作者</div>
+      <div class="a-body">邮箱：<a href="mailto:andydot@qq.com">andydot@qq.com</a></div>
+    </div>
+    <div class="about-card">
+      <div class="a-title">🐛 反馈问题</div>
+      <div class="a-body">欢迎在 <a href="https://github.com/Andydot-ui/Vchange/issues" target="_blank" rel="noopener">GitHub Issues</a> 提交 Bug 或功能建议。</div>
+    </div>
+    <div class="about-card">
+      <div class="a-title">📄 开源协议</div>
+      <div class="a-body">本项目基于 MIT License 开源，欢迎 Star 支持。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 页脚 ======================= -->
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Andydot 工作室 · Vchange</span>
+    <span>
+      <a href="https://github.com/Andydot-ui" target="_blank" rel="noopener">GitHub</a>
+      &nbsp;·&nbsp;
+      <a href="mailto:andydot@qq.com">andydot@qq.com</a>
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>
