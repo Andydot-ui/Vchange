@@ -164,6 +164,7 @@ Vchange/
 - [🐛 提交 Bug 反馈](https://github.com/Andydot-ui/Vchange/issues/new?template=BugReport.yml)
 - [💡 提交功能建议](https://github.com/Andydot-ui/Vchange/issues/new?template=FeatureRequest.yml)
 - [📋 查看已有 Issues](https://github.com/Andydot-ui/Vchange/issues)
+- 📮 邮箱联系：**andydot@qq.com**
 
 ## ⭐ Star History
 
