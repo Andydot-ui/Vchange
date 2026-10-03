@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <RootNamespace>VideoConverter</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationIcon>Resources\app_white.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\app_white.ico" />
+    <Resource Include="Resources\app_dark.ico" />
+    <!-- 内嵌完整版 ffmpeg（仅 Release 发布时包含，首次运行释放到本地） -->
+    <EmbeddedResource Include="Resources\ffmpeg.exe" Condition="'$(Configuration)' == 'Release'" />
+  </ItemGroup>
+
+</Project>
