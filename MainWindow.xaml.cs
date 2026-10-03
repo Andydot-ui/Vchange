@@ -24,6 +24,7 @@ namespace Vchange
     {
         private Process? _ffmpegProcess;
         private int _currentStep = 1;
+        private string? _autoOutputPath;
 
         // 进度解析
         private TimeSpan? _mediaDuration;
@@ -41,6 +42,16 @@ namespace Vchange
             ShowStep(1);
             UpdateControlStates();
             RestoreWindowPosition();
+
+            // 隐藏的命令行参数（截图/自动化测试用）：--input <文件> --output <文件>
+            var cliArgs = Environment.GetCommandLineArgs();
+            for (int i = 1; i < cliArgs.Length; i++)
+            {
+                if (cliArgs[i] == "--input" && i + 1 < cliArgs.Length)
+                    InputFileTextBox.Text = cliArgs[++i];
+                else if (cliArgs[i] == "--output" && i + 1 < cliArgs.Length)
+                    _autoOutputPath = cliArgs[++i];
+            }
 
             // 应用与主题相关的图标和视觉
             ApplyThemeIcon();
@@ -579,15 +590,23 @@ namespace Vchange
             }
             var format = ((ComboBoxItem)FormatComboBox.SelectedItem).Content.ToString();
 
-            // Output file location
-            var saveDlg = new SaveFileDialog
+            // 输出路径：自动化参数优先，否则弹出保存对话框
+            string outputPath;
+            if (!string.IsNullOrEmpty(_autoOutputPath))
             {
-                FileName = Path.GetFileNameWithoutExtension(inputPath) + "." + format,
-                Filter = $"{format.ToUpper()}文件|*.{format}"
-            };
-            if (saveDlg.ShowDialog() != true)
-                return;
-            var outputPath = saveDlg.FileName;
+                outputPath = _autoOutputPath;
+            }
+            else
+            {
+                var saveDlg = new SaveFileDialog
+                {
+                    FileName = Path.GetFileNameWithoutExtension(inputPath) + "." + format,
+                    Filter = $"{format.ToUpper()}文件|*.{format}"
+                };
+                if (saveDlg.ShowDialog() != true)
+                    return;
+                outputPath = saveDlg.FileName;
+            }
 
             // Determine whether to use source values
             bool useSourceCodec = CodecSameCheckBox != null && CodecSameCheckBox.IsChecked == true;
