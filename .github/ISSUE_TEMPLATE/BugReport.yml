@@ -1,0 +1,92 @@
+name: Bug 反馈
+description: 在使用 Vchange 的过程中遇到了 Bug。
+title: "[Bug] 请一句话描述问题"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你提交 Bug 反馈！请尽量填写完整的信息，方便开发者快速定位问题。
+
+        > [!IMPORTANT]
+        > 请**一个 Bug 开一个 issue**。提交前请先在 [Issues](https://github.com/Andydot-ui/Vchange/issues?q=is%3Aissue) 中搜索是否已有人反馈过相同问题。
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 提交前检查
+      description: 在开始填写之前，请先确认：
+      options:
+        - label: 我已确认使用的是 [最新版本](https://github.com/Andydot-ui/Vchange/releases/latest)，并且已确认该问题未在 Issues 中重复提交。
+          required: true
+        - label: 我已经详细阅读了选项内容，并知道未勾选必选项的 issue 可能会被直接关闭。
+          required: true
+  - type: markdown
+    attributes:
+      value: |
+        ### 问题信息
+
+        请尽量附上截图、录屏或日志，这会大大加快问题定位速度。
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 问题描述
+      description: 实际发生了什么？如果转换出错，请一并将「转换日志」中的 ffmpeg 输出粘贴到下方。
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望结果
+      description: 你期望发生什么？
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce-steps
+    attributes:
+      label: 复现步骤
+      description: 详细说明如何一步步复现这个问题。
+      placeholder: |
+        1. 打开 Vchange，选择 xxx 视频文件
+        2. 设置输出格式为 xxx，分辨率 xxx
+        3. 点击「开始转换」
+        4. 出现 xxx 问题
+    validations:
+      required: true
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: 复现概率
+      options:
+        - 每次都会复现
+        - 偶尔复现
+        - 只出现过一次
+    validations:
+      required: true
+  - type: textarea
+    id: ffmpeg-log
+    attributes:
+      label: 转换日志 / 错误信息（可选）
+      description: 转换相关问题时，请把「转换日志」页面的内容粘贴到这里。
+      render: plaintext
+  - type: input
+    id: version
+    attributes:
+      label: Vchange 版本
+      description: 例如 v1.0.0（可在 [Releases](https://github.com/Andydot-ui/Vchange/releases) 页面查看）。
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: 操作系统版本
+      description: 例如：Windows 11 24H2 (26100)。
+    validations:
+      required: true
+  - type: checkboxes
+    id: revision
+    attributes:
+      label: 最后确认
+      description: 回顾你的回答
+      options:
+        - label: 我确认以上信息已经尽可能详细，方便开发者定位问题。
+          required: true

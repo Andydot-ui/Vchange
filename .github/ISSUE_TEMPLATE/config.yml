@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📥 下载最新版本
+    url: https://github.com/Andydot-ui/Vchange/releases/latest
+    about: 获取最新版 Vchange（单文件免安装，内置 ffmpeg）
+  - name: 📖 使用说明与常见问题
+    url: https://github.com/Andydot-ui/Vchange#-开始使用
+    about: 查看 README 中的功能说明、下载说明与常见问题
