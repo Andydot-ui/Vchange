@@ -1,37 +1,62 @@
 # 视频转换器 (WPF)
 
-此项目是一个使用 **WPF** 构建的简易 GUI 程序，利用 **ffmpeg** 完成视频的 **格式、码率、分辨率、帧率** 转换。
+一个使用 **WPF** 构建的 Windows 视频转换工具，底层调用 **ffmpeg** 完成格式、编码、分辨率、帧率、码率转换。
 
 ## 功能
-- 选择源视频文件。
-- 设定目标格式（mp4、avi、mkv、mov）。
-- 输入目标码率（kbps）。
-- 选择或自定义分辨率（如 `1280x720`）。
-- 输入目标帧率（fps）。
-- 通过 `ffmpeg` 执行转换，实时在日志框中显示 ffmpeg 输出。
 
-## 环境要求
-- Windows 10/11（已安装 Visual Studio 2022 以上）。
-- 已安装 **ffmpeg** 并确保 `ffmpeg.exe` 在系统 `PATH` 中，或者将 `ffmpeg.exe` 复制到生成的可执行文件所在目录。
+- **向导式操作流程**：选择文件 → 输出格式 → 编码/分辨率/帧率 → 码率 → 转换
+- 视频编码、分辨率、帧率可分别选择「与原视频相同」
+- 码率根据分辨率**自动推荐**，也可手动修改
+- 实时进度条（百分比 + 转换速度），转换日志仅显示 ffmpeg 原始输出
+- 深色/浅色主题**跟随系统自动切换**（含应用图标）
+- Windows 11 亚克力（Acrylic）毛玻璃效果
+- 自绘无边框窗口、步骤切换动画、圆角控件、自定义提示对话框
+- 记住窗口位置
 
-## 编译运行步骤
-1. 打开 `VideoConverter` 文件夹（`C:\Users\andyd\Documents\shipin\VideoConverter`）
-   - 在 Visual Studio 中选择 **“打开文件夹”**，或使用 **`File -> Open -> Project/Solution`** 打开 `VideoConverter.csproj`。
-2. 若系统未自动恢复 NuGet 包，右键项目 → **“恢复 NuGet 包”**（本项目仅使用默认的 WPF 包）。
-3. 生成（`Ctrl+Shift+B`）并运行（`F5`）。
-4. 使用界面选择输入视频、设置参数后点击 **开始转换**。
+## 运行环境
 
-## 常见问题
-- **ffmpeg 未找到**：请确认 `ffmpeg.exe` 已加入系统 `PATH`，或将其复制到 `bin\Debug\net6.0-windows`（或 `Release`）目录下。
-- **转换失败**：检查日志窗口中的错误信息，确保输入文件路径、参数格式正确。
+- Windows 10 / 11（64 位）
+- 直接使用发布版 `视频转换器.exe` 时：**无需安装 .NET，无需单独安装 ffmpeg**（已内嵌完整版 ffmpeg，首次转换时自动释放到 `%LocalAppData%\VideoConverter\ffmpeg.exe`）
+- 从源码构建需要：Visual Studio 2022 / .NET 6 SDK
+
+## 使用方法
+
+1. 运行 `视频转换器.exe`
+2. 选择要转换的视频文件
+3. 依次设置输出格式、编码、分辨率、帧率、码率（不需要改的项可勾选"与原视频相同"）
+4. 点击「开始转换」，等待进度条完成
+
+## 打包（生成单文件 exe）
+
+1. 将完整版 `ffmpeg.exe` 放到 `Resources\` 目录（仅 Release 发布时内嵌）
+2. 执行：
+
+```
+dotnet publish VideoConverter.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true
+```
+
+3. 产物在 `bin\Release\net6.0-windows\win-x64\publish\VideoConverter.exe`
 
 ## 项目结构
+
 ```
 VideoConverter/
-├─ VideoConverter.csproj          # 项目文件，使用 .NET 6.0‑windows + WPF
-├─ App.xaml / App.xaml.cs        # 应用入口
-├─ MainWindow.xaml / MainWindow.xaml.cs  # 主界面与业务逻辑
-└─ README.md                     # 本说明文件
+├─ VideoConverter.csproj          # 项目文件（.NET 6.0-windows + WPF）
+├─ App.xaml / App.xaml.cs         # 应用入口与全局样式（主题资源）
+├─ MainWindow.xaml / .xaml.cs     # 主界面与业务逻辑
+├─ MessageDialog.xaml / .xaml.cs  # 自定义提示对话框
+├─ FfmpegProvider.cs              # ffmpeg 定位（外部/PATH/内嵌释放）
+├─ ThemeManager.cs                # 深浅色主题管理与切换
+├─ VideoConverter.slnx            # 解决方案文件
+├─ Resources/
+│   ├─ app_white.ico              # 深色主题图标
+│   └─ app_dark.ico               # 浅色主题图标
+└─ tools/
+    └─ make-icon.ps1              # 图标生成脚本
 ```
 
-祝您使用愉快！
+## 常见问题
+
+- **转换失败**：查看「转换日志」中 ffmpeg 的原始输出定位原因
+- **日志中文乱码**：程序已按 UTF-8 解码 ffmpeg 输出，如仍异常请反馈
+- **图标在浅色环境看不清**：图标会跟随系统深浅色自动切换（白/黑场记板）
