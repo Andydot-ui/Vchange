@@ -1,0 +1,2 @@
+C:\Users\andyd\Documents\shipin\VideoConverter\bin\Release\net6.0-windows\win-x64\publish\VideoConverter.pdb
+C:\Users\andyd\Documents\shipin\VideoConverter\bin\Release\net6.0-windows\win-x64\publish\VideoConverter.exe
