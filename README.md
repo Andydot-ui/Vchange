@@ -92,6 +92,9 @@
 2. 下载并运行 `Vchange.exe`
 3. 按向导选择视频、设置参数，点击「开始转换」即可
 
+> [!TIP]
+> GitHub 下载速度慢？可使用高速镜像：[**123 云盘 · Vchange.exe**](https://1828395166.share.123pan.cn/123pan/DA7Sjv-j3adv)
+
 > [!NOTE]
 > 首次转换时会自动释放内嵌的 ffmpeg（约需几秒），之后复用不再重复释放。
 > 无需安装 .NET 运行时，也无需单独配置 ffmpeg。
