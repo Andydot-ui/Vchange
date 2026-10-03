@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 
-namespace VideoConverter
+namespace Vchange
 {
     public partial class MessageDialog : Window
     {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 
-namespace VideoConverter
+namespace Vchange
 {
     /// <summary>
     /// 界面主题管理：跟随系统深色/浅色自动切换配色（应用界面主题）。

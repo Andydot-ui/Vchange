@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace VideoConverter
+namespace Vchange
 {
     public partial class App : Application
     {

@@ -18,7 +18,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Collections.Generic;
 
-namespace VideoConverter
+namespace Vchange
 {
     public partial class MainWindow : Window
     {
@@ -269,7 +269,7 @@ namespace VideoConverter
         }
 
         private static string WindowPosFile => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "VideoConverter", "window.txt");
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Vchange", "window.txt");
 
         /// <summary>
         /// 恢复上次关闭时的窗口位置；没有记录时居中到主屏幕。

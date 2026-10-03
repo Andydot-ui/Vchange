@@ -1,4 +1,4 @@
-# 视频转换器 (WPF)
+# Vchange 视频转换器 (WPF)
 
 一个使用 **WPF** 构建的 Windows 视频转换工具，底层调用 **ffmpeg** 完成格式、编码、分辨率、帧率、码率转换。
 
@@ -16,12 +16,12 @@
 ## 运行环境
 
 - Windows 10 / 11（64 位）
-- 直接使用发布版 `视频转换器.exe` 时：**无需安装 .NET，无需单独安装 ffmpeg**（已内嵌完整版 ffmpeg，首次转换时自动释放到 `%LocalAppData%\VideoConverter\ffmpeg.exe`）
+- 直接使用发布版 `Vchange.exe` 时：**无需安装 .NET，无需单独安装 ffmpeg**（已内嵌完整版 ffmpeg，首次转换时自动释放到 `%LocalAppData%\Vchange\ffmpeg.exe`）
 - 从源码构建需要：Visual Studio 2022 / .NET 6 SDK
 
 ## 使用方法
 
-1. 运行 `视频转换器.exe`
+1. 运行 `Vchange.exe`
 2. 选择要转换的视频文件
 3. 依次设置输出格式、编码、分辨率、帧率、码率（不需要改的项可勾选"与原视频相同"）
 4. 点击「开始转换」，等待进度条完成
@@ -32,22 +32,22 @@
 2. 执行：
 
 ```
-dotnet publish VideoConverter.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true
+dotnet publish Vchange.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true
 ```
 
-3. 产物在 `bin\Release\net6.0-windows\win-x64\publish\VideoConverter.exe`
+3. 产物在 `bin\Release\net6.0-windows\win-x64\publish\Vchange.exe`
 
 ## 项目结构
 
 ```
-VideoConverter/
-├─ VideoConverter.csproj          # 项目文件（.NET 6.0-windows + WPF）
+Vchange/
+├─ Vchange.csproj                 # 项目文件（.NET 6.0-windows + WPF）
 ├─ App.xaml / App.xaml.cs         # 应用入口与全局样式（主题资源）
 ├─ MainWindow.xaml / .xaml.cs     # 主界面与业务逻辑
 ├─ MessageDialog.xaml / .xaml.cs  # 自定义提示对话框
 ├─ FfmpegProvider.cs              # ffmpeg 定位（外部/PATH/内嵌释放）
 ├─ ThemeManager.cs                # 深浅色主题管理与切换
-├─ VideoConverter.slnx            # 解决方案文件
+├─ Vchange.slnx                   # 解决方案文件
 ├─ Resources/
 │   ├─ app_white.ico              # 深色主题图标
 │   └─ app_dark.ico               # 浅色主题图标

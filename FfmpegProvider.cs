@@ -2,17 +2,17 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace VideoConverter
+namespace Vchange
 {
     /// <summary>
     /// 提供 ffmpeg 可执行文件路径：
     /// 1) 程序目录下存在 ffmpeg.exe（绿色版）时直接使用；
-    /// 2) 否则把内嵌的完整版 ffmpeg 释放到 %LocalAppData%\VideoConverter 后使用；
+    /// 2) 否则把内嵌的完整版 ffmpeg 释放到 %LocalAppData%\Vchange 后使用；
     /// 3) 以上都不可用时回退到系统 PATH 中的 ffmpeg。
     /// </summary>
     internal static class FfmpegProvider
     {
-        private const string ResourceName = "VideoConverter.Resources.ffmpeg.exe";
+        private const string ResourceName = "Vchange.Resources.ffmpeg.exe";
         private static string? _cachedPath;
 
         public static string GetPath()
@@ -32,7 +32,7 @@ namespace VideoConverter
                 {
                     var dir = Path.Combine(
                         Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                        "VideoConverter");
+                        "Vchange");
                     Directory.CreateDirectory(dir);
                     var target = Path.Combine(dir, "ffmpeg.exe");
 
