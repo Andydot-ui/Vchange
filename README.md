@@ -71,9 +71,6 @@
 
 ![视频参数](docs/screenshots/3-params.png)
 
-<details>
-<summary>查看更多截图</summary>
-
 ##### 4. 设置码率
 
 ![码率](docs/screenshots/4-bitrate.png)
@@ -85,8 +82,6 @@
 ##### 6. 转换完成（进度与日志）
 
 ![转换完成](docs/screenshots/6-done.png)
-
-</details>
 
 ## 🚀 开始使用
 
