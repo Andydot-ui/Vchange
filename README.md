@@ -20,6 +20,7 @@
 <br/>
 ![.NET](https://img.shields.io/badge/.NET-6-512bd4?style=flat-square)
 [![许可证](https://img.shields.io/github/license/Andydot-ui/Vchange?style=flat-square)](LICENSE)
+[![Issues](https://img.shields.io/github/issues/Andydot-ui/Vchange?style=flat-square&color=%233fb950&label=Issues)](https://github.com/Andydot-ui/Vchange/issues)
 
 [**⬇ 立即下载**](https://github.com/Andydot-ui/Vchange/releases/latest) | [**🐛 反馈问题**](https://github.com/Andydot-ui/Vchange/issues)
 
@@ -155,6 +156,14 @@ Vchange/
 
 支持。视频编码下拉框中可选择 `h264_nvenc`（N 卡）、`h264_qsv`（Intel 核显）、`h264_amf`（A 卡）等硬件编码器。
 </details>
+
+## 🙋 反馈与支持
+
+遇到问题或有新想法？欢迎反馈（提交时请按模板填写，信息越完整解决越快）：
+
+- [🐛 提交 Bug 反馈](https://github.com/Andydot-ui/Vchange/issues/new?template=BugReport.yml)
+- [💡 提交功能建议](https://github.com/Andydot-ui/Vchange/issues/new?template=FeatureRequest.yml)
+- [📋 查看已有 Issues](https://github.com/Andydot-ui/Vchange/issues)
 
 ## ⭐ Star History
 
