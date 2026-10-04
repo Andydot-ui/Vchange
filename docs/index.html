@@ -791,23 +791,42 @@ const io = new IntersectionObserver(entries => {
 }, { threshold: .12 });
 document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-/* Gallery arrows */
+/* Gallery arrows — advance exactly one card per click */
 const track = document.getElementById('galleryTrack');
 const prev = document.getElementById('gPrev');
 const next = document.getElementById('gNext');
-const step = () => Math.max(320, track.clientWidth * .7);
-prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
-next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+const cards = [...track.children];
+const centerOf = c => c.offsetLeft + c.offsetWidth / 2;
+const clampIdx = i => Math.max(0, Math.min(cards.length - 1, i));
+let curIdx = 0;
+
 const updateArrows = () => {
-  const max = track.scrollWidth - track.clientWidth - 2;
-  prev.disabled = track.scrollLeft <= 2;
-  next.disabled = track.scrollLeft >= max;
+  prev.disabled = curIdx <= 0;
+  next.disabled = curIdx >= cards.length - 1;
 };
-track.addEventListener('scroll', updateArrows, { passive: true });
-window.addEventListener('resize', updateArrows);
+const syncFromScroll = () => {
+  const mid = track.scrollLeft + track.clientWidth / 2;
+  let best = 0, bestDist = Infinity;
+  cards.forEach((c, i) => {
+    const d = Math.abs(centerOf(c) - mid);
+    if (d < bestDist) { bestDist = d; best = i; }
+  });
+  curIdx = best;
+  updateArrows();
+};
+const goTo = i => {
+  curIdx = clampIdx(i);
+  track.scrollTo({ left: centerOf(cards[curIdx]) - track.clientWidth / 2, behavior: 'smooth' });
+  updateArrows();
+};
+prev.addEventListener('click', () => goTo(curIdx - 1));
+next.addEventListener('click', () => goTo(curIdx + 1));
+let syncTimer;
+track.addEventListener('scroll', () => { clearTimeout(syncTimer); syncTimer = setTimeout(syncFromScroll, 160); }, { passive: true });
+window.addEventListener('resize', syncFromScroll);
 /* Chromium picks the last snap point on initial layout; reset to the first card */
-requestAnimationFrame(() => { track.scrollLeft = 0; updateArrows(); });
-updateArrows();
+requestAnimationFrame(() => { track.scrollLeft = 0; syncFromScroll(); });
+syncFromScroll();
 </script>
 </body>
 </html>
