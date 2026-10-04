@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#000000">
 <title>Vchange - 视频转换，轻而易举。</title>
 <meta name="description" content="Vchange 是一款简洁美观的 Windows 视频转换器：向导式操作、内嵌完整版 ffmpeg、深浅色主题自适应、单文件免安装，下载即用。">
 <meta property="og:type" content="website">
@@ -13,8 +12,7 @@
 <meta property="og:url" content="https://justice0418.qd.je/">
 <meta property="og:image" content="https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-light-theme.png">
 <meta name="twitter:card" content="summary">
-<link rel="icon" href="./images/logo-light-theme.png" media="(prefers-color-scheme: light)">
-<link rel="icon" href="./images/logo-dark-theme.png" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="./images/logo-dark-theme.png">
 <link rel="apple-touch-icon" href="./images/logo-light-theme.png">
 <script type="application/ld+json">
 {
@@ -32,43 +30,25 @@
 <style>
 /* ============ Design Tokens ============ */
 :root {
-  --bg: #ffffff;
-  --bg-alt: #f5f5f7;
-  --card: #ffffff;
-  --fg: #1d1d1f;
-  --fg-2: #6e6e73;
+  --bg: #000000;
+  --bg-alt: #101010;
+  --card: #1d1d1f;
+  --fg: #f5f5f7;
+  --fg-2: #a1a1a6;
   --fg-3: #86868b;
-  --accent: #0066cc;
+  --accent: #2997ff;
   --btn: #0071e3;
   --btn-hover: #0077ed;
-  --hairline: rgba(0, 0, 0, .1);
-  --shadow-lg: 0 24px 80px rgba(0, 0, 0, .16), 0 4px 24px rgba(0, 0, 0, .08);
-  --shadow-card: 0 2px 12px rgba(0, 0, 0, .04);
-  --nav-bg: rgba(255, 255, 255, .72);
+  --hairline: rgba(255, 255, 255, .14);
+  --shadow-lg: 0 24px 80px rgba(0, 0, 0, .6), 0 4px 24px rgba(0, 0, 0, .5);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, .4);
+  --nav-bg: rgba(10, 10, 10, .72);
   --radius-card: 28px;
   --radius-img: 22px;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
           "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei UI",
           "Helvetica Neue", "Segoe UI", Arial, sans-serif;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #000000;
-    --bg-alt: #101010;
-    --card: #1d1d1f;
-    --fg: #f5f5f7;
-    --fg-2: #a1a1a6;
-    --fg-3: #86868b;
-    --accent: #2997ff;
-    --btn: #0071e3;
-    --btn-hover: #0077ed;
-    --hairline: rgba(255, 255, 255, .14);
-    --shadow-lg: 0 24px 80px rgba(0, 0, 0, .6), 0 4px 24px rgba(0, 0, 0, .5);
-    --shadow-card: 0 2px 12px rgba(0, 0, 0, .4);
-    --nav-bg: rgba(10, 10, 10, .72);
-  }
-}
-
 /* ============ Reset & Base ============ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
@@ -413,7 +393,7 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
   <div class="nav-inner">
     <a class="nav-logo" href="#top">
       <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="./images/logo-dark-theme.png">
+        <source srcset="./images/logo-dark-theme.png">
         <img src="./images/logo-light-theme.png" alt="Vchange 图标">
       </picture>
       Vchange
@@ -741,7 +721,7 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
       <div class="foot-col">
         <div class="foot-brand">
           <picture>
-            <source media="(prefers-color-scheme: dark)" srcset="./images/logo-dark-theme.png">
+            <source srcset="./images/logo-dark-theme.png">
             <img src="./images/logo-light-theme.png" alt="Vchange 图标">
           </picture>
           <span>Vchange</span>
