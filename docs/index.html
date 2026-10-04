@@ -1,521 +1,806 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="no-js">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-<title>Vchange - 简洁美观的视频转换器</title>
-<meta name="description" content="Vchange - 简洁美观的 Windows 视频转换器。向导式操作、内置 ffmpeg、深浅色主题自适应、单文件免安装。">
-<link rel="preconnect" href="https://gh-proxy.com">
-<link rel="preconnect" href="https://github.com">
-<link rel="icon" href="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-light-theme.png" media="(prefers-color-scheme: light)">
-<link rel="icon" href="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-dark-theme.png" media="(prefers-color-scheme: dark)">
-<style>
-/* ===== CSS Variables (Design Tokens) ===== */
-:root {
-  /* Dark (default) */
-  --bg: #0d1117;
-  --bg-elevated: #161b22;
-  --bg-hover: #1f2428;
-  --border: #30363d;
-  --fg: #e6edf3;
-  --fg-muted: #8b949e;
-  --accent: #58a6ff;
-  --accent-hover: #79b8ff;
-  --accent-soft: rgba(88,166,255,.12);
-  --danger: #f85149;
-  --success: #3fb950;
-  --font-sans: "Microsoft YaHei UI", "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: 0 8px 30px rgba(0,0,0,.35);
-  --shadow-sm: 0 2px 8px rgba(0,0,0,.2);
-  --transition: 0.2s cubic-bezier(.4,0,.2,1);
+<meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<title>Vchange - 视频转换，轻而易举。</title>
+<meta name="description" content="Vchange 是一款简洁美观的 Windows 视频转换器：向导式操作、内嵌完整版 ffmpeg、深浅色主题自适应、单文件免安装，下载即用。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Vchange - 视频转换，轻而易举。">
+<meta property="og:description" content="向导式操作、内嵌完整版 ffmpeg、单文件免安装的 Windows 视频转换器。">
+<meta property="og:url" content="https://justice0418.qd.je/">
+<meta property="og:image" content="https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-light-theme.png">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="./images/logo-light-theme.png" media="(prefers-color-scheme: light)">
+<link rel="icon" href="./images/logo-dark-theme.png" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="./images/logo-light-theme.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Vchange",
+  "operatingSystem": "Windows 10/11 (64-bit)",
+  "applicationCategory": "MultimediaApplication",
+  "softwareVersion": "1.0.0",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "author": { "@type": "Person", "name": "Andydot" },
+  "license": "https://opensource.org/licenses/MIT"
 }
-
-/* Light mode */
-@media (prefers-color-scheme: light) {
+</script>
+<style>
+/* ============ Design Tokens ============ */
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f7;
+  --card: #ffffff;
+  --fg: #1d1d1f;
+  --fg-2: #6e6e73;
+  --fg-3: #86868b;
+  --accent: #0066cc;
+  --btn: #0071e3;
+  --btn-hover: #0077ed;
+  --hairline: rgba(0, 0, 0, .1);
+  --shadow-lg: 0 24px 80px rgba(0, 0, 0, .16), 0 4px 24px rgba(0, 0, 0, .08);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, .04);
+  --nav-bg: rgba(255, 255, 255, .72);
+  --radius-card: 28px;
+  --radius-img: 22px;
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+          "PingFang SC", "HarmonyOS Sans SC", "Microsoft YaHei UI",
+          "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
   :root {
-    --bg: #ffffff;
-    --bg-elevated: #f6f8fa;
-    --bg-hover: #f0f3f6;
-    --border: #d0d7de;
-    --fg: #1f2328;
-    --fg-muted: #656d76;
-    --accent: #0969da;
-    --accent-hover: #0860ca;
-    --accent-soft: rgba(9,105,218,.1);
-    --shadow: 0 8px 30px rgba(27,31,35,.08);
-    --shadow-sm: 0 1px 4px rgba(27,31,35,.08);
+    --bg: #000000;
+    --bg-alt: #101010;
+    --card: #1d1d1f;
+    --fg: #f5f5f7;
+    --fg-2: #a1a1a6;
+    --fg-3: #86868b;
+    --accent: #2997ff;
+    --btn: #0071e3;
+    --btn-hover: #0077ed;
+    --hairline: rgba(255, 255, 255, .14);
+    --shadow-lg: 0 24px 80px rgba(0, 0, 0, .6), 0 4px 24px rgba(0, 0, 0, .5);
+    --shadow-card: 0 2px 12px rgba(0, 0, 0, .4);
+    --nav-bg: rgba(10, 10, 10, .72);
   }
 }
 
-/* ===== Reset ===== */
+/* ============ Reset & Base ============ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
 body {
-  font-family: var(--font-sans);
+  font-family: var(--font);
   background: var(--bg);
   color: var(--fg);
-  line-height: 1.6;
+  line-height: 1.47;
+  font-size: 17px;
+  letter-spacing: .011em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-a { color: var(--accent); text-decoration: none; transition: color var(--transition); }
-a:hover { color: var(--accent-hover); }
-img { max-width: 100%; height: auto; display: block; border-radius: var(--radius-sm); }
-h1, h2, h3 { font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; }
-h1 { font-size: clamp(2.5rem, 5vw, 4rem); }
-h2 { font-size: clamp(1.75rem, 3vw, 2.25rem); margin-bottom: 1rem; }
-h3 { font-size: 1.15rem; margin-bottom: .5rem; }
-p { color: var(--fg-muted); font-size: 1rem; }
-code { font-family: "JetBrains Mono", "Fira Code", Consolas, monospace; background: var(--bg-hover); padding: .15em .4em; border-radius: 4px; font-size: .9em; }
-kbd { background: var(--bg-hover); border: 1px solid var(--border); padding: .1em .4em; border-radius: 4px; font-family: inherit; font-size: .85em; }
-hr { border: none; border-top: 1px solid var(--border); margin: 3rem 0; }
+::selection { background: #0071e3; color: #fff; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+ul { list-style: none; }
 
-/* ===== Layout Helpers ===== */
-.container { width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 24px; }
-.section { padding: 6rem 0; }
-.section-title { text-align: center; margin-bottom: 3.5rem; }
-.section-title h2 { margin-bottom: .5rem; }
-.section-title p { max-width: 600px; margin: 0 auto; font-size: 1.1rem; }
+h1, h2, h3 { letter-spacing: -.022em; line-height: 1.08; font-weight: 640; }
+.section { padding: clamp(76px, 11vw, 132px) 0; }
+.section-alt { background: var(--bg-alt); }
+.wrap { width: 100%; max-width: 1024px; margin: 0 auto; padding: 0 22px; }
+.wrap-wide { max-width: 1280px; }
 
-/* ===== Buttons ===== */
+/* Section headers — Apple pattern: eyebrow / headline / subhead */
+.eyebrow {
+  font-size: 19px; font-weight: 600; color: var(--accent);
+  margin-bottom: 12px; letter-spacing: .011em;
+}
+.section-head { text-align: center; max-width: 760px; margin: 0 auto clamp(44px, 6vw, 72px); }
+.section-head h2 { font-size: clamp(32px, 5vw, 56px); margin-bottom: 16px; }
+.section-head p { font-size: clamp(17px, 2vw, 21px); color: var(--fg-2); line-height: 1.5; }
+
+/* ============ Buttons & Links ============ */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
-  padding: .85rem 1.75rem; font-size: 1rem; font-weight: 600;
-  border-radius: var(--radius-sm); border: 1px solid transparent;
-  cursor: pointer; transition: all var(--transition);
-  text-decoration: none; white-space: nowrap;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 980px; border: none; cursor: pointer;
+  font-family: inherit; font-size: 17px; font-weight: 400;
+  padding: 12px 26px; transition: background .18s ease, transform .18s ease;
+  text-decoration: none !important; white-space: nowrap;
 }
-.btn-primary {
-  background: linear-gradient(135deg, var(--accent), #3b82f6);
-  color: #fff; border-color: transparent;
-  box-shadow: 0 4px 14px rgba(88,166,255,.35);
+.btn-primary { background: var(--btn); color: #fff; }
+.btn-primary:hover { background: var(--btn-hover); }
+.btn-primary:active { transform: scale(.98); }
+.btn-lg { font-size: 19px; padding: 15px 34px; }
+.btn-outline { background: transparent; color: var(--fg); box-shadow: inset 0 0 0 1px var(--hairline); }
+.btn-outline:hover { box-shadow: inset 0 0 0 1px var(--fg-2); }
+.link-chevron { font-size: 17px; color: var(--accent); }
+.link-chevron:hover { text-decoration: underline; }
+.link-chevron::after { content: " ›"; font-weight: 500; }
+
+/* ============ Nav (frosted glass) ============ */
+.nav {
+  position: sticky; top: 0; z-index: 1000;
+  background: var(--nav-bg);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  transition: box-shadow .25s ease;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(88,166,255,.45); }
-.btn-primary:active { transform: translateY(0); }
-.btn-ghost {
-  background: transparent; color: var(--fg); border-color: var(--border);
+.nav.scrolled { box-shadow: 0 1px 0 var(--hairline); }
+.nav-inner {
+  max-width: 1024px; margin: 0 auto; padding: 0 22px;
+  height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 24px;
 }
-.btn-ghost:hover { background: var(--bg-hover); border-color: var(--accent); color: var(--accent); }
-.btn-lg { padding: 1rem 2.5rem; font-size: 1.1rem; }
-
-/* ===== Header / Nav ===== */
-.site-header {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(var(--bg-rgb, 13,17,23), .85);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 100;
+.nav-logo {
+  display: inline-flex; align-items: center; gap: 9px;
+  color: var(--fg); font-size: 19px; font-weight: 600; letter-spacing: -.01em;
+  text-decoration: none !important;
 }
-.header-inner {
-  max-width: 1120px; margin: 0 auto; padding: 0 24px;
-  display: flex; align-items: center; justify-content: space-between; height: 64px;
+.nav-logo img { width: 24px; height: 24px; border-radius: 6px; }
+.nav-links { display: flex; align-items: center; gap: clamp(20px, 3.4vw, 36px); }
+.nav-links a {
+  font-size: 13px; color: var(--fg-2); text-decoration: none;
+  transition: color .15s ease;
 }
-.logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.25rem; color: var(--fg); }
-.logo img { width: 28px; height: 28px; }
-.nav { display: flex; gap: 8px; }
-.nav a { padding: 6px 14px; border-radius: var(--radius-sm); color: var(--fg-muted); font-size: .9rem; font-weight: 500; transition: all .15s; }
-.nav a:hover { color: var(--fg); background: var(--bg-hover); }
-.nav a.active { color: var(--accent); background: var(--accent-soft); }
-.mobile-menu-btn { display: none; background: none; border: none; color: var(--fg); font-size: 1.5rem; cursor: pointer; }
+.nav-links a:hover { color: var(--fg); }
+.nav-cta { font-size: 13px; padding: 7px 16px; }
+@media (max-width: 860px) { .nav-links { display: none; } }
 
-/* ===== Hero ===== */
-.hero {
-  position: relative; padding: 8rem 0 6rem; text-align: center; overflow: hidden;
+/* ============ Hero ============ */
+.hero { text-align: center; padding: clamp(64px, 9vw, 118px) 0 0; overflow: hidden; }
+.hero h1 {
+  font-size: clamp(42px, 8vw, 88px);
+  letter-spacing: -.025em;
+  margin: 0 auto 18px;
+  max-width: 16ch;
 }
-.hero::before {
-  content: ""; position: absolute; inset: 0; z-index: -1;
-  background: radial-gradient(ellipse 80% 50% at 50% 0%, var(--accent-soft), transparent 70%);
-  pointer-events: none;
+.hero-sub {
+  font-size: clamp(19px, 2.6vw, 28px);
+  color: var(--fg-2); font-weight: 500;
+  max-width: 34ch; margin: 0 auto 30px; line-height: 1.35;
 }
-.hero-logo { width: 72px; height: 72px; margin: 0 auto 1.5rem; filter: drop-shadow(0 8px 24px var(--accent-soft)); }
-.hero h1 { margin-bottom: 1rem; background: linear-gradient(135deg, var(--fg) 30%, var(--accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
-.hero .lead { font-size: 1.25rem; color: var(--fg-muted); max-width: 640px; margin: 0 auto 2.5rem; line-height: 1.7; }
-.hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
-.badges { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
-.badge { font-size: .75rem; font-weight: 500; padding: .35rem .75rem; border-radius: 999px; background: var(--bg-elevated); border: 1px solid var(--border); color: var(--fg-muted); }
-
-/* ===== Features ===== */
-.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-.feature-card {
-  background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius);
-  padding: 2rem 1.75rem; transition: all var(--transition);
+.hero-cta { display: flex; align-items: center; justify-content: center; gap: clamp(16px, 3vw, 32px); flex-wrap: wrap; }
+.hero-visual {
+  position: relative; margin: clamp(48px, 7vw, 84px) auto 0;
+  max-width: 900px; padding: 0 22px;
 }
-.feature-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: var(--shadow); }
-.feature-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; color: var(--accent); font-size: 1.5rem; }
-.feature-card h3 { margin-bottom: .5rem; }
-.feature-card p { font-size: .95rem; }
-
-/* ===== Screenshots ===== */
-.screenshots { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; }
-.screenshot { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: var(--bg-elevated); transition: transform var(--transition); cursor: zoom-in; }
-.screenshot:hover { transform: scale(1.02); box-shadow: var(--shadow); }
-.screenshot img { width: 100%; height: 200px; object-fit: cover; }
-.screenshot-caption { padding: 1rem; font-size: .9rem; color: var(--fg-muted); text-align: center; }
-
-/* ===== Download Section ===== */
-.download-section { background: linear-gradient(180deg, transparent, var(--bg-elevated)); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-.download-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
-@media (max-width: 900px) { .download-grid { grid-template-columns: 1fr; } }
-.download-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem; }
-.download-card h2 { margin-bottom: .5rem; }
-.download-card .desc { color: var(--fg-muted); margin-bottom: 2rem; }
-.btn-block { width: 100%; margin-bottom: 1rem; }
-.file-info { font-size: .9rem; color: var(--fg-muted); margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
-.file-info p { margin: .4rem 0; }
-.file-info code { background: var(--bg); border: 1px solid var(--border); }
-
-/* SHA Table */
-.sha-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; font-size: .85rem; }
-.sha-table th, .sha-table td { padding: .7rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
-.sha-table th { color: var(--fg-muted); font-weight: 600; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
-.sha-table code { font-size: .8em; word-break: break-all; background: var(--bg); border: 1px solid var(--border); }
-
-/* Mirrors */
-.mirrors { margin-top: 2rem; }
-.mirror-list { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1rem; }
-.mirror-btn { padding: .6rem 1.2rem; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg-elevated); color: var(--fg); font-size: .9rem; font-weight: 500; transition: all .15s; }
-.mirror-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-
-/* ===== Footer ===== */
-.site-footer { border-top: 1px solid var(--border); padding: 3rem 0 2rem; background: var(--bg-elevated); }
-.footer-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 2rem; }
-@media (max-width: 700px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
-.footer-brand { max-width: 280px; }
-.footer-brand .logo { margin-bottom: .75rem; }
-.footer-brand p { font-size: .9rem; line-height: 1.7; }
-.footer-col h4 { font-size: .85rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--fg-muted); margin-bottom: 1rem; }
-.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: .5rem; }
-.footer-col a { color: var(--fg-muted); font-size: .9rem; transition: color .15s; }
-.footer-col a:hover { color: var(--accent); }
-.footer-bottom { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center; font-size: .8rem; color: var(--fg-muted); }
-
-/* ===== Lightbox (for screenshots) ===== */
-.lightbox { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,.92); backdrop-filter: blur(4px); padding: 2rem; }
-.lightbox.open { display: flex; }
-.lightbox img { max-width: 90vw; max-height: 85vh; border-radius: 8px; box-shadow: 0 0 40px rgba(0,0,0,.5); transform: scale(0.95); animation: zoomIn .2s ease-out forwards; }
-@keyframes zoomIn { to { transform: scale(1); } }
-.lightbox-close { position: absolute; top: 1.5rem; right: 1.5rem; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); color: #fff; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s; }
-.lightbox-close:hover { background: rgba(255,255,255,.2); }
-.lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15); color: #fff; font-size: 1.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; opacity: .7; transition: opacity .2s, background .2s; }
-.lightbox-nav:hover { opacity: 1; background: rgba(255,255,255,.2); }
-.lightbox-prev { left: 1.5rem; }
-.lightbox-next { right: 1.5rem; }
-
-/* ===== Scrollbar ===== */
-::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--fg-muted); }
-
-/* ===== Utilities ===== */
-.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-.skip-link { position: absolute; top: -100%; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: .75rem 1.5rem; border-radius: var(--radius-sm); z-index: 10000; transition: top .2s; }
-.skip-link:focus { top: 1rem; }
-.hidden { display: none !important; }
-.text-center { text-align: center; }
-.mt-1 { margin-top: .5rem; } .mt-2 { margin-top: 1rem; } .mt-3 { margin-top: 1.5rem; } .mt-4 { margin-top: 2rem; }
-.mb-1 { margin-bottom: .5rem; } .mb-2 { margin-bottom: 1rem; } .mb-3 { margin-bottom: 1.5rem; } .mb-4 { margin-bottom: 2rem; }
-
-/* ===== Responsive ===== */
-@media (max-width: 700px) {
-  .hero { padding: 5rem 0 4rem; }
-  .hero h1 { font-size: 2.25rem; }
-  .hero .lead { font-size: 1.1rem; }
-  .btn-lg { padding: .85rem 2rem; font-size: 1rem; }
-  .section { padding: 4rem 0; }
-  .footer-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-  .download-grid { grid-template-columns: 1fr; }
-  .features-grid { grid-template-columns: 1fr; }
-  .screenshots { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr 1fr; }
+.hero-visual::before {
+  content: ""; position: absolute; inset: -18% -12%;
+  background:
+    radial-gradient(38% 46% at 30% 34%, rgba(0, 113, 227, .22), transparent 70%),
+    radial-gradient(34% 42% at 72% 62%, rgba(162, 89, 255, .18), transparent 70%);
+  z-index: 0; filter: blur(6px);
 }
-@media (max-width: 480px) {
-  .footer-grid { grid-template-columns: 1fr; }
+.hero-shot {
+  position: relative; z-index: 1;
+  border-radius: var(--radius-img);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--hairline);
+  width: 100%;
+}
+.hero-note { margin: 26px 0 clamp(70px, 10vw, 110px); font-size: 13px; color: var(--fg-3); }
+
+/* ============ Dark statement (stats + engine) ============ */
+.dark { background: #000; color: #f5f5f7; }
+.dark .eyebrow {
+  background: linear-gradient(96deg, #2997ff, #a259ff 62%, #ff5f6d);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 32px; text-align: center; margin-bottom: clamp(64px, 9vw, 110px);
+}
+.stat-num {
+  font-size: clamp(64px, 9vw, 112px); font-weight: 660; letter-spacing: -.03em; line-height: 1;
+  background: linear-gradient(180deg, #ffffff 30%, rgba(255, 255, 255, .55));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.stat-label { margin-top: 12px; font-size: clamp(15px, 1.8vw, 19px); color: #a1a1a6; }
+@media (max-width: 680px) {
+  .stats { grid-template-columns: 1fr; gap: 44px; }
+}
+.engine-head { text-align: center; max-width: 720px; margin: 0 auto; }
+.engine-head h2 { font-size: clamp(32px, 5vw, 56px); margin-bottom: 18px; }
+.engine-head p { font-size: clamp(17px, 2vw, 21px); color: #a1a1a6; line-height: 1.5; }
+.chips {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+  margin-top: 36px;
+}
+.chip {
+  font-family: "SF Mono", ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 13px; color: #d2d2d7; padding: 7px 14px; border-radius: 980px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .18);
 }
 
-/* Reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
-  html { scroll-behavior: auto; }
+/* ============ Gallery (scroll-snap) ============ */
+.gallery-head { text-align: center; max-width: 720px; margin: 0 auto clamp(40px, 5vw, 56px); }
+.gallery-head h2 { font-size: clamp(32px, 5vw, 56px); margin-bottom: 14px; }
+.gallery-head p { font-size: clamp(17px, 2vw, 21px); color: var(--fg-2); }
+.gallery {
+  position: relative;
+  display: flex; gap: 22px;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 10px max(22px, calc((100vw - 1024px) / 2)) 34px;
+  scrollbar-width: none;
 }
+.gallery::-webkit-scrollbar { display: none; }
+.shot { flex: 0 0 min(720px, 84vw); scroll-snap-align: center; }
+.shot-card {
+  background: var(--card); border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card); border: 1px solid var(--hairline);
+  padding: 26px 26px 30px;
+}
+.shot-card img { border-radius: 14px; border: 1px solid var(--hairline); width: 100%; }
+.shot-meta { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; }
+.shot-num {
+  font-size: 34px; font-weight: 660; letter-spacing: -.03em; line-height: 1;
+  background: linear-gradient(96deg, #0071e3, #a259ff);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.shot-title { font-size: 19px; font-weight: 600; }
+.shot-desc { color: var(--fg-2); font-size: 15px; margin-top: 14px; }
+.gallery-nav { display: flex; justify-content: center; gap: 14px; }
+.gbtn {
+  width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer;
+  background: var(--card); color: var(--fg); font-size: 20px; line-height: 1;
+  box-shadow: inset 0 0 0 1px var(--hairline), var(--shadow-card);
+  transition: opacity .2s ease;
+}
+.gbtn:disabled { opacity: .35; cursor: default; }
+.gbtn:not(:disabled):hover { box-shadow: inset 0 0 0 1.5px var(--fg-2); }
+
+/* ============ Bento features ============ */
+.bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.cell {
+  background: var(--card); border-radius: var(--radius-card);
+  border: 1px solid var(--hairline);
+  padding: clamp(26px, 3.4vw, 40px);
+  display: flex; flex-direction: column;
+}
+.cell.span2 { grid-column: span 2; }
+.cell h3 { font-size: 23px; margin: 18px 0 8px; letter-spacing: -.015em; }
+.cell p { color: var(--fg-2); font-size: 15.5px; line-height: 1.55; }
+.cell-icon {
+  width: 46px; height: 46px; border-radius: 13px; flex: none;
+  display: grid; place-items: center;
+  background: linear-gradient(180deg, rgba(0, 113, 227, .14), rgba(162, 89, 255, .12));
+  color: var(--accent);
+}
+.cell-icon svg { width: 24px; height: 24px; }
+.cell-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 20px; }
+.cell-tags span {
+  font-family: "SF Mono", ui-monospace, Consolas, monospace;
+  font-size: 12px; color: var(--fg-2); padding: 5px 11px; border-radius: 980px;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+.steps-viz { display: flex; align-items: center; gap: 0; margin-top: auto; padding-top: 26px; }
+.steps-viz i {
+  flex: 1; height: 5px; border-radius: 980px;
+  background: var(--hairline); position: relative;
+}
+.steps-viz i.done { background: linear-gradient(90deg, #0071e3, #a259ff); }
+.steps-viz i:not(:last-child) { margin-right: 26px; }
+.steps-viz i::after {
+  content: attr(data-label); position: absolute; top: 13px; left: 50%;
+  transform: translateX(-50%); font-size: 11.5px; color: var(--fg-3); white-space: nowrap;
+  font-style: normal;
+}
+@media (max-width: 900px) {
+  .bento { grid-template-columns: repeat(2, 1fr); }
+  .cell.span2 { grid-column: span 2; }
+}
+@media (max-width: 620px) {
+  .bento { grid-template-columns: 1fr; }
+  .cell.span2 { grid-column: span 1; }
+  .steps-viz i::after { font-size: 10px; }
+  .steps-viz i:not(:last-child) { margin-right: 12px; }
+}
+
+/* ============ Specs ============ */
+.specs { max-width: 860px; margin: 0 auto; }
+.spec-row {
+  display: grid; grid-template-columns: 220px 1fr; gap: 24px;
+  padding: 22px 4px; border-bottom: 1px solid var(--hairline);
+}
+.spec-row:first-child { border-top: 1px solid var(--hairline); }
+.spec-row dt { color: var(--fg-2); font-size: 15px; padding-top: 2px; }
+.spec-row dd { font-size: 15.5px; line-height: 1.6; }
+.spec-row code {
+  font-family: "SF Mono", ui-monospace, Consolas, monospace;
+  font-size: .88em; background: var(--bg-alt); border: 1px solid var(--hairline);
+  padding: 2px 7px; border-radius: 6px; margin: 2px 2px;
+  display: inline-block; color: var(--fg);
+}
+@media (max-width: 620px) {
+  .spec-row { grid-template-columns: 1fr; gap: 6px; }
+}
+
+/* ============ Download ============ */
+.dl-card {
+  max-width: 720px; margin: 0 auto; text-align: center;
+  background: var(--card); border: 1px solid var(--hairline);
+  border-radius: 32px; box-shadow: var(--shadow-card);
+  padding: clamp(40px, 6vw, 64px) clamp(24px, 5vw, 56px);
+}
+.dl-version {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13.5px; color: var(--fg-2); margin-bottom: 18px;
+  padding: 6px 14px; border-radius: 980px;
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+.dl-version b { color: var(--fg); font-weight: 600; }
+.dl-card h2 { font-size: clamp(30px, 4.4vw, 46px); margin-bottom: 12px; }
+.dl-card .dl-sub { color: var(--fg-2); font-size: 17px; margin-bottom: 30px; }
+.dl-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.dl-mirrors { margin-top: 22px; font-size: 15px; color: var(--fg-2); display: flex; justify-content: center; gap: 8px 26px; flex-wrap: wrap; }
+.dl-files { margin-top: 34px; text-align: left; border-top: 1px solid var(--hairline); }
+.dl-file { display: flex; gap: 14px; padding: 18px 2px; border-bottom: 1px solid var(--hairline); }
+.dl-file svg { width: 22px; height: 22px; color: var(--accent); flex: none; margin-top: 2px; }
+.dl-file b { font-size: 15px; font-weight: 600; }
+.dl-file span { display: block; font-size: 13.5px; color: var(--fg-2); margin-top: 3px; line-height: 1.5; }
+.dl-note { margin-top: 26px; font-size: 13px; color: var(--fg-3); line-height: 1.6; }
+
+/* ============ FAQ ============ */
+.faq { max-width: 760px; margin: 0 auto; }
+.faq details { border-bottom: 1px solid var(--hairline); }
+.faq details:first-child { border-top: 1px solid var(--hairline); }
+.faq summary {
+  list-style: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 22px 4px; font-size: 18px; font-weight: 560; letter-spacing: -.01em;
+  transition: color .15s ease;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary:hover { color: var(--accent); }
+.faq summary .plus {
+  flex: none; width: 22px; height: 22px; position: relative;
+}
+.faq summary .plus::before, .faq summary .plus::after {
+  content: ""; position: absolute; inset: 0; margin: auto;
+  background: var(--fg-2); transition: transform .25s ease;
+}
+.faq summary .plus::before { width: 14px; height: 1.6px; }
+.faq summary .plus::after { width: 1.6px; height: 14px; }
+.faq details[open] summary .plus::after { transform: rotate(90deg); }
+.faq details[open] summary .plus::before { transform: rotate(180deg); }
+.faq .faq-body { padding: 0 4px 24px; color: var(--fg-2); font-size: 15.5px; line-height: 1.65; max-width: 64ch; }
+.faq .faq-body a { color: var(--accent); }
+
+/* ============ CTA strip ============ */
+.cta-strip { text-align: center; }
+.cta-strip h2 { font-size: clamp(32px, 5vw, 56px); margin-bottom: 14px; }
+.cta-strip p { color: var(--fg-2); font-size: clamp(17px, 2vw, 21px); margin-bottom: 32px; }
+
+/* ============ Footer ============ */
+footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); padding: 48px 0 40px; }
+.foot-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px;
+  padding-bottom: 36px; border-bottom: 1px solid var(--hairline);
+}
+.foot-col h4 { font-size: 13px; font-weight: 600; color: var(--fg); margin-bottom: 14px; }
+.foot-col a { display: block; font-size: 13px; color: var(--fg-2); padding: 4.5px 0; }
+.foot-col a:hover { color: var(--accent); text-decoration: none; }
+.foot-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.foot-brand img { width: 28px; height: 28px; border-radius: 7px; }
+.foot-brand span { font-size: 17px; font-weight: 620; }
+.foot-desc { font-size: 12.5px; color: var(--fg-2); line-height: 1.6; max-width: 24ch; }
+.foot-bottom {
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  padding-top: 22px; font-size: 12.5px; color: var(--fg-3);
+}
+.foot-bottom a { color: var(--fg-2); }
+@media (max-width: 780px) { .foot-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ============ Reveal on scroll ============ */
+.js .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s ease; }
+.js .reveal.in { opacity: 1; transform: none; }
+.js .reveal.d1 { transition-delay: .1s; }
+.js .reveal.d2 { transition-delay: .2s; }
 </style>
 </head>
 <body>
-<a href="#main" class="skip-link">跳转到主内容</a>
 
-<!-- ===== Header ===== -->
-<header class="site-header" role="banner">
-  <div class="header-inner">
-    <a href="#top" class="logo" aria-label="Vchange 首页">
-      <img src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-light-theme.png" alt="" width="28" height="28" style="display:block;">
-      <span>Vchange</span>
+<!-- ================= Nav ================= -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#top">
+      <img src="./images/logo-light-theme.png" alt="Vchange 图标">
+      Vchange
     </a>
-    <nav class="nav" role="navigation" aria-label="主导航">
-      <a href="#features" class="active">特性</a>
-      <a href="#screenshots">截图</a>
-      <a href="#download">下载</a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="#gallery">界面</a>
+      <a href="#features">功能亮点</a>
+      <a href="#engine">技术</a>
+      <a href="#specs">技术规格</a>
+      <a href="#faq">支持</a>
     </nav>
-    <button class="mobile-menu-btn" aria-label="展开菜单" aria-expanded="false" aria-controls="mobile-menu">☰</button>
+    <a class="btn btn-primary nav-cta" href="#download">下载</a>
   </div>
 </header>
 
-<main id="main" role="main">
+<main id="top">
 
-<!-- ===== Hero ===== -->
-<section class="hero" aria-labelledby="hero-title">
-  <div class="container">
-    <img class="hero-logo" src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-light-theme.png" alt="" width="72" height="72" aria-hidden="true">
-    <h1 id="hero-title">Vchange</h1>
-    <p class="lead">简洁美观的 Windows 视频转换器 · 内置完整 ffmpeg · 向导式操作 · 深浅色主题自适应</p>
-    <div class="hero-actions">
-      <a href="#download" class="btn btn-primary btn-lg">⬇ 立即下载 Vchange</a>
-      <a href="https://github.com/Andydot-ui/Vchange" target="_blank" rel="noopener" class="btn btn-ghost">GitHub 查看源码</a>
+  <!-- ================= Hero ================= -->
+  <section class="hero">
+    <div class="wrap">
+      <h1>视频转换，<br>轻而易举。</h1>
+      <p class="hero-sub">向导式操作，内嵌完整版 ffmpeg。单文件免安装，下载即用。</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="https://github.com/Andydot-ui/Vchange/releases/latest/download/Vchange.exe">免费下载</a>
+        <a class="link-chevron" href="#gallery">进一步了解</a>
+      </div>
     </div>
-    <div class="badges">
-      <span class="badge">Windows 10/11</span>
-      <span class="badge">单文件免安装</span>
-      <span class="badge">内置完整 ffmpeg</span>
-      <span class="badge">深浅色自适应</span>
+    <div class="hero-visual reveal">
+      <img class="hero-shot" src="./screenshots/3-params.png" width="1024" alt="Vchange 视频参数设置界面，可选择编码、分辨率与帧率">
     </div>
-  </div>
-</section>
+    <p class="hero-note">Vchange v1.0.0 · Windows 10 / 11（64 位） · MIT 开源</p>
+  </section>
 
-<!-- ===== Features ===== -->
-<section id="features" class="section" aria-labelledby="features-title">
-  <div class="container">
-    <header class="section-title">
-      <h2 id="features-title">核心特性</h2>
-      <p>为日常视频转换而生，专注体验与效率</p>
-    </header>
-    <div class="features-grid">
-      <article class="feature-card">
-        <div class="feature-icon" aria-hidden="true">🎬</div>
-        <h3>向导式转换流程</h3>
-        <p>选择文件 → 输出格式 → 视频参数 → 码率 → 开始转换，步骤清晰，随时可返回修改。</p>
-      </article>
-      <article class="feature-card">
-        <div class="feature-icon" aria-hidden="true">🎛</div>
-        <h3>灵活的转换参数</h3>
-        <p>编码、分辨率、帧率、码率均可单独设置，或一键勾选「与原视频相同」。</p>
-      </article>
-      <article class="feature-card">
-        <div class="feature-icon" aria-hidden="true">⚡</div>
-        <h3>硬件加速编码</div>
-        <p>支持 NVENC (N卡)、QSV (Intel核显)、AMF (A卡) 等硬件加速，转换又快又省电。</p>
-      </article>
-      <article class="feature-card">
-        <div class="feature-icon" aria-hidden="true">🌓</div>
-        <h3>主题自适应</div>
-        <p>深色/浅色界面跟随系统自动切换，应用图标同步切换，护眼更舒适。</        </article>
-        <article class="feature-card">
-        <div class="feature-icon" aria-hidden="true">📊</div>
-        <h3>实时进度反馈</div>
-        <p>进度条显示百分比与实时转换速度，转换日志实时输出 ffmpeg 原始输出。</p>
-      </article>
-      <article class="feature-card">
-        <div class="feature-icon" aria-hidden="true">📦</div>
-        <h3>开箱即用</div>
-        <p>单文件绿色版，无需安装 .NET 运行时，内嵌完整版 ffmpeg，首次转换自动释放即可使用。</      </article>
-    </div>
-  </div>
-</section>
-
-<!-- ===== Screenshots ===== -->
-<section id="screenshots" class="section" aria-labelledby="screenshots-title">
-  <div class="container">
-    <header class="section-title">
-      <h2 id="screenshots-title">界面预览</h2>
-      <p>简洁、现代、专注转换本身</p>
-    </header>
-    <div class="screenshots" role="list">
-      <figure class="screenshot" role="listitem" tabindex="0" aria-label="选择文件步骤">
-        <img src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/screenshots/1-file.png" alt="步骤一：选择视频文件" loading="lazy" width="640" height="360">
-        <figcaption class="screenshot-caption">步骤 1：选择要转换的视频文件</figcaption>
-      </figure>
-      <figure class="screenshot" role="listitem" tabindex="0" aria-label="视频参数设置">
-        <img src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/screenshots/3-params.png" alt="视频参数设置" loading="lazy" width="640" height="360">
-        <figcaption class="screenshot-caption">步骤 3：设置编码、分辨率、帧率</figcaption>
-      </figure>
-      <figure class="screenshot" role="listitem" tabindex="0" aria-label="转换完成">
-        <img src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/screenshots/6-done.png" alt="转换完成进度" loading="lazy" width="640" height="360">
-        <figcaption class="screenshot-caption">转换完成：进度条、速度、日志一目了然</figcaption>
-      </figure>
-    </div>
-  </div>
-</section>
-
-<!-- ===== Download ===== -->
-<section id="download" class="section download-section" aria-labelledby="download-title">
-  <div class="container">
-    <header class="section-title">
-      <h2 id="download-title">立即下载</h2>
-      <p>单文件免安装 · 内置完整 ffmpeg · 开箱即用</p>
-    </header>
-    <div class="download-grid">
-      <!-- Left: Main Download -->
-      <div class="download-card" role="region" aria-labelledby="dl-title">
-        <h2 id="dl-title">Vchange v1.0.0</h2>
-        <p class="desc">单文件绿色版，已内置完整版 ffmpeg 9.0.2 与 .NET 8 运行时。无需安装，双击即用。</p>
-        <a href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-j3adv" class="btn btn-primary btn-block btn-lg" target="_blank" rel="noopener">🚀 高速下载（123 云盘）</a>
-        <a href="https://github.com/Andydot-ui/Vchange/releases/download/v1.0.0/Vchange.exe" class="btn btn-ghost btn-block" target="_blank" rel="noopener">GitHub 官方下载</a>
-        <a href="https://github.com/Andydot-ui/Vchange/releases" class="btn btn-ghost btn-block" target="_blank" rel="noopener">查看历史版本</a>
-        <div class="file-info">
-          <p><strong>文件名：</strong> Vchange.exe</p>
-          <p><strong>版本：</strong> v1.0.0</p>
-          <p><strong>大小：</strong> 149.8 MB</p>
-          <p><strong>更新日期：</strong> 2026-10-03</p>
-          <p><strong>运行环境：</strong> Windows 10 / 11 (64 位)</p>
-          <p><strong>SHA512：</strong><br><code>9D47733FCCE13F276B74EDBFD6FE83A22FC60E5051BE621CE0449A0E0E291CFD987816DB3B4DEC044CDF68B32EC6430011131D8FA7CB463D84FAA6D89AB82B2E</code></p>
+  <!-- ================= Dark statement: numbers + engine ================= -->
+  <section class="section dark" id="engine">
+    <div class="wrap">
+      <div class="stats">
+        <div class="reveal">
+          <div class="stat-num">20</div>
+          <div class="stat-label">种输出格式，常用与专业容器全覆盖</div>
+        </div>
+        <div class="reveal d1">
+          <div class="stat-num">6</div>
+          <div class="stat-label">步向导流程，每一步都清晰明了</div>
+        </div>
+        <div class="reveal d2">
+          <div class="stat-num">0</div>
+          <div class="stat-label">项配置 —— 下载、打开、开始转换</div>
         </div>
       </div>
-
-      <!-- Right: Mirrors & SHA -->
-      <div class="download-card">
-        <h2>📦 备用下载与校验</h2>
-        <p class="desc" style="margin-bottom:1.5rem;">GitHub 下载慢？用 123 云盘高速镜像。校验 SHA512 确保文件完整。</p>
-        <div class="mirrors" role="list" aria-label="镜像下载">
-          <a href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-j3adv" class="mirror-btn" target="_blank" rel="noopener" role="listitem">🚀 123 云盘高速下载</a>
-          <a href="https://github.com/Andydot-ui/Vchange/releases/download/v1.0.0/Vchange.exe" class="mirror-btn" target="_blank" rel="noopener" role="listitem">GitHub Release 直接下载</a>
-          <a href="https://github.com/Andydot-ui/Vchange/releases" class="mirror-btn" target="_blank" rel="noopener" role="listitem">历史版本 / 其它平台</a>
+      <div class="engine-head reveal">
+        <p class="eyebrow">动力核心</p>
+        <h2>完整版 ffmpeg，<br>内置于身。</h2>
+        <p>Vchange 将 217&nbsp;MB 的 ffmpeg&nbsp;9 完整版直接嵌入主程序——无需单独下载，无需配置环境变量。首次转换时自动释放，此后立即可用。</p>
+        <div class="chips" aria-label="支持的编码器">
+          <span class="chip">libx264</span>
+          <span class="chip">libx265</span>
+          <span class="chip">h264_nvenc</span>
+          <span class="chip">h264_qsv</span>
+          <span class="chip">h264_amf</span>
+          <span class="chip">hevc_nvenc</span>
+          <span class="chip">av1_nvenc</span>
+          <span class="chip">h264_vaapi</span>
         </div>
-        <table class="sha-table" aria-label="SHA512 校验值">
-          <thead>
-            <tr><th>文件</th><th>SHA512 校验值</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Vchange.exe</td>
-              <td><code>9D47733FCCE13F276B74EDBFD6FE83A22FC60E5051BE621CE0449A0E0E291CFD987816DB3B4DEC044CDF68B32EC6430011131D8FA7CB463D84FAA6D89AB82B2E</code></td>
-            </tr>
-            <tr>
-              <td>ffmpeg-9.0.2-full.exe</td>
-              <td><code>362CBD465BD0BD27184F14FD0AB2E3E4CEFFD58D7154A7C2B1042D4CC83D0CFCFF99465CB0FFF5A9F6C4EF7DD3FE421E7F473AC3858E76604EE3E8B947871A7B</code></td>
-            </tr>
-          </tbody>
-        </table>
-        <p style="margin-top:1.5rem;font-size:.9rem;color:var(--fg-muted);">💡 <strong>验证方法：</strong> PowerShell 运行 <code>Get-FileHash -Algorithm SHA512 Vchange.exe</code> 对比上表数值。</p>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- ===== Footer ===== -->
-<footer class="site-footer" role="contentinfo">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-col footer-brand">
-        <div class="logo"><img src="https://gh-proxy.com/https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-light-theme.png" alt="" width="28" height="28"> Vchange</div>
-        <p>简洁美观的 Windows 视频转换器 · 基于 WPF + ffmpeg · MIT License</p>
-      </div>
-      <nav class="footer-col" aria-label="快速链接">
-        <h4>快速链接</h4>
-        <ul>
-          <li><a href="#features">核心特性</a></li>
-          <li><a href="#screenshots">界面预览</a></li>
-          <li><a href="#download">立即下载</a></li>
-          <li><a href="https://github.com/Andydot-ui/Vchange/releases" target="_blank" rel="noopener">历史版本</a></li>
-        </ul>
-      </nav>
-      <nav class="footer-col" aria-label="支持与反馈">
-        <h4>支持与反馈</h4>
-        <ul>
-          <li><a href="https://github.com/Andydot-ui/Vchange/issues/new?template=BugReport.yml" target="_blank" rel="noopener">🐛 提交 Bug</a></li>
-          <li><a href="https://github.com/Andydot-ui/Vchange/issues/new?template=FeatureRequest.yml" target="_blank" rel="noopener">💡 功能建议</a></li>
-          <li><a href="mailto:andydot@qq.com">📮 邮件联系作者</a></li>
-          <li><a href="https://github.com/Andydot-ui/Vchange/issues" target="_blank" rel="noopener">查看已有 Issues</a></li>
-        </ul>
-      </nav>
-      <nav class="footer-col" aria-label="相关链接">
-        <h4>相关链接</h4>
-        <ul>
-          <li><a href="https://github.com/Andydot-ui/Vchange" target="_blank" rel="noopener">GitHub 仓库</a></li>
-          <li><a href="https://ffmpeg.org/" target="_blank" rel="noopener">FFmpeg 官网</a></li>
-          <li><a href="https://dotnet.microsoft.com/" target="_blank" rel="noopener">.NET 运行时</a></li>
-          <li><a href="LICENSE" target="_blank" rel="noopener">MIT 许可证</a></li>
-        </ul>
-      </nav>
+  <!-- ================= Gallery ================= -->
+  <section class="section" id="gallery">
+    <div class="wrap gallery-head reveal">
+      <h2>每一步，<br>都清晰明了。</h2>
+      <p>像向导一样简单：选择文件、设置参数、确认、转换。随时返回上一步，从不迷失。</p>
     </div>
-    <div class="footer-bottom">
-      <p>© 2026 Andydot 工作室 · Vchange · 基于 MIT 许可证开源 · <a href="mailto:andydot@qq.com">andydot@qq.com</a></p>
+    <div class="gallery" id="galleryTrack" tabindex="0" aria-label="转换流程截图，可左右滑动浏览">
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">01</span><span class="shot-title">选择文件</span></div>
+          <img src="./screenshots/1-file.png" loading="lazy" alt="第一步：选择要转换的视频文件">
+          <figcaption class="shot-desc">浏览或拖入视频，即刻开始。</figcaption>
+        </div>
+      </figure>
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">02</span><span class="shot-title">输出格式</span></div>
+          <img src="./screenshots/2-format.png" loading="lazy" alt="第二步：从 20 种格式中选择输出格式">
+          <figcaption class="shot-desc">20 种输出格式，一目了然。</figcaption>
+        </div>
+      </figure>
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">03</span><span class="shot-title">视频参数</span></div>
+          <img src="./screenshots/3-params.png" loading="lazy" alt="第三步：设置编码、分辨率与帧率">
+          <figcaption class="shot-desc">编码、分辨率、帧率自由组合，可保持与原视频一致。</figcaption>
+        </div>
+      </figure>
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">04</span><span class="shot-title">码率</span></div>
+          <img src="./screenshots/4-bitrate.png" loading="lazy" alt="第四步：设置目标码率">
+          <figcaption class="shot-desc">按分辨率智能推荐，亦可手动精调。</figcaption>
+        </div>
+      </figure>
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">05</span><span class="shot-title">确认摘要</span></div>
+          <img src="./screenshots/5-summary.png" loading="lazy" alt="第五步：确认全部转换设置">
+          <figcaption class="shot-desc">转换之前，一览全部设置。</figcaption>
+        </div>
+      </figure>
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">06</span><span class="shot-title">开始转换</span></div>
+          <img src="./screenshots/6-done.png" loading="lazy" alt="第六步：实时查看转换进度与日志">
+          <figcaption class="shot-desc">实时百分比、速度与 ffmpeg 原始日志。</figcaption>
+        </div>
+      </figure>
+    </div>
+    <div class="gallery-nav">
+      <button class="gbtn" id="gPrev" aria-label="上一张">‹</button>
+      <button class="gbtn" id="gNext" aria-label="下一张">›</button>
+    </div>
+  </section>
+
+  <!-- ================= Bento features ================= -->
+  <section class="section section-alt" id="features">
+    <div class="wrap wrap-wide">
+      <div class="section-head reveal">
+        <p class="eyebrow">功能亮点</p>
+        <h2>强大，却从不复杂。</h2>
+        <p>该有的全都有，不该有的一样也没有。</p>
+      </div>
+      <div class="bento">
+        <div class="cell span2 reveal">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2.2"/></svg>
+          </div>
+          <h3>向导式转换流程</h3>
+          <p>分步操作，清晰的步骤指示器，流畅的页面切换动画。随时返回上一步修改，一切尽在掌控。</p>
+          <div class="steps-viz" aria-hidden="true">
+            <i class="done" data-label="文件"></i><i class="done" data-label="格式"></i><i class="done" data-label="参数"></i><i class="done" data-label="码率"></i><i class="done" data-label="摘要"></i><i data-label="转换"></i>
+          </div>
+        </div>
+        <div class="cell reveal d1">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v10"/></svg>
+          </div>
+          <h3>开箱即用</h3>
+          <p>单文件 exe，内嵌 .NET 运行时与完整版 ffmpeg。不装任何东西，下载即用。</p>
+        </div>
+        <div class="cell reveal">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
+          </div>
+          <h3>20 种输出格式</h3>
+          <p>从 mp4 到 webm，从 mov 到 gif，常用与专业容器一应俱全。</p>
+          <div class="cell-tags"><span>mp4</span><span>mkv</span><span>mov</span><span>webm</span><span>hevc</span><span>gif</span></div>
+        </div>
+        <div class="cell span2 reveal d1">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5L13 2z"/></svg>
+          </div>
+          <h3>硬件加速编码</h3>
+          <p>NVIDIA、Intel、AMD 显卡硬编码全面支持，h264、HEVC 乃至 AV1，转码快人一步。分辨率最高支持 8K，亦可自定义宽 × 高。</p>
+          <div class="cell-tags"><span>NVENC</span><span>Quick Sync</span><span>AMF</span><span>VAAPI</span><span>AV1</span></div>
+        </div>
+        <div class="cell reveal">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
+          </div>
+          <h3>随系统深浅色</h3>
+          <p>深色 / 浅色主题自动跟随系统，Windows 11 亚克力毛玻璃窗口，图标同频切换。</p>
+        </div>
+        <div class="cell reveal d1">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg>
+          </div>
+          <h3>实时进度与日志</h3>
+          <p>百分比、转换速度与 ffmpeg 原始输出实时呈现，出问题时原因一目了然。</p>
+        </div>
+        <div class="cell reveal d2">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3z"/><path d="M9 12l2 2 4-4.5"/></svg>
+          </div>
+          <h3>纯粹，且开源</h3>
+          <p>无广告、无捆绑、无遥测。以 MIT 许可证开源，代码尽可审阅。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Specs ================= -->
+  <section class="section" id="specs">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">技术规格</p>
+        <h2>看看里面有什么。</h2>
+      </div>
+      <dl class="specs reveal">
+        <div class="spec-row">
+          <dt>系统要求</dt>
+          <dd>Windows 10 / 11（64 位）</dd>
+        </div>
+        <div class="spec-row">
+          <dt>转换引擎</dt>
+          <dd>ffmpeg 9.0.2 完整版（内嵌，约 217 MB，首次转换自动释放）</dd>
+        </div>
+        <div class="spec-row">
+          <dt>运行时</dt>
+          <dd>.NET 6（已内嵌，无需另行安装）</dd>
+        </div>
+        <div class="spec-row">
+          <dt>主程序</dt>
+          <dd>单个 exe，约 150 MB，免安装绿色版</dd>
+        </div>
+        <div class="spec-row">
+          <dt>输出格式（20 种）</dt>
+          <dd><code>mp4</code><code>mkv</code><code>avi</code><code>mov</code><code>webm</code><code>flv</code><code>wmv</code><code>mpg</code><code>ts</code><code>m4v</code><code>3gp</code><code>vob</code><code>ogv</code><code>m2ts</code><code>rm</code><code>rmvb</code><code>asf</code><code>mxf</code><code>hevc</code><code>gif</code></dd>
+        </div>
+        <div class="spec-row">
+          <dt>视频编码</dt>
+          <dd>软件编码 libx264 / libx265；硬件加速 h264 · HEVC · AV1（NVENC / Quick Sync / AMF / VAAPI）；编码、分辨率、帧率均可选择「与原视频相同」</dd>
+        </div>
+        <div class="spec-row">
+          <dt>分辨率预设</dt>
+          <dd>360p · 480p · 720p · 1080p · 1440p · 4K · 8K（7680 × 4320），支持自定义宽 × 高；码率按分辨率自动推荐，可手动调整</dd>
+        </div>
+        <div class="spec-row">
+          <dt>界面</dt>
+          <dd>简体中文 · 深色 / 浅色主题跟随系统 · Windows 11 亚克力毛玻璃 · 自绘无边框圆角窗口 · 记住窗口位置</dd>
+        </div>
+        <div class="spec-row">
+          <dt>许可证</dt>
+          <dd><a href="https://github.com/Andydot-ui/Vchange/blob/main/LICENSE">MIT License</a>，免费开源</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ================= Download ================= -->
+  <section class="section section-alt" id="download">
+    <div class="wrap">
+      <div class="dl-card reveal">
+        <span class="dl-version"><b>v1.0.0</b> · 2026 年 10 月 · 最新稳定版</span>
+        <h2>下载 Vchange。</h2>
+        <p class="dl-sub">免费、开源，为 Windows 10 / 11 而生。</p>
+        <div class="dl-actions">
+          <a class="btn btn-primary btn-lg" href="https://github.com/Andydot-ui/Vchange/releases/latest/download/Vchange.exe">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>
+            下载 Vchange.exe
+          </a>
+          <a class="btn btn-outline btn-lg" href="https://github.com/Andydot-ui/Vchange/releases/latest">查看全部版本</a>
+        </div>
+        <div class="dl-mirrors">
+          <span>下载慢？<a href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-j3adv">123 云盘高速镜像 ›</a></span>
+        </div>
+        <div class="dl-files">
+          <div class="dl-file">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+            <div>
+              <b>Vchange.exe（约 150 MB）—— 推荐</b>
+              <span>单文件绿色版，内置 ffmpeg 与 .NET 运行时，下载后双击直接使用。</span>
+            </div>
+          </div>
+          <div class="dl-file">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h6v6H9z"/></svg>
+            <div>
+              <b>ffmpeg-9.0.2-full.exe（约 217 MB）—— 进阶可选</b>
+              <span>完整版 ffmpeg 命令行工具，普通用户无需下载；适合需单独使用 ffmpeg 的进阶用户。</span>
+            </div>
+          </div>
+        </div>
+        <p class="dl-note">首次转换时会自动释放内嵌的 ffmpeg（约需几秒），仅此一次，之后复用。<br>无需安装 .NET 运行时，也无需单独配置 ffmpeg。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">支持</p>
+        <h2>常见问题</h2>
+      </div>
+      <div class="faq reveal">
+        <details>
+          <summary>转换失败怎么办？<span class="plus" aria-hidden="true"></span></summary>
+          <div class="faq-body">查看「转换日志」中 ffmpeg 的原始输出，通常会明确指出失败原因——例如源文件损坏、编码器不支持等。<a href="https://github.com/Andydot-ui/Vchange/issues/new?template=BugReport.yml">仍无法解决？提交 Bug 反馈 ›</a></div>
+        </details>
+        <details>
+          <summary>为什么第一次转换会慢一点？<span class="plus" aria-hidden="true"></span></summary>
+          <div class="faq-body">首次转换需要把内嵌的 ffmpeg（约 217 MB）释放到 <code>%LocalAppData%\Vchange\ffmpeg.exe</code>，只需一次，之后立即可用。</div>
+        </details>
+        <details>
+          <summary>支持硬件加速吗？<span class="plus" aria-hidden="true"></span></summary>
+          <div class="faq-body">支持。视频编码下拉框中可选择 <code>h264_nvenc</code>（N 卡）、<code>h264_qsv</code>（Intel 核显）、<code>h264_amf</code>（A 卡）等硬件编码器，另有 HEVC 与 AV1 硬编码可选。</div>
+        </details>
+        <details>
+          <summary>GitHub 下载速度慢？<span class="plus" aria-hidden="true"></span></summary>
+          <div class="faq-body">可使用高速镜像：<a href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-j3adv">123 云盘 · Vchange.exe ›</a></div>
+        </details>
+        <details>
+          <summary>如何从源码构建？<span class="plus" aria-hidden="true"></span></summary>
+          <div class="faq-body">安装 Visual Studio 2022 / .NET 6 SDK，将完整版 ffmpeg.exe 放入 Resources\ 目录后执行 <code>dotnet publish</code>。详见 <a href="https://github.com/Andydot-ui/Vchange#-从源码构建">README 构建指南 ›</a></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA strip ================= -->
+  <section class="section section-alt cta-strip">
+    <div class="wrap reveal">
+      <h2>转换，从未如此简单。</h2>
+      <p>一个小小的 exe，装下完整的转换能力。</p>
+      <a class="btn btn-primary btn-lg" href="https://github.com/Andydot-ui/Vchange/releases/latest/download/Vchange.exe">立即下载</a>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= Footer ================= -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <div class="foot-brand">
+          <img src="./images/logo-light-theme.png" alt="Vchange 图标">
+          <span>Vchange</span>
+        </div>
+        <p class="foot-desc">简洁美观的 Windows 视频转换器。WPF + ffmpeg 打造。</p>
+      </div>
+      <div class="foot-col">
+        <h4>资源</h4>
+        <a href="https://github.com/Andydot-ui/Vchange">GitHub 仓库</a>
+        <a href="https://github.com/Andydot-ui/Vchange/releases/latest">最新版本</a>
+        <a href="https://github.com/Andydot-ui/Vchange/blob/main/LICENSE">许可证（MIT）</a>
+      </div>
+      <div class="foot-col">
+        <h4>反馈</h4>
+        <a href="https://github.com/Andydot-ui/Vchange/issues/new?template=BugReport.yml">提交 Bug 反馈</a>
+        <a href="https://github.com/Andydot-ui/Vchange/issues/new?template=FeatureRequest.yml">提交功能建议</a>
+        <a href="https://github.com/Andydot-ui/Vchange/issues">查看 Issues</a>
+      </div>
+      <div class="foot-col">
+        <h4>下载</h4>
+        <a href="https://github.com/Andydot-ui/Vchange/releases/latest/download/Vchange.exe">Vchange.exe</a>
+        <a href="https://github.com/Andydot-ui/Vchange/releases/latest">ffmpeg 完整版</a>
+        <a href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-j3adv">123 云盘镜像</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>Copyright © 2026 Andydot · Vchange 以 MIT 许可证开源</span>
+      <span>联系：<a href="mailto:andydot@qq.com">andydot@qq.com</a></span>
     </div>
   </div>
 </footer>
 
-<!-- ===== Lightbox ===== -->
-<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="图片预览" tabindex="-1">
-  <button class="lightbox-close" aria-label="关闭预览" tabindex="0">✕</button>
-  <button class="lightbox-nav lightbox-prev" aria-label="上一张" tabindex="0">‹</button>
-  <img src="" alt="" id="lightbox-img">
-  <button class="lightbox-nav lightbox-next" aria-label="下一张" tabindex="0">›</button>
-</div>
-
 <script>
-/* ===== Lightbox ===== */
-const lightbox = document.getElementById('lightbox');
-const lbImg = document.getElementById('lightbox-img');
-const screenshots = document.querySelectorAll('.screenshot');
-let currentIndex = 0;
+document.documentElement.classList.replace('no-js', 'js');
 
-function openLightbox(index) {
-  currentIndex = index;
-  const img = screenshots[index].querySelector('img');
-  lbImg.src = img.src;
-  lbImg.alt = img.alt;
-  lightbox.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  document.addEventListener('keydown', onKeydown);
-}
-function closeLightbox() {
-  lightbox.classList.remove('open');
-  document.body.style.overflow = '';
-  document.removeEventListener('keydown', onKeydown);
-}
-function navigate(dir) {
-  currentIndex = (currentIndex + dir + screenshots.length) % screenshots.length;
-  const img = screenshots[currentIndex].querySelector('img');
-  lbImg.style.opacity = 0;
-  setTimeout(() => { lbImg.src = screenshots[currentIndex].querySelector('img').src; lbImg.style.opacity = 1; }, 80);
-}
-function onKeydown(e) {
-  if (e.key === 'Escape') closeLightbox();
-  else if (e.key === 'ArrowLeft') navigate(-1);
-  else if (e.key === 'ArrowRight') navigate(1);
-}
-screenshots.forEach((el, i) => {
-  el.addEventListener('click', () => openLightbox(i));
-  el.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(i); } });
-});
-lightbox.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
-lightbox.querySelector('.lightbox-prev').addEventListener('click', () => navigate(-1));
-lightbox.querySelector('.lightbox-next').addEventListener('click', () => navigate(1));
-lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+/* Nav hairline on scroll */
+const nav = document.getElementById('nav');
+const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 8);
+onScroll();
+window.addEventListener('scroll', onScroll, { passive: true });
 
-/* Mobile menu toggle (simple) */
-const menuBtn = document.querySelector('.mobile-menu-btn');
-if (menuBtn) {
-  menuBtn.addEventListener('click', () => {
-    const expanded = menuBtn.getAttribute('aria-expanded') === 'true';
-    menuBtn.setAttribute('aria-expanded', !expanded);
-    document.querySelector('.nav').classList.toggle('open');
-  });
-}
+/* Reveal on scroll */
+const io = new IntersectionObserver(entries => {
+  for (const e of entries) {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }
+}, { threshold: .12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-/* Smooth scroll for anchor links */
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const target = document.querySelector(a.getAttribute('href'));
-    if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-  });
-});
-
-/* Respect prefers-reduced-motion */
-if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  document.documentElement.style.setProperty('--transition', '0.01ms');
-}
+/* Gallery arrows */
+const track = document.getElementById('galleryTrack');
+const prev = document.getElementById('gPrev');
+const next = document.getElementById('gNext');
+const step = () => Math.max(320, track.clientWidth * .7);
+prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
+next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+const updateArrows = () => {
+  const max = track.scrollWidth - track.clientWidth - 2;
+  prev.disabled = track.scrollLeft <= 2;
+  next.disabled = track.scrollLeft >= max;
+};
+track.addEventListener('scroll', updateArrows, { passive: true });
+window.addEventListener('resize', updateArrows);
+/* Chromium picks the last snap point on initial layout; reset to the first card */
+requestAnimationFrame(() => { track.scrollLeft = 0; updateArrows(); });
+updateArrows();
 </script>
 </body>
 </html>
