@@ -411,7 +411,10 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
 <header class="nav" id="nav">
   <div class="nav-inner">
     <a class="nav-logo" href="#top">
-      <img src="./images/logo-light-theme.png" alt="Vchange 图标">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./images/logo-dark-theme.png">
+        <img src="./images/logo-light-theme.png" alt="Vchange 图标">
+      </picture>
       Vchange
     </a>
     <nav class="nav-links" aria-label="页面导航">
@@ -736,7 +739,10 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
     <div class="foot-grid">
       <div class="foot-col">
         <div class="foot-brand">
-          <img src="./images/logo-light-theme.png" alt="Vchange 图标">
+          <picture>
+            <source media="(prefers-color-scheme: dark)" srcset="./images/logo-dark-theme.png">
+            <img src="./images/logo-light-theme.png" alt="Vchange 图标">
+          </picture>
           <span>Vchange</span>
         </div>
         <p class="foot-desc">简洁美观的 Windows 视频转换器。WPF + ffmpeg 打造。</p>
