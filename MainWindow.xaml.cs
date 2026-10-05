@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -16,22 +17,49 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using System.Collections.Generic;
 
 namespace Vchange
 {
+    public enum AppMode
+    {
+        Home,
+        Convert,
+        Timelapse,
+        Stack,
+        ImageConvert
+    }
+
     public partial class MainWindow : Window
     {
         private Process? _ffmpegProcess;
-        private int _currentStep = 1;
+        private AppMode _mode = AppMode.Home;
+        private int _convertStep = 1;
+        private int _timelapseStep = 1;
+        private int _stackStep = 1;
+        private int _imageConvertStep = 1;
         private string? _autoOutputPath;
+
+        // 面板与步骤指示器
+        private Grid[] _convertPanels = Array.Empty<Grid>();
+        private Grid[] _timelapsePanels = Array.Empty<Grid>();
+        private Grid[] _stackPanels = Array.Empty<Grid>();
+        private Grid[] _imagePanels = Array.Empty<Grid>();
+        private List<Border> _indicatorDots = new();
+        private List<TextBlock> _indicatorNums = new();
+        private List<TextBlock> _indicatorLabels = new();
 
         // 进度解析
         private TimeSpan? _mediaDuration;
+        private TimeSpan? _expectedDuration;   // 延时合成：帧数/帧率 可预知总时长
         private TimeSpan _currentTime = TimeSpan.Zero;
         private string _currentSpeed = "";
         private static readonly Regex DurationRegex = new(@"Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)", RegexOptions.Compiled);
         private static readonly Regex OutTimeRegex = new(@"out_time=(\d+):(\d+):(\d+(?:\.\d+)?)", RegexOptions.Compiled);
+
+        // 当前 ffmpeg 任务绑定的界面控件（进度条/文字/日志）
+        private ProgressBar _activeProgressBar = null!;
+        private TextBlock _activeProgressText = null!;
+        private TextBox _activeLogBox = null!;
 
         public MainWindow()
         {
@@ -39,7 +67,12 @@ namespace Vchange
             ThemeManager.Apply(ThemeManager.SystemIsLight());
 
             InitializeComponent();
-            ShowStep(1);
+
+            _convertPanels = new[] { Step1Panel, Step2Panel, Step3Panel, Step4Panel, Step5Panel };
+            _timelapsePanels = new[] { T1Panel, T2Panel, T3Panel, T4Panel, T5Panel, T6Panel };
+            _stackPanels = new[] { S1Panel, S2Panel, S3Panel, S4Panel };
+            _imagePanels = new[] { C1Panel, C2Panel, C3Panel, C4Panel };
+
             UpdateControlStates();
             RestoreWindowPosition();
 
@@ -48,7 +81,10 @@ namespace Vchange
             for (int i = 1; i < cliArgs.Length; i++)
             {
                 if (cliArgs[i] == "--input" && i + 1 < cliArgs.Length)
+                {
                     InputFileTextBox.Text = cliArgs[++i];
+                    ShowConvertStep(1);
+                }
                 else if (cliArgs[i] == "--output" && i + 1 < cliArgs.Length)
                     _autoOutputPath = cliArgs[++i];
             }
@@ -60,6 +96,316 @@ namespace Vchange
             // 启动后在调试输出记录材质状态（不写入界面日志）
             Loaded += (s, e) => System.Diagnostics.Debug.WriteLine($"界面材质: {_acrylicStatus}（Windows {Environment.OSVersion.Version}）");
         }
+
+        #region 流程导航
+
+        private void ShowHome()
+        {
+            _mode = AppMode.Home;
+            StepIndicatorBorder.Visibility = Visibility.Collapsed;
+            EnsureAllPanels();
+            // 返回主页属于“后退”导航；当前可见的流程页作为退出页
+            Grid? leaving = _allPanels.FirstOrDefault(p =>
+                p != null && !ReferenceEquals(p, HomePanel) && p.Visibility == Visibility.Visible);
+            AnimatePanelSwitch(new[] { HomePanel }, 0, prevIndex: -1, backward: true, extraOutgoing: leaving);
+        }
+
+        private void ShowConvertStep(int step)
+        {
+            int prev = _convertStep > 0 ? _convertStep - 1 : -1;
+            bool backward = step < _convertStep;
+            _mode = AppMode.Convert;
+            _convertStep = step;
+            StepIndicatorBorder.Visibility = Visibility.Visible;
+            BuildStepIndicator(new[] { "选择文件", "输出格式", "视频参数", "码率", "转换" });
+            UpdateStepIndicator(step);
+            AnimatePanelSwitch(_convertPanels, step - 1, prev, backward);
+        }
+
+        private void ShowTimelapseStep(int step)
+        {
+            int prev = _timelapseStep > 0 ? _timelapseStep - 1 : -1;
+            bool backward = step < _timelapseStep;
+            _mode = AppMode.Timelapse;
+            _timelapseStep = step;
+            StepIndicatorBorder.Visibility = Visibility.Visible;
+            BuildStepIndicator(new[] { "选择文件夹", "重命名方案", "输出格式", "视频参数", "码率", "合成" });
+            UpdateStepIndicator(step);
+            AnimatePanelSwitch(_timelapsePanels, step - 1, prev, backward);
+        }
+
+        private void ShowStackStep(int step)
+        {
+            int prev = _stackStep > 0 ? _stackStep - 1 : -1;
+            bool backward = step < _stackStep;
+            _mode = AppMode.Stack;
+            _stackStep = step;
+            StepIndicatorBorder.Visibility = Visibility.Visible;
+            BuildStepIndicator(new[] { "选择文件夹", "输出格式", "品质与分辨率", "输出与日志" });
+            UpdateStepIndicator(step);
+            AnimatePanelSwitch(_stackPanels, step - 1, prev, backward);
+        }
+
+        private void ShowImageConvertStep(int step)
+        {
+            int prev = _imageConvertStep > 0 ? _imageConvertStep - 1 : -1;
+            bool backward = step < _imageConvertStep;
+            _mode = AppMode.ImageConvert;
+            _imageConvertStep = step;
+            StepIndicatorBorder.Visibility = Visibility.Visible;
+            BuildStepIndicator(new[] { "选择文件", "输出格式", "品质与选项", "输出与日志" });
+            UpdateStepIndicator(step);
+            AnimatePanelSwitch(_imagePanels, step - 1, prev, backward);
+        }
+
+        private void BackToHome_Click(object sender, RoutedEventArgs e) => ShowHome();
+
+        private void HomeConvert_Click(object sender, RoutedEventArgs e)
+        {
+            _convertStep = 0; // 从主页进入固定为“前进”方向
+            ShowConvertStep(1);
+            UpdateControlStates();
+        }
+
+        private void HomeTimelapse_Click(object sender, RoutedEventArgs e)
+        {
+            _timelapseStep = 0;
+            ShowTimelapseStep(1);
+            T1InfoText.Text = "";
+            ResetTimelapseProgressUi();
+        }
+
+        private void HomeStack_Click(object sender, RoutedEventArgs e)
+        {
+            _stackStep = 0;
+            ShowStackStep(1);
+            S1InfoText.Text = "";
+        }
+
+        private void HomeImageCard_Click(object sender, RoutedEventArgs e)
+        {
+            _imageConvertStep = 0;
+            ShowImageConvertStep(1);
+            C1InfoText.Text = "";
+        }
+
+        /// <summary>确保全部面板清单已初始化。</summary>
+        private void EnsureAllPanels()
+        {
+            if (_allPanels.Length == 0)
+                _allPanels = new[] { HomePanel, Step1Panel, Step2Panel, Step3Panel, Step4Panel, Step5Panel,
+                    T1Panel, T2Panel, T3Panel, T4Panel, T5Panel, T6Panel,
+                    S1Panel, S2Panel, S3Panel, S4Panel,
+                    C1Panel, C2Panel, C3Panel, C4Panel };
+        }
+
+        /// <summary>全部页面面板：跨流程切换时用于清理残留页面。</summary>
+        private Grid[] _allPanels = Array.Empty<Grid>();
+
+        /// <summary>
+        /// 通用面板切换动画（与项目最初的 ShowStep 相同）：
+        /// 前进时新页从右侧滑入、旧页向左滑出并淡出；后退方向相反。
+        /// 300ms，两页同时开始同时结束。
+        /// </summary>
+        private void AnimatePanelSwitch(Grid[] panels, int index, int prevIndex, bool backward,
+            Grid? extraOutgoing = null)
+        {
+            // 不在目标数组内的所有面板直接隐藏（防止跨流程切换时旧页面残留）
+            EnsureAllPanels();
+            var targetSet = new HashSet<Grid>(panels);
+            foreach (var p in _allPanels)
+            {
+                if (p == null || targetSet.Contains(p)) continue;
+                p.BeginAnimation(OpacityProperty, null);
+                p.Opacity = 1;
+                p.RenderTransform = null;
+                p.CacheMode = null;
+                Panel.SetZIndex(p, 0);
+                p.Visibility = Visibility.Collapsed;
+            }
+
+            // 前进：新页从右(+48)滑入、旧页向左(-48)滑出；后退相反
+            double inOffset = backward ? -48 : 48;
+            double outOffset = backward ? 48 : -48;
+
+            for (int i = 0; i < panels.Length; i++)
+            {
+                var panel = panels[i];
+
+                if (i == index)
+                {
+                    // 新页：只做位移滑入，不透明度保持 1
+                    panel.Visibility = Visibility.Visible;
+                    panel.BeginAnimation(OpacityProperty, null);
+                    panel.Opacity = 1;
+                    panel.CacheMode = null;
+                    Panel.SetZIndex(panel, 1); // 新页面置于上层
+
+                    var translate = new TranslateTransform(inOffset, 0);
+                    panel.RenderTransform = translate;
+
+                    translate.BeginAnimation(TranslateTransform.XProperty, new DoubleAnimation(inOffset, 0, TimeSpan.FromMilliseconds(300))
+                    {
+                        EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+                    });
+                }
+                else if (i == prevIndex && prevIndex != index)
+                {
+                    // 旧页：淡出并沿反方向滑走，与新页面同时结束
+                    var outPanel = panel;
+                    outPanel.CacheMode = null;
+                    Panel.SetZIndex(outPanel, 0);
+                    outPanel.Visibility = Visibility.Visible;
+
+                    var translate = new TranslateTransform(0, 0);
+                    outPanel.RenderTransform = translate;
+
+                    var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(300))
+                    {
+                        EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+                    };
+                    fadeOut.Completed += (s, ev) =>
+                    {
+                        outPanel.BeginAnimation(OpacityProperty, null);
+                        outPanel.Opacity = 0;
+                        outPanel.RenderTransform = null;
+                        outPanel.Visibility = Visibility.Collapsed;
+                        outPanel.Opacity = 1;
+                    };
+                    outPanel.BeginAnimation(OpacityProperty, fadeOut);
+
+                    translate.BeginAnimation(TranslateTransform.XProperty, new DoubleAnimation(0, outOffset, TimeSpan.FromMilliseconds(300))
+                    {
+                        EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+                    });
+                }
+                else
+                {
+                    // 其余面板直接隐藏并清理动画
+                    panel.BeginAnimation(OpacityProperty, null);
+                    panel.Opacity = 1;
+                    panel.RenderTransform = null;
+                    panel.CacheMode = null;
+                    Panel.SetZIndex(panel, 0);
+                    panel.Visibility = Visibility.Collapsed;
+                }
+            }
+
+            // 跨流程退出页（如返回主页时原流程页）：滑出淡出
+            if (extraOutgoing != null && !targetSet.Contains(extraOutgoing) &&
+                extraOutgoing.Visibility == Visibility.Visible)
+            {
+                var outPanel = extraOutgoing;
+                Panel.SetZIndex(outPanel, 0);
+
+                var translate = new TranslateTransform(0, 0);
+                outPanel.RenderTransform = translate;
+
+                var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(300))
+                {
+                    EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+                };
+                fadeOut.Completed += (s, ev) =>
+                {
+                    outPanel.BeginAnimation(OpacityProperty, null);
+                    outPanel.Opacity = 0;
+                    outPanel.RenderTransform = null;
+                    outPanel.Visibility = Visibility.Collapsed;
+                    outPanel.Opacity = 1;
+                };
+                outPanel.BeginAnimation(OpacityProperty, fadeOut);
+
+                translate.BeginAnimation(TranslateTransform.XProperty, new DoubleAnimation(0, outOffset, TimeSpan.FromMilliseconds(300))
+                {
+                    EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+                });
+            }
+        }
+
+        /// <summary>按当前功能重建步骤指示器圆点。</summary>
+        private void BuildStepIndicator(string[] labels)
+        {
+            var indicator = StepIndicatorPanel;
+            indicator.Children.Clear();
+            _indicatorDots.Clear();
+            _indicatorNums.Clear();
+            _indicatorLabels.Clear();
+
+            var accent = (Brush)FindResource("AccentBrush");
+            var dotInactive = (Brush)FindResource("Theme.StepDotInactive");
+            var labelInactive = (Brush)FindResource("Theme.TextSecondary");
+            var numInactive = (Brush)FindResource("Theme.TextPrimary");
+            var chevronBrush = (Brush)FindResource("Theme.Chevron");
+
+            for (int i = 0; i < labels.Length; i++)
+            {
+                if (i > 0)
+                {
+                    indicator.Children.Add(new TextBlock
+                    {
+                        Text = "›",
+                        Foreground = chevronBrush,
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Margin = new Thickness(0, 0, 8, 0),
+                        FontSize = 16
+                    });
+                }
+
+                var dot = new Border
+                {
+                    Width = 24,
+                    Height = 24,
+                    CornerRadius = new CornerRadius(12),
+                    Background = dotInactive
+                };
+                var num = new TextBlock
+                {
+                    Text = (i + 1).ToString(),
+                    Foreground = numInactive,
+                    FontSize = 12,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+                dot.Child = num;
+
+                var label = new TextBlock
+                {
+                    Text = labels[i],
+                    Foreground = labelInactive,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Margin = new Thickness(8, 0, 0, 0)
+                };
+
+                var wrap = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 8, 0) };
+                wrap.Children.Add(dot);
+                wrap.Children.Add(label);
+                indicator.Children.Add(wrap);
+
+                _indicatorDots.Add(dot);
+                _indicatorNums.Add(num);
+                _indicatorLabels.Add(label);
+            }
+        }
+
+        private void UpdateStepIndicator(int activeStep)
+        {
+            if (_indicatorDots.Count == 0) return;
+            var accent = (Brush)FindResource("AccentBrush");
+            var dotInactive = (Brush)FindResource("Theme.StepDotInactive");
+            var labelInactive = (Brush)FindResource("Theme.TextSecondary");
+            var numInactive = (Brush)FindResource("Theme.TextPrimary");
+
+            for (int i = 0; i < _indicatorDots.Count; i++)
+            {
+                bool isActive = (i + 1) == activeStep;
+                _indicatorDots[i].Background = isActive ? accent : dotInactive;
+                _indicatorLabels[i].Foreground = isActive ? accent : labelInactive;
+                _indicatorLabels[i].FontWeight = isActive ? FontWeights.SemiBold : FontWeights.Normal;
+                _indicatorNums[i].Foreground = isActive ? Brushes.White : numInactive;
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// 深色环境下用白色图标，浅色环境下用深色图标（窗口/任务栏/标题栏）。
@@ -100,7 +446,10 @@ namespace Vchange
         {
             UpdateDwmDarkMode();
             ApplyThemeIcon();
-            UpdateStepIndicator(_currentStep);
+            if (_mode == AppMode.Convert) UpdateStepIndicator(_convertStep);
+            else if (_mode == AppMode.Timelapse) UpdateStepIndicator(_timelapseStep);
+            else if (_mode == AppMode.Stack) UpdateStepIndicator(_stackStep);
+            else if (_mode == AppMode.ImageConvert) UpdateStepIndicator(_imageConvertStep);
         }
 
         /// <summary>让系统标题栏/材质跟随深浅色。</summary>
@@ -215,7 +564,7 @@ namespace Vchange
         #endregion
 
         // 推荐码率映射（分辨率 → 码率 kbps）
-        private static readonly Dictionary<string, int> ResolutionBitrateMap = new()
+        internal static readonly Dictionary<string, int> ResolutionBitrateMap = new()
         {
             { "1920x1080", 6000 },
             { "1280x720", 2500 },
@@ -225,7 +574,7 @@ namespace Vchange
             { "3840x2160", 20000 },
             { "7680x4320", 50000 }
         };
-        
+
         private void SetRecommendedBitrate(string? selected)
         {
             if (string.IsNullOrEmpty(selected)) return;
@@ -336,7 +685,7 @@ namespace Vchange
             var dlg = new OpenFileDialog
             {
                 Title = "选择视频文件",
-                Filter = "视频文件|*.mp4;*.avi;*.mkv;*.mov;*.wmv;*.flv;*.webm|所有文件|*.*"
+                Filter = "视频/动图文件|*.mp4;*.avi;*.mkv;*.mov;*.wmv;*.flv;*.webm;*.gif;*.png|所有文件|*.*"
             };
             if (dlg.ShowDialog() == true)
             {
@@ -352,7 +701,7 @@ namespace Vchange
                 ShowMessage("请先选择有效的输入文件。");
                 return;
             }
-            ShowStep(2);
+            ShowConvertStep(2);
         }
         private void TitleBar_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -362,7 +711,7 @@ namespace Vchange
 
         private void Step2Next_Click(object sender, RoutedEventArgs e)
         {
-            ShowStep(3);
+            ShowConvertStep(3);
         }
 
         private void Step3Next_Click(object sender, RoutedEventArgs e)
@@ -370,128 +719,33 @@ namespace Vchange
             // Auto-fill recommended bitrate based on selected resolution (if not using source)
             var selected = (ResolutionComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString();
             SetRecommendedBitrate(selected);
-            ShowStep(4);
+            ShowConvertStep(4);
         }
 
         private void Step4Next_Click(object sender, RoutedEventArgs e)
         {
             BuildSummary();
-            ShowStep(5);
+            ShowConvertStep(5);
         }
 
         private void Step2Back_Click(object sender, RoutedEventArgs e)
         {
-            ShowStep(1);
+            ShowConvertStep(1);
         }
 
         private void Step3Back_Click(object sender, RoutedEventArgs e)
         {
-            ShowStep(2);
+            ShowConvertStep(2);
         }
 
         private void Step4Back_Click(object sender, RoutedEventArgs e)
         {
-            ShowStep(3);
+            ShowConvertStep(3);
         }
 
         private void Step5Back_Click(object sender, RoutedEventArgs e)
         {
-            ShowStep(4);
-        }
-
-        private void ShowStep(int step)
-        {
-            int previous = _currentStep;
-            _currentStep = step;
-
-            var panels = new[] { Step1Panel, Step2Panel, Step3Panel, Step4Panel, Step5Panel };
-            bool forward = step >= previous;
-
-            for (int i = 0; i < panels.Length; i++)
-            {
-                var panel = panels[i];
-                int panelStep = i + 1;
-
-                if (panelStep == step)
-                {
-                    // 渐入：0.3s；只做位移滑动，避免淡入时深色半透明层产生色阶
-                    panel.Visibility = Visibility.Visible;
-                    panel.BeginAnimation(OpacityProperty, null);
-                    panel.Opacity = 1;
-                    panel.CacheMode = null;
-                    Panel.SetZIndex(panel, 1); // 新页面置于上层
-
-                    var inOffset = forward ? 48 : -48;
-                    var translate = new TranslateTransform(inOffset, 0);
-                    panel.RenderTransform = translate;
-
-                    translate.BeginAnimation(TranslateTransform.XProperty, new DoubleAnimation(inOffset, 0, TimeSpan.FromMilliseconds(300))
-                    {
-                        EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
-                    });
-                }
-                else if (panelStep == previous && previous != step && panel.Visibility == Visibility.Visible)
-                {
-                    // 旧页面：0.3s 淡出并反向滑走，与新页面同时结束，避免重叠残留
-                    var outPanel = panel;
-                    outPanel.CacheMode = null;
-                    Panel.SetZIndex(outPanel, 0);
-
-                    var translate = new TranslateTransform(0, 0);
-                    outPanel.RenderTransform = translate;
-
-                    var fadeOut = new DoubleAnimation(1, 0, TimeSpan.FromMilliseconds(300))
-                    {
-                        EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
-                    };
-                    fadeOut.Completed += (s, ev) =>
-                    {
-                        outPanel.BeginAnimation(OpacityProperty, null);
-                        outPanel.Opacity = 0;
-                        outPanel.RenderTransform = null;
-                        outPanel.Visibility = Visibility.Collapsed;
-                    };
-                    outPanel.BeginAnimation(OpacityProperty, fadeOut);
-
-                    var outOffset = forward ? -48 : 48;
-                    translate.BeginAnimation(TranslateTransform.XProperty, new DoubleAnimation(0, outOffset, TimeSpan.FromMilliseconds(300))
-                    {
-                        EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
-                    });
-                }
-                else
-                {
-                    // 其余面板直接隐藏并清理动画
-                    panel.BeginAnimation(OpacityProperty, null);
-                    panel.Opacity = 1;
-                    panel.RenderTransform = null;
-                    panel.CacheMode = null;
-                    Panel.SetZIndex(panel, 0);
-                    panel.Visibility = Visibility.Collapsed;
-                }
-            }
-
-            UpdateStepIndicator(step);
-        }
-
-        private void UpdateStepIndicator(int activeStep)
-        {
-            var dots = new[] { StepDot1, StepDot2, StepDot3, StepDot4, StepDot5 };
-            var nums = new[] { StepNum1, StepNum2, StepNum3, StepNum4, StepNum5 };
-            var labels = new[] { StepLabel1, StepLabel2, StepLabel3, StepLabel4, StepLabel5 };
-            var accent = (Brush)FindResource("AccentBrush");
-            var dotInactive = (Brush)FindResource("Theme.StepDotInactive");
-            var labelInactive = (Brush)FindResource("Theme.TextSecondary");
-            var numInactive = (Brush)FindResource("Theme.TextPrimary");
-
-            for (int i = 0; i < dots.Length; i++)
-            {
-                bool isActive = (i + 1) == activeStep;
-                dots[i].Background = isActive ? accent : dotInactive;
-                labels[i].Foreground = isActive ? accent : labelInactive;
-                labels[i].FontWeight = isActive ? FontWeights.SemiBold : FontWeights.Normal;
-                nums[i].Foreground = isActive ? Brushes.White : numInactive;
-            }
+            ShowConvertStep(4);
         }
 
         private void SameOption_Changed(object sender, RoutedEventArgs e)
@@ -588,7 +842,8 @@ namespace Vchange
                 ShowMessage("请选择输出格式。");
                 return;
             }
-            var format = ((ComboBoxItem)FormatComboBox.SelectedItem).Content.ToString();
+            var formatRaw = ((ComboBoxItem)FormatComboBox.SelectedItem).Content?.ToString() ?? "mp4";
+            var format = formatRaw.StartsWith("apng") ? "apng" : formatRaw;
 
             // 输出路径：自动化参数优先，否则弹出保存对话框
             string outputPath;
@@ -655,7 +910,7 @@ namespace Vchange
                     ShowMessage("请选择分辨率。");
                     return;
                 }
-                var res = ((ComboBoxItem)ResolutionComboBox.SelectedItem).Content.ToString();
+                var res = ((ComboBoxItem)ResolutionComboBox.SelectedItem).Content?.ToString() ?? "";
                 if (res.StartsWith("自定义"))
                 {
                     var widthStr = CustomResolutionWidthTextBox.Text;
@@ -677,8 +932,29 @@ namespace Vchange
                 }
             }
 
+            // 色彩空间标记（与原视频相同 = 不写入）
+            string? colorSpace = (ColorSpaceCombo?.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            bool hdrOutput = colorSpace?.StartsWith("HDR") == true;
+            string? csArgs = colorSpace switch
+            {
+                "BT.709（高清标准）" => "-color_primaries bt709 -color_trc bt709 -colorspace bt709",
+                "BT.601（标清标准）" => "-color_primaries smpte170m -color_trc smpte170m -colorspace smpte170m",
+                "BT.2020（广色域）" => "-color_primaries bt2020 -color_trc bt2020_10 -colorspace bt2020nc",
+                "HDR10（BT.2020 PQ，10-bit）" => "-color_primaries bt2020 -color_trc smpte2084 -colorspace bt2020nc",
+                "HLG（BT.2020 HLG，10-bit）" => "-color_primaries bt2020 -color_trc arib-std-b67 -colorspace bt2020nc",
+                _ => null
+            };
+
             // Build ffmpeg arguments conditionally
             var argsList = new List<string>();
+            if (csArgs != null)
+                argsList.Add(csArgs);
+
+            // HDR10：写入 SMPTE ST 2086 静态元数据（libx265 支持 master-display 与 MaxCLL/MaxFALL）
+            if (hdrOutput && codec.StartsWith("libx265"))
+            {
+                argsList.Add("-x265-params \"master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16350)L(max=10000000,min=0):max-cll=1000,400\"");
+            }
             argsList.Add($"-i \"{inputPath}\"");
             argsList.Add($"-c:v {codec}");
             if (!useSourceBitrate)
@@ -687,18 +963,29 @@ namespace Vchange
                 argsList.Add($"-vf \"scale={width}:{height}\"");
             if (!useSourceFps)
                 argsList.Add($"-r {fps}");
+            // gif/apng 用 RGB 像素；HDR 输出 10-bit；其余统一 yuv420p 保证兼容性
+            if (format == "gif" || format == "apng")
+                argsList.Add("-pix_fmt rgb24");
+            else if (hdrOutput)
+                argsList.Add("-pix_fmt yuv420p10le");
+            else
+                argsList.Add("-pix_fmt yuv420p");
             argsList.Add($"\"{outputPath}\"");
 
             // -y 覆盖输出；-hide_banner 精简日志；-nostats/-progress 输出可解析进度
             var args = "-y -hide_banner -nostdin -nostats -progress pipe:1 " + string.Join(" ", argsList);
 
             // 初始化进度显示，并清空上一次的转换日志
+            _activeProgressBar = ConvertProgressBar;
+            _activeProgressText = ProgressTextBlock;
+            _activeLogBox = LogTextBox;
             ConvertProgressBar.Visibility = Visibility.Visible;
             ProgressTextBlock.Visibility = Visibility.Visible;
             ConvertProgressBar.IsIndeterminate = false;
             ConvertProgressBar.Value = 0;
             ProgressTextBlock.Text = "0%";
             LogTextBox.Clear();
+            _expectedDuration = null;
 
             bool ok = await RunFfmpegAsync(args);
 
@@ -782,7 +1069,7 @@ namespace Vchange
                 if (exitCode == 0)
                     return true;
 
-                ShowMessage($"转换失败（退出码 {exitCode}），详情请查看转换日志。");
+                ShowMessage($"执行失败（退出码 {exitCode}），详情请查看日志。");
                 return false;
             }
             catch (Exception ex)
@@ -821,35 +1108,55 @@ namespace Vchange
 
         private void UpdateProgressUi()
         {
-            if (_mediaDuration.HasValue && _mediaDuration.Value.TotalSeconds > 0.1)
+            // 优先使用 ffmpeg 报告的时长；延时合成为图片序列（无输入时长），使用预估值
+            TimeSpan? total = _mediaDuration ?? _expectedDuration;
+            if (total.HasValue && total.Value.TotalSeconds > 0.1)
             {
-                double pct = Math.Min(100, _currentTime.TotalSeconds / _mediaDuration.Value.TotalSeconds * 100);
-                ConvertProgressBar.IsIndeterminate = false;
-                ConvertProgressBar.Value = pct;
-                ProgressTextBlock.Text = string.IsNullOrEmpty(_currentSpeed)
+                double pct = Math.Min(100, _currentTime.TotalSeconds / total.Value.TotalSeconds * 100);
+                _activeProgressBar.IsIndeterminate = false;
+                _activeProgressBar.Value = pct;
+                _activeProgressText.Text = string.IsNullOrEmpty(_currentSpeed)
                     ? $"{pct:0}%"
                     : $"{pct:0}% · {_currentSpeed}";
             }
             else if (!string.IsNullOrEmpty(_currentSpeed))
             {
-                ProgressTextBlock.Text = _currentSpeed;
+                _activeProgressText.Text = _currentSpeed;
             }
         }
 
         private void AppendFfmpegLog(string message)
         {
-            // 仅记录 ffmpeg 原始输出；过长时裁剪，避免界面越用越卡
-            if (LogTextBox.Text.Length > 200_000)
-                LogTextBox.Text = LogTextBox.Text.Substring(LogTextBox.Text.Length - 100_000);
+            if (_activeLogBox == null) return;
 
-            LogTextBox.AppendText(message + Environment.NewLine);
-            LogTextBox.ScrollToEnd();
+            // 仅记录 ffmpeg 原始输出；过长时裁剪，避免界面越用越卡
+            if (_activeLogBox.Text.Length > 200_000)
+                _activeLogBox.Text = _activeLogBox.Text.Substring(_activeLogBox.Text.Length - 100_000);
+
+            _activeLogBox.AppendText(message + Environment.NewLine);
+            _activeLogBox.ScrollToEnd();
+        }
+
+        /// <summary>追加一行业务日志（区别于 ffmpeg 原始输出）。</summary>
+        private void AppendLog(string message)
+        {
+            if (_activeLogBox == null) return;
+            _activeLogBox.AppendText(message + Environment.NewLine);
+            _activeLogBox.ScrollToEnd();
         }
 
         private void ShowMessage(string message, string title = "提示")
         {
             var dlg = new MessageDialog(message, title) { Owner = this };
             dlg.ShowDialog();
+        }
+
+        /// <summary>带“是/否”按钮的确认对话框。</summary>
+        private bool ShowConfirm(string message, string title = "确认", string? yes = null, string? no = null)
+        {
+            var dlg = new MessageDialog(message, title, confirm: true, yesText: yes, noText: no) { Owner = this };
+            dlg.ShowDialog();
+            return dlg.Confirmed;
         }
 
         private void FormatComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#000000">
-<title>Vchange - 视频转换，轻而易举。</title>
-<meta name="description" content="Vchange 是一款简洁美观的 Windows 视频转换器：向导式操作、内嵌完整版 ffmpeg、深浅色主题自适应、单文件免安装，下载即用。">
+<title>Vchange - 视频 · 图片 · 延时 · 堆砌，轻而易举。</title>
+<meta name="description" content="Vchange 是一款简洁美观的 Windows 多媒体转换工具：视频转换、图片转换、延时合成、图片堆砌四合一，向导式操作、内嵌完整版 ffmpeg、单文件免安装，下载即用。">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Vchange - 视频转换，轻而易举。">
-<meta property="og:description" content="向导式操作、内嵌完整版 ffmpeg、单文件免安装的 Windows 视频转换器。">
-<meta property="og:url" content="https://justice0418.qd.je/">
+<meta property="og:title" content="Vchange - 视频 · 图片 · 延时 · 堆砌，轻而易举。">
+<meta property="og:description" content="视频转换、图片转换、延时合成、图片堆砌四合一：向导式操作、内嵌完整版 ffmpeg、单文件免安装的 Windows 多媒体转换工具。">
+<meta property="og:url" content="https://andydot-ui.github.io/Vchange/">
 <meta property="og:image" content="https://raw.githubusercontent.com/Andydot-ui/Vchange/main/docs/images/logo-light-theme.png">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="./images/logo-dark-theme.png">
@@ -21,7 +21,7 @@
   "name": "Vchange",
   "operatingSystem": "Windows 10/11 (64-bit)",
   "applicationCategory": "MultimediaApplication",
-  "softwareVersion": "1.0.0",
+  "softwareVersion": "1.1.0",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
   "author": { "@type": "Person", "name": "Andydot" },
   "license": "https://www.gnu.org/licenses/gpl-3.0"
@@ -284,6 +284,11 @@ h1, h2, h3 { letter-spacing: -.022em; line-height: 1.08; font-weight: 640; }
   .steps-viz i:not(:last-child) { margin-right: 12px; }
 }
 
+/* ============ Four modes ============ */
+.modes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.modes .cell-icon { font-size: 22px; letter-spacing: 0; }
+@media (max-width: 760px) { .modes { grid-template-columns: 1fr; } }
+
 /* ============ Specs ============ */
 .specs { max-width: 860px; margin: 0 auto; }
 .spec-row {
@@ -321,6 +326,8 @@ h1, h2, h3 { letter-spacing: -.022em; line-height: 1.08; font-weight: 640; }
 .dl-card .dl-sub { color: var(--fg-2); font-size: 17px; margin-bottom: 30px; }
 .dl-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
 .dl-mirrors { margin-top: 22px; font-size: 15px; color: var(--fg-2); display: flex; justify-content: center; gap: 8px 26px; flex-wrap: wrap; }
+.dl-warn { font-size: 13px; color: var(--fg-3); max-width: 56ch; }
+.dl-warn b { color: #ffd60a; font-weight: 600; }
 .dl-files { margin-top: 34px; text-align: left; border-top: 1px solid var(--hairline); }
 .dl-file { display: flex; gap: 14px; padding: 18px 2px; border-bottom: 1px solid var(--hairline); }
 .dl-file svg { width: 22px; height: 22px; color: var(--accent); flex: none; margin-top: 2px; }
@@ -399,6 +406,7 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
       Vchange
     </a>
     <nav class="nav-links" aria-label="页面导航">
+      <a href="#modes">功能</a>
       <a href="#gallery">界面</a>
       <a href="#features">功能亮点</a>
       <a href="#engine">技术</a>
@@ -414,17 +422,54 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
   <!-- ================= Hero ================= -->
   <section class="hero">
     <div class="wrap">
-      <h1>视频转换，<br>轻而易举。</h1>
-      <p class="hero-sub">向导式操作，内嵌完整版 ffmpeg。单文件免安装，下载即用。</p>
+      <h1>转换，<br>轻而易举。</h1>
+      <p class="hero-sub">视频转换、图片转换、延时合成、图片堆砌。向导式操作，内嵌完整版 ffmpeg，单文件免安装。</p>
       <div class="hero-cta">
         <a class="btn btn-primary btn-lg" href="https://github.com/Andydot-ui/Vchange/releases/latest/download/Vchange.exe">免费下载</a>
-        <a class="link-chevron" href="#gallery">进一步了解</a>
+        <a class="link-chevron" href="#modes">进一步了解</a>
       </div>
     </div>
     <div class="hero-visual reveal">
-      <img class="hero-shot" src="./screenshots/3-params.png" width="1024" alt="Vchange 视频参数设置界面，可选择编码、分辨率与帧率">
+      <img class="hero-shot" src="./screenshots/3-params.png" width="1024" alt="Vchange 视频参数设置界面，可选择编码、分辨率、帧率与色彩空间">
     </div>
-    <p class="hero-note">Vchange v1.0.0 · Windows 10 / 11（64 位） · GPL-3.0 开源</p>
+    <p class="hero-note">Vchange v1.1.0 · Windows 10 / 11（64 位） · GPL-3.0 开源</p>
+  </section>
+
+  <!-- ================= Four modes ================= -->
+  <section class="section section-alt" id="modes">
+    <div class="wrap wrap-wide">
+      <div class="section-head reveal">
+        <p class="eyebrow">四个工具，一次装齐</p>
+        <h2>打开首页，<br>先选要做的事。</h2>
+        <p>视频转换、延时合成、图片堆砌、图片转换——同一套向导式界面，同一套参数逻辑。</p>
+      </div>
+      <div class="modes">
+        <div class="cell reveal">
+          <div class="cell-icon" aria-hidden="true">🎬</div>
+          <h3>视频转换</h3>
+          <p>将视频转换为 mp4 / mkv / mov 等 21 种格式，编码、分辨率、帧率、码率分别可调，也可全部保持与原视频相同。支持硬件加速与 HDR 色彩空间标记。</p>
+          <div class="cell-tags"><span>21 种格式</span><span>NVENC / QSV / AMF</span><span>HDR10 · HLG</span></div>
+        </div>
+        <div class="cell reveal d1">
+          <div class="cell-icon" aria-hidden="true">⏱️</div>
+          <h3>延时合成</h3>
+          <p>把延时摄影的图片序列按补零文件名自动重命名（复制或就地重命名），再按指定帧率合成视频。重命名与合成两条进度条一上一下，完成后自动播放待你确认。</p>
+          <div class="cell-tags"><span>自动补零重命名</span><span>双进度条</span><span>合成后自动播放</span></div>
+        </div>
+        <div class="cell reveal">
+          <div class="cell-icon" aria-hidden="true">🌌</div>
+          <h3>图片堆砌</h3>
+          <p>星轨、流水、车流的长曝光堆砌：最大值、平均值、最小值三种合成方式，输出 JPG / PNG / BMP / TIFF / DNG（16-bit 线性 DNG），全程进度条可见。</p>
+          <div class="cell-tags"><span>最大值 / 平均 / 最小值</span><span>16-bit DNG</span><span>品质滑杆</span></div>
+        </div>
+        <div class="cell reveal d1">
+          <div class="cell-icon" aria-hidden="true">🖼️</div>
+          <h3>图片转换</h3>
+          <p>单张图片格式互转：JPG / PNG / BMP / TIFF / WebP / WMP / DNG。可调品质滑杆、TIFF 压缩算法、PNG 交错、输出分辨率，并支持 sRGB 到 HDR 的色彩空间重映射。</p>
+          <div class="cell-tags"><span>WebP</span><span>TIFF 压缩可选</span><span>SDR / HDR 色彩空间</span></div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ================= Dark statement: numbers + engine ================= -->
@@ -432,12 +477,12 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
     <div class="wrap">
       <div class="stats">
         <div class="reveal">
-          <div class="stat-num">20</div>
-          <div class="stat-label">种输出格式，常用与专业容器全覆盖</div>
+          <div class="stat-num">4</div>
+          <div class="stat-label">大核心功能，一个 exe 全部搞定</div>
         </div>
         <div class="reveal d1">
-          <div class="stat-num">6</div>
-          <div class="stat-label">步向导流程，每一步都清晰明了</div>
+          <div class="stat-num">21</div>
+          <div class="stat-label">种视频输出格式，另有 7 种图片格式</div>
         </div>
         <div class="reveal d2">
           <div class="stat-num">0</div>
@@ -466,7 +511,7 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
   <section class="section" id="gallery">
     <div class="wrap gallery-head reveal">
       <h2>每一步，<br>都清晰明了。</h2>
-      <p>像向导一样简单：选择文件、设置参数、确认、转换。随时返回上一步，从不迷失。</p>
+      <p>以视频转换为例：选择文件、设置参数、确认、转换。随时返回上一步，从不迷失——延时合成、图片堆砌与图片转换采用同样的向导式界面。</p>
     </div>
     <div class="gallery" id="galleryTrack" tabindex="0" aria-label="转换流程截图，可左右滑动浏览">
       <figure class="shot">
@@ -479,8 +524,8 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
       <figure class="shot">
         <div class="shot-card">
           <div class="shot-meta"><span class="shot-num">02</span><span class="shot-title">输出格式</span></div>
-          <img src="./screenshots/2-format.png" loading="lazy" alt="第二步：从 20 种格式中选择输出格式">
-          <figcaption class="shot-desc">20 种输出格式，一目了然。</figcaption>
+          <img src="./screenshots/2-format.png" loading="lazy" alt="第二步：从 21 种视频格式中选择输出格式">
+          <figcaption class="shot-desc">21 种输出格式，一目了然。</figcaption>
         </div>
       </figure>
       <figure class="shot">
@@ -548,9 +593,9 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
           <div class="cell-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
           </div>
-          <h3>20 种输出格式</h3>
-          <p>从 mp4 到 webm，从 mov 到 gif，常用与专业容器一应俱全。</p>
-          <div class="cell-tags"><span>mp4</span><span>mkv</span><span>mov</span><span>webm</span><span>hevc</span><span>gif</span></div>
+          <h3>21 种视频格式</h3>
+          <p>从 mp4 到 webm，从 mov 到 gif / apng，常用与专业容器一应俱全；图片另有 7 种输出格式。</p>
+          <div class="cell-tags"><span>mp4</span><span>mkv</span><span>mov</span><span>webm</span><span>hevc</span><span>gif</span><span>apng</span></div>
         </div>
         <div class="cell span2 reveal d1">
           <div class="cell-icon" aria-hidden="true">
@@ -581,6 +626,38 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
           <h3>纯粹，且开源</h3>
           <p>无广告、无捆绑、无遥测。以 GPL-3.0 许可证开源，代码尽可审阅。</p>
         </div>
+        <div class="cell span2 reveal">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2.2"/><path d="M17 3.5a8.5 8.5 0 0 1 3.5 6.5"/></svg>
+          </div>
+          <h3>延时合成流水线</h3>
+          <p>图片序列先按补零规则重命名，再合成视频。磁盘空间不足时自动改用就地重命名；重命名与合成两条进度条一上一下实时显示；合成完成后调用默认播放器播放，确认无误再清理临时的 rename 文件夹。</p>
+          <div class="cell-tags"><span>复制 rename 方案</span><span>就地重命名</span><span>空间不足自动降级</span><span>合成后自动播放</span></div>
+        </div>
+        <div class="cell reveal d1">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17c2-3 4-4.5 6-4.5S13 15 15 15s3.5-1.5 6-4"/><path d="M3 12c2-3 4-4.5 6-4.5S13 10 15 10s3.5-1.5 6-4"/><path d="M3 22c2-3 4-4.5 6-4.5S13 20 15 20s3.5-1.5 6-4"/></svg>
+          </div>
+          <h3>长曝光图片堆砌</h3>
+          <p>最大值堆星轨车流、平均值堆流水降噪、最小值堆暗场合成，一张一张叠出长曝光效果。</p>
+          <div class="cell-tags"><span>最大值</span><span>平均值</span><span>最小值</span><span>16-bit DNG</span></div>
+        </div>
+        <div class="cell span2 reveal d2">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18"/><path d="M3.5 9h17M3.5 15h17"/></svg>
+          </div>
+          <h3>色彩空间与 HDR</h3>
+          <p>下拉选项按 SDR / HDR 分组：BT.709、BT.601、BT.2020、HDR10（PQ）、HLG。图片可重映射到 sRGB、Adobe RGB、Display P3、ProPhoto RGB、ACEScg，并自动以 16-bit PNG 输出；视频侧的 HDR10 还会写入 ST 2086 静态元数据。</p>
+          <div class="cell-tags"><span>Rec.2100 PQ</span><span>HLG</span><span>ST 2086</span><span>16-bit PNG</span></div>
+        </div>
+        <div class="cell reveal">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M21 16l-5-5-6.5 8"/></svg>
+          </div>
+          <h3>图片格式转换</h3>
+          <p>JPG / PNG / BMP / TIFF / WebP / WMP / DNG 互转，品质滑杆、TIFF 压缩算法、PNG 交错与输出分辨率全部可调。</p>
+          <div class="cell-tags"><span>WebP</span><span>16-bit</span><span>DNG</span></div>
+        </div>
       </div>
     </div>
   </section>
@@ -598,20 +675,28 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
           <dd>Windows 10 / 11（64 位）</dd>
         </div>
         <div class="spec-row">
+          <dt>核心功能（4 项）</dt>
+          <dd>🎬 视频转换 · ⏱ 延时合成 · 🌌 图片堆砌 · 🖼 图片转换，主页一点即入，全部为引导式界面</dd>
+        </div>
+        <div class="spec-row">
           <dt>转换引擎</dt>
-          <dd>ffmpeg 9.0.2 完整版（内嵌，约 217 MB，首次转换自动释放）</dd>
+          <dd>ffmpeg 9.0.2 完整版（内嵌，约 217 MB，首次使用自动释放）</dd>
         </div>
         <div class="spec-row">
           <dt>运行时</dt>
-          <dd>.NET 6（已内嵌，无需另行安装）</dd>
+          <dd>.NET 8（已内嵌，无需另行安装）</dd>
         </div>
         <div class="spec-row">
           <dt>主程序</dt>
-          <dd>单个 exe，约 150 MB，免安装绿色版</dd>
+          <dd>单个 exe，约 372 MB，免安装绿色版</dd>
         </div>
         <div class="spec-row">
-          <dt>输出格式（20 种）</dt>
-          <dd><code>mp4</code><code>mkv</code><code>avi</code><code>mov</code><code>webm</code><code>flv</code><code>wmv</code><code>mpg</code><code>ts</code><code>m4v</code><code>3gp</code><code>vob</code><code>ogv</code><code>m2ts</code><code>rm</code><code>rmvb</code><code>asf</code><code>mxf</code><code>hevc</code><code>gif</code></dd>
+          <dt>视频输出（21 种）</dt>
+          <dd><code>mp4</code><code>mkv</code><code>avi</code><code>mov</code><code>webm</code><code>flv</code><code>wmv</code><code>mpg</code><code>ts</code><code>m4v</code><code>3gp</code><code>vob</code><code>ogv</code><code>m2ts</code><code>rm</code><code>rmvb</code><code>asf</code><code>mxf</code><code>hevc</code><code>gif</code><code>apng</code></dd>
+        </div>
+        <div class="spec-row">
+          <dt>图片输出</dt>
+          <dd>转换：<code>JPG</code><code>PNG</code><code>BMP</code><code>TIFF</code><code>WEBP</code><code>WMP</code><code>DNG</code>；堆砌：<code>JPG</code><code>PNG</code><code>BMP</code><code>TIFF</code><code>DNG</code>（16-bit 线性 DNG，不含 EXIF 元数据）</dd>
         </div>
         <div class="spec-row">
           <dt>视频编码</dt>
@@ -620,6 +705,10 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
         <div class="spec-row">
           <dt>分辨率预设</dt>
           <dd>360p · 480p · 720p · 1080p · 1440p · 4K · 8K（7680 × 4320），支持自定义宽 × 高；码率按分辨率自动推荐，可手动调整</dd>
+        </div>
+        <div class="spec-row">
+          <dt>色彩空间 / HDR</dt>
+          <dd>视频：与原视频相同 · BT.709 · BT.601 · BT.2020 · HDR10（PQ，10-bit，含 ST 2086）· HLG；图片：与原图一致 · sRGB · Adobe RGB · Display P3 · ProPhoto RGB · ACEScg · HDR10 · HLG（广色域与 HDR 自动输出 16-bit PNG）</dd>
         </div>
         <div class="spec-row">
           <dt>界面</dt>
@@ -637,7 +726,7 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
   <section class="section section-alt" id="download">
     <div class="wrap">
       <div class="dl-card reveal">
-        <span class="dl-version"><b>v1.0.0</b> · 2026 年 10 月 · 最新稳定版</span>
+        <span class="dl-version"><b>v1.1.0</b> · 2026 年 10 月 · 最新稳定版</span>
         <h2>下载 Vchange。</h2>
         <p class="dl-sub">免费、开源，为 Windows 10 / 11 而生。</p>
         <div class="dl-actions">
@@ -648,14 +737,15 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
           <a class="btn btn-outline btn-lg" href="https://github.com/Andydot-ui/Vchange/releases/latest">查看全部版本</a>
         </div>
         <div class="dl-mirrors">
-          <span>下载慢？<a href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-j3adv">123 云盘高速镜像 ›</a></span>
+          <span>下载慢？<a href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-PfZvv">123 云盘高速镜像 ›</a></span>
+          <span class="dl-warn">⚠ 高速链接仅对<b>最新版本</b>有效：每次发布新版本后旧的高速链接即失效，请始终以本页面的最新链接为准。</span>
         </div>
         <div class="dl-files">
           <div class="dl-file">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
             <div>
-              <b>Vchange.exe（约 150 MB）—— 推荐</b>
-              <span>单文件绿色版，内置 ffmpeg 与 .NET 运行时，下载后双击直接使用。</span>
+              <b>Vchange.exe（约 372 MB）—— 推荐</b>
+              <span>单文件绿色版，内置 .NET 8 运行时与完整版 ffmpeg，下载后双击直接使用。</span>
             </div>
           </div>
           <div class="dl-file">
@@ -680,6 +770,10 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
       </div>
       <div class="faq reveal">
         <details>
+          <summary>v1.1.0 新增了什么？<span class="plus" aria-hidden="true"></span></summary>
+          <div class="faq-body">新增<b>延时合成</b>（图片序列自动补零重命名 + 按帧率合成视频，双进度条、合成后自动播放确认）、<b>图片堆砌</b>（最大值 / 平均值 / 最小值长曝光堆砌，支持 16-bit DNG 输出）、<b>图片转换</b>（JPG / PNG / BMP / TIFF / WebP / WMP / DNG 互转）三个新工具，并为视频与图片加入色彩空间选项（SDR / HDR 分组，Rec.2100 PQ / HLG）。<a href="https://github.com/Andydot-ui/Vchange/releases/latest">查看完整更新 ›</a></div>
+        </details>
+        <details>
           <summary>转换失败怎么办？<span class="plus" aria-hidden="true"></span></summary>
           <div class="faq-body">查看「转换日志」中 ffmpeg 的原始输出，通常会明确指出失败原因——例如源文件损坏、编码器不支持等。<a href="https://github.com/Andydot-ui/Vchange/issues/new?template=BugReport.yml">仍无法解决？提交 Bug 反馈 ›</a></div>
         </details>
@@ -692,12 +786,16 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
           <div class="faq-body">支持。视频编码下拉框中可选择 <code>h264_nvenc</code>（N 卡）、<code>h264_qsv</code>（Intel 核显）、<code>h264_amf</code>（A 卡）等硬件编码器，另有 HEVC 与 AV1 硬编码可选。</div>
         </details>
         <details>
+          <summary>堆砌和转换会写入 EXIF 信息吗？<span class="plus" aria-hidden="true"></span></summary>
+          <div class="faq-body">不会。堆砌与图片转换生成的是<b>不含 EXIF 元数据</b>的纯净图片（16-bit 线性 DNG 同样不含 EXIF），拍摄信息请以原图为准。</div>
+        </details>
+        <details>
           <summary>GitHub 下载速度慢？<span class="plus" aria-hidden="true"></span></summary>
-          <div class="faq-body">可使用高速镜像：<a href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-j3adv">123 云盘 · Vchange.exe ›</a></div>
+          <div class="faq-body">可使用高速镜像：<a href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-PfZvv">123 云盘 · Vchange.exe ›</a><br><b>注意：高速链接仅对最新版本有效</b>——每次发布新版本后，旧版本的高速链接会失效，请以本页面与 README 中的最新链接为准。</div>
         </details>
         <details>
           <summary>如何从源码构建？<span class="plus" aria-hidden="true"></span></summary>
-          <div class="faq-body">安装 Visual Studio 2022 / .NET 6 SDK，将完整版 ffmpeg.exe 放入 Resources\ 目录后执行 <code>dotnet publish</code>。详见 <a href="https://github.com/Andydot-ui/Vchange#-从源码构建">README 构建指南 ›</a></div>
+          <div class="faq-body">安装 Visual Studio 2022 / .NET 8 SDK，将完整版 ffmpeg.exe 放入 Resources\ 目录后执行 <code>dotnet publish</code>。详见 <a href="https://github.com/Andydot-ui/Vchange#-从源码构建">README 构建指南 ›</a></div>
         </details>
       </div>
     </div>
@@ -726,7 +824,7 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
           </picture>
           <span>Vchange</span>
         </div>
-        <p class="foot-desc">简洁美观的 Windows 视频转换器。WPF + ffmpeg 打造。</p>
+        <p class="foot-desc">视频转换 · 图片转换 · 延时合成 · 图片堆砌。WPF + ffmpeg 打造。</p>
       </div>
       <div class="foot-col">
         <h4>资源</h4>
@@ -744,7 +842,7 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
         <h4>下载</h4>
         <a href="https://github.com/Andydot-ui/Vchange/releases/latest/download/Vchange.exe">Vchange.exe</a>
         <a href="https://github.com/Andydot-ui/Vchange/releases/latest">ffmpeg 完整版</a>
-        <a href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-j3adv">123 云盘镜像</a>
+        <a href="https://1828395166.share.123pan.cn/123pan/DA7Sjv-PfZvv">123 云盘镜像（仅最新版有效）</a>
       </div>
     </div>
     <div class="foot-bottom">

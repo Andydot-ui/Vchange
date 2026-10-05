@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <RootNamespace>Vchange</RootNamespace>
     <AssemblyName>Vchange</AssemblyName>
     <UseWPF>true</UseWPF>
@@ -10,6 +10,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationIcon>Resources\app_white.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <!-- 排除嵌套的旧副本目录，避免重复编译 -->
+  <ItemGroup>
+    <Compile Remove="Vchange\**\*.cs" />
+    <Page Remove="Vchange\**\*.xaml" />
+    <Resource Remove="Vchange\**" />
+    <Content Remove="Vchange\**" />
+    <None Remove="Vchange\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Resources\app_white.ico" />

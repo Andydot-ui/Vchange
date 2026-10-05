@@ -7,11 +7,23 @@ namespace Vchange
 {
     public partial class MessageDialog : Window
     {
-        public MessageDialog(string message, string title = "提示")
+        /// <summary>确认模式下用户是否点击了“是”。</summary>
+        public bool Confirmed { get; private set; }
+
+        public MessageDialog(string message, string title = "提示", bool confirm = false,
+            string? yesText = null, string? noText = null)
         {
             InitializeComponent();
             TitleText.Text = title;
             MessageText.Text = message;
+
+            if (confirm)
+            {
+                SingleButtonPanel.Visibility = Visibility.Collapsed;
+                ConfirmButtonPanel.Visibility = Visibility.Visible;
+                ConfirmYesButton.Content = yesText ?? "是";
+                ConfirmNoButton.Content = noText ?? "否";
+            }
 
             Loaded += (s, e) =>
             {
@@ -26,6 +38,19 @@ namespace Vchange
 
         private void Ok_Click(object sender, RoutedEventArgs e)
         {
+            Confirmed = true;
+            Close();
+        }
+
+        private void Yes_Click(object sender, RoutedEventArgs e)
+        {
+            Confirmed = true;
+            Close();
+        }
+
+        private void No_Click(object sender, RoutedEventArgs e)
+        {
+            Confirmed = false;
             Close();
         }
 

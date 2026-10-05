@@ -5,7 +5,6 @@
     <Application.Resources>
         <!-- Accent color (same in both themes) -->
         <SolidColorBrush x:Key="AccentBrush" Color="#FF0A84FF"/>
-
         <!-- Theme palette (initial values = dark; switched at runtime by ThemeManager) -->
         <SolidColorBrush x:Key="Theme.WindowTint" Color="#8C202020"/>
         <SolidColorBrush x:Key="Theme.TitleBar" Color="#592B2B2B"/>
@@ -31,7 +30,6 @@
         <SolidColorBrush x:Key="Theme.Chevron" Color="#5C5C5C"/>
         <SolidColorBrush x:Key="Theme.StepDotInactive" Color="#3A3A3A"/>
         <SolidColorBrush x:Key="Theme.Dialog" Color="#F0202020"/>
-
         <!-- Window style -->
         <DropShadowEffect x:Key="WindowDropShadow" Color="#FF000000" BlurRadius="12" ShadowDepth="2" Opacity="0.4"/>
         <Style TargetType="{x:Type Window}">
@@ -39,7 +37,6 @@
             <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimary}"/>
             <Setter Property="FontFamily" Value="Microsoft YaHei UI, Microsoft YaHei, Segoe UI"/>
         </Style>
-
         <!-- Button style -->
         <Style TargetType="{x:Type Button}">
             <Setter Property="Background" Value="{DynamicResource Theme.Control}"/>
@@ -73,7 +70,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- TextBox style -->
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Background" Value="{DynamicResource Theme.Control}"/>
@@ -101,7 +97,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- ComboBox style -->
         <Style TargetType="{x:Type ComboBox}">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -195,7 +190,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- ComboBoxItem style -->
         <Style TargetType="{x:Type ComboBoxItem}">
             <Setter Property="Background" Value="Transparent"/>
@@ -242,7 +236,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- Primary (accent) button -->
         <Style x:Key="PrimaryButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Foreground" Value="White"/>
@@ -298,7 +291,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- Secondary (outline) button -->
         <Style x:Key="SecondaryButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimary}"/>
@@ -334,7 +326,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- Circle next button (accent circle with arrow) -->
         <Style x:Key="CircleNextButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Width" Value="46"/>
@@ -403,7 +394,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- Circle back button (dark circle with arrow) -->
         <Style x:Key="CircleBackButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Width" Value="46"/>
@@ -456,7 +446,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- Card container -->
         <Style x:Key="CardBorderStyle" TargetType="{x:Type Border}">
             <Setter Property="Background" Value="{DynamicResource Theme.Surface}"/>
@@ -465,7 +454,6 @@
             <Setter Property="CornerRadius" Value="8"/>
             <Setter Property="Padding" Value="18"/>
         </Style>
-
         <!-- Text styles -->
         <Style x:Key="SectionTitleStyle" TargetType="{x:Type TextBlock}">
             <Setter Property="FontSize" Value="18"/>
@@ -486,7 +474,6 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimary}"/>
         </Style>
-
         <!-- Toggle switch (CheckBox) -->
         <Style TargetType="{x:Type CheckBox}">
             <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimary}"/>
@@ -551,7 +538,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- ToolTip style -->
         <Style TargetType="{x:Type ToolTip}">
             <Setter Property="Background" Value="{DynamicResource Theme.Popup}"/>
@@ -575,7 +561,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- Progress bar (rounded accent pill) -->
         <Style TargetType="{x:Type ProgressBar}">
             <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
@@ -603,15 +588,46 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
         <!-- Label style -->
         <Style TargetType="{x:Type Label}">
             <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimary}"/>
         </Style>
-
         <!-- TextBlock style -->
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="Foreground" Value="{DynamicResource Theme.TextPrimary}"/>
+        </Style>
+        <!-- Big Dot RadioButton style -->
+        <Style x:Key="BigDotRadioStyle" TargetType="{x:Type RadioButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid Width="24" Height="24" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Ellipse x:Name="Outer" Stroke="{DynamicResource AccentBrush}" StrokeThickness="2" Fill="Transparent"/>
+                            <Ellipse x:Name="Inner" Width="16" Height="16" Fill="{DynamicResource AccentBrush}" Opacity="0" RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform>
+                                    <ScaleTransform ScaleX="0" ScaleY="0"/>
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="Inner" Property="Opacity" Value="1"/>
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Inner" Storyboard.TargetProperty="RenderTransform.ScaleX" From="0" To="1" Duration="0:0:0.2"/>
+                                            <DoubleAnimation Storyboard.TargetName="Inner" Storyboard.TargetProperty="RenderTransform.ScaleY" From="0" To="1" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.4"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
     </Application.Resources>
 </Application>

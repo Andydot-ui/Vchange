@@ -6,6 +6,157 @@
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" ResizeBorderThickness="0" GlassFrameThickness="-1" CornerRadius="0" UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
+    <Window.Resources>
+        <!-- 滑杆（蓝色已填充轨道 + 圆形拇指） -->
+        <Style TargetType="{x:Type Slider}">
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Slider}">
+                        <Grid VerticalAlignment="Center" Background="Transparent">
+                            <Border Height="6" CornerRadius="3" Background="{DynamicResource Theme.ProgressTrack}" VerticalAlignment="Center"/>
+                            <Track x:Name="PART_Track">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.DecreaseLarge}" Focusable="False" IsTabStop="False">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Grid Background="Transparent" Height="24">
+                                                    <Border Height="6" CornerRadius="3" Background="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Command="{x:Static Slider.IncreaseLarge}" Focusable="False" IsTabStop="False">
+                                        <RepeatButton.Template>
+                                            <ControlTemplate TargetType="RepeatButton">
+                                                <Grid Background="Transparent" Height="24"/>
+                                            </ControlTemplate>
+                                        </RepeatButton.Template>
+                                    </RepeatButton>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Width="20" Height="20" Focusable="False">
+                                        <Thumb.Template>
+                                            <ControlTemplate TargetType="Thumb">
+                                                <Grid Background="Transparent">
+                                                    <Ellipse x:Name="thumbDot" Fill="White" Stroke="{StaticResource AccentBrush}" StrokeThickness="2.5">
+                                                        <Ellipse.Effect>
+                                                            <DropShadowEffect Color="#FF0A84FF" BlurRadius="8" ShadowDepth="0" Opacity="0.35"/>
+                                                        </Ellipse.Effect>
+                                                    </Ellipse>
+                                                </Grid>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="thumbDot" Property="Fill" Value="#E6F2FF"/>
+                                                    </Trigger>
+                                                    <Trigger Property="IsDragging" Value="True">
+                                                        <Setter TargetName="thumbDot" Property="StrokeThickness" Value="3.5"/>
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Thumb.Template>
+                                    </Thumb>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 醒目的选择圆点（大号，选中时蓝色圆环+实心点带弹出动画） -->
+        <Style x:Key="BigDotRadioStyle" TargetType="{x:Type RadioButton}">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <Grid Background="Transparent">
+                            <Ellipse x:Name="outer" Width="22" Height="22" StrokeThickness="2"
+                                     Stroke="{DynamicResource Theme.ToggleBorder}" Fill="{DynamicResource Theme.Control}"/>
+                            <Ellipse x:Name="ringSelected" Width="22" Height="22" StrokeThickness="2"
+                                     Stroke="{StaticResource AccentBrush}" Opacity="0"/>
+                            <Ellipse x:Name="inner" Width="10" Height="10"
+                                     Fill="{StaticResource AccentBrush}"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                                <Ellipse.RenderTransform>
+                                    <ScaleTransform x:Name="innerScale" ScaleX="0" ScaleY="0"/>
+                                </Ellipse.RenderTransform>
+                            </Ellipse>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ringSelected" Storyboard.TargetProperty="Opacity" To="1" Duration="0:0:0.18">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CubicEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="innerScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.28">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <BackEase EasingMode="EaseOut" Amplitude="2"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimation Storyboard.TargetName="innerScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.28">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <BackEase EasingMode="EaseOut" Amplitude="2"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="ringSelected" Storyboard.TargetProperty="Opacity" To="0" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="innerScale" Storyboard.TargetProperty="ScaleX" To="0" Duration="0:0:0.12"/>
+                                            <DoubleAnimation Storyboard.TargetName="innerScale" Storyboard.TargetProperty="ScaleY" To="0" Duration="0:0:0.12"/>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="IsChecked" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="outer" Property="Stroke" Value="{DynamicResource Theme.ToggleBorderHover}"/>
+                            </MultiTrigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 主页功能卡片 -->
+        <Style x:Key="HomeCardStyle" TargetType="{x:Type Button}">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="bd" Background="{DynamicResource Theme.Surface}" BorderBrush="{DynamicResource Theme.SurfaceBorder}" BorderThickness="1" CornerRadius="12" Padding="18">
+                            <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource Theme.ItemSelected}"/>
+                                <Setter TargetName="bd" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="{DynamicResource Theme.Hover}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
     <Border Background="{DynamicResource Theme.WindowTint}">
         <Grid>
             <Grid.RowDefinitions>
@@ -14,7 +165,6 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- Title bar -->
             <Border Grid.Row="0" Background="{DynamicResource Theme.TitleBar}" MouseLeftButtonDown="TitleBar_MouseDown">
                 <DockPanel LastChildFill="False">
                     <Image x:Name="TitleBarIcon" Source="/Resources/app_white.ico" Width="16" Height="16" Margin="12,0,0,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
@@ -23,118 +173,136 @@
                 </DockPanel>
             </Border>
 
-            <!-- Step indicator -->
-            <Border Grid.Row="1" Padding="16,12,16,6">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
-                        <Border x:Name="StepDot1" Width="24" Height="24" CornerRadius="12" Background="{DynamicResource Theme.StepDotInactive}">
-                            <TextBlock x:Name="StepNum1" Text="1" Foreground="White" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock x:Name="StepLabel1" Text="选择文件" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
-                    </StackPanel>
-                    <TextBlock Text="›" Foreground="{DynamicResource Theme.Chevron}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="16"/>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
-                        <Border x:Name="StepDot2" Width="24" Height="24" CornerRadius="12" Background="{DynamicResource Theme.StepDotInactive}">
-                            <TextBlock x:Name="StepNum2" Text="2" Foreground="White" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock x:Name="StepLabel2" Text="输出格式" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
-                    </StackPanel>
-                    <TextBlock Text="›" Foreground="{DynamicResource Theme.Chevron}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="16"/>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
-                        <Border x:Name="StepDot3" Width="24" Height="24" CornerRadius="12" Background="{DynamicResource Theme.StepDotInactive}">
-                            <TextBlock x:Name="StepNum3" Text="3" Foreground="White" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock x:Name="StepLabel3" Text="视频参数" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
-                    </StackPanel>
-                    <TextBlock Text="›" Foreground="{DynamicResource Theme.Chevron}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="16"/>
-
-                    <StackPanel Orientation="Horizontal" Margin="0,0,8,0">
-                        <Border x:Name="StepDot4" Width="24" Height="24" CornerRadius="12" Background="{DynamicResource Theme.StepDotInactive}">
-                            <TextBlock x:Name="StepNum4" Text="4" Foreground="White" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock x:Name="StepLabel4" Text="码率" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
-                    </StackPanel>
-                    <TextBlock Text="›" Foreground="{DynamicResource Theme.Chevron}" VerticalAlignment="Center" Margin="0,0,8,0" FontSize="16"/>
-
-                    <StackPanel Orientation="Horizontal">
-                        <Border x:Name="StepDot5" Width="24" Height="24" CornerRadius="12" Background="{DynamicResource Theme.StepDotInactive}">
-                            <TextBlock x:Name="StepNum5" Text="5" Foreground="White" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <TextBlock x:Name="StepLabel5" Text="转换" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
-                    </StackPanel>
-                </StackPanel>
+            <Border Grid.Row="1" Padding="16,12,16,6" x:Name="StepIndicatorBorder">
+                <StackPanel x:Name="StepIndicatorPanel" Orientation="Horizontal" HorizontalAlignment="Center"/>
             </Border>
 
-            <!-- Step 1: input file -->
-            <Grid x:Name="Step1Panel" Grid.Row="2" Margin="28,4,28,8">
+            <Grid x:Name="HomePanel" Grid.Row="2" Margin="28,8,28,16">
+                <StackPanel VerticalAlignment="Center" MaxWidth="660">
+                    <TextBlock Text="选择功能" FontSize="26" FontWeight="Bold" Foreground="{DynamicResource Theme.TextPrimary}" HorizontalAlignment="Center" TextAlignment="Center"/>
+                    <TextBlock Text="请选择需要使用的工具" FontSize="13" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,6,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
+
+                    <Button x:Name="HomeConvertCard" Style="{StaticResource HomeCardStyle}" Margin="0,26,0,0" Click="HomeConvert_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="48" Height="48" CornerRadius="12" Background="#200A84FF" VerticalAlignment="Center">
+                                <TextBlock Text="🎬" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center" Margin="16,0,0,0">
+                                <TextBlock Text="视频转换" FontSize="16" FontWeight="SemiBold"/>
+                                <TextBlock Text="将视频文件转换为其他格式（mp4 / mkv / mov …），可选编码、分辨率、帧率与码率" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap" MaxWidth="500"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="HomeTimelapseCard" Style="{StaticResource HomeCardStyle}" Margin="0,14,0,0" Click="HomeTimelapse_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="48" Height="48" CornerRadius="12" Background="#200A84FF" VerticalAlignment="Center">
+                                <TextBlock Text="⏱" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center" Margin="16,0,0,0">
+                                <TextBlock Text="延时合成" FontSize="16" FontWeight="SemiBold"/>
+                                <TextBlock Text="将延时摄影拍摄的图片序列按顺序重命名并合成视频（每张图片为一帧），可选帧率、格式、编码与码率" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap" MaxWidth="500"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="HomeStackCard" Style="{StaticResource HomeCardStyle}" Margin="0,14,0,0" Click="HomeStack_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="48" Height="48" CornerRadius="12" Background="#200A84FF" VerticalAlignment="Center">
+                                <TextBlock Text="🌌" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center" Margin="16,0,0,0">
+                                <TextBlock Text="图片堆砌" FontSize="16" FontWeight="SemiBold"/>
+                                <TextBlock Text="星轨、流水、车流等长曝光堆砌，支持最大值/平均/最小值合成，输出 JPG / PNG / BMP / TIFF / DNG" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap" MaxWidth="500"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+                    <Button x:Name="HomeImageCard" Style="{StaticResource HomeCardStyle}" Margin="0,14,0,0" Click="HomeImageCard_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="48" Height="48" CornerRadius="12" Background="#200A84FF" VerticalAlignment="Center">
+                                <TextBlock Text="🖼️" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Center" Margin="16,0,0,0">
+                                <TextBlock Text="图片转换" FontSize="16" FontWeight="SemiBold"/>
+                                <TextBlock Text="单张图片格式互转（JPG / PNG / BMP / TIFF / WebP / WMP / DNG），可调品质、压缩、色彩空间与分辨率" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap" MaxWidth="500"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="Step1Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
-                    <StackPanel>
-                        <TextBlock Text="选择要转换的视频文件" Style="{StaticResource SectionTitleStyle}"/>
-                        <TextBlock Text="支持 mp4、avi、mkv、mov、wmv、flv、webm 等常见格式" Style="{StaticResource SectionSubtitleStyle}"/>
-                        <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox Name="InputFileTextBox" IsReadOnly="True" Height="40" VerticalAlignment="Center" FontSize="13"/>
-                                <Button Grid.Column="1" Content="浏览文件" Style="{StaticResource PrimaryButtonStyle}" Width="110" Height="40" Margin="12,0,0,0" Click="BrowseInput_Click"/>
-                            </Grid>
-                        </Border>
-                    </StackPanel>
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="选择要转换的视频文件" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="支持 mp4、avi、mkv、mov、wmv、flv、webm 等常见格式" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Name="InputFileTextBox" IsReadOnly="True" Height="40" VerticalAlignment="Center" FontSize="13"/>
+                                    <Button Grid.Column="1" Content="浏览文件" Style="{StaticResource PrimaryButtonStyle}" Width="110" Height="40" Margin="12,0,0,0" Click="BrowseInput_Click"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
                 </ScrollViewer>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
-                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="Step1Next_Click">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="返回主页" Click="BackToHome_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="Step1Next_Click" Margin="16,0,0,0">
                         <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
                     </Button>
                 </StackPanel>
             </Grid>
 
-            <!-- Step 2: output format -->
             <Grid x:Name="Step2Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
-                    <StackPanel>
-                        <TextBlock Text="选择输出格式" Style="{StaticResource SectionTitleStyle}"/>
-                        <TextBlock Text="转换完成后的文件将保存为该格式" Style="{StaticResource SectionSubtitleStyle}"/>
-                        <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
-                            <StackPanel>
-                                <TextBlock Text="输出格式" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
-                                <ComboBox Name="FormatComboBox" Width="280" Height="34" Margin="0,12,0,0" SelectionChanged="FormatComboBox_SelectionChanged" HorizontalAlignment="Center">
-                                    <ComboBoxItem Content="mp4" IsSelected="True"/>
-                                    <ComboBoxItem Content="avi" />
-                                    <ComboBoxItem Content="mkv" />
-                                    <ComboBoxItem Content="mov" />
-                                    <ComboBoxItem Content="wmv" />
-                                    <ComboBoxItem Content="flv" />
-                                    <ComboBoxItem Content="webm" />
-                                    <ComboBoxItem Content="mpg" />
-                                    <ComboBoxItem Content="ts" />
-                                    <ComboBoxItem Content="m4v" />
-                                    <ComboBoxItem Content="3gp" />
-                                    <ComboBoxItem Content="vob" />
-                                    <ComboBoxItem Content="ogv" />
-                                    <ComboBoxItem Content="m2ts" />
-                                    <ComboBoxItem Content="rm" />
-                                    <ComboBoxItem Content="rmvb" />
-                                    <ComboBoxItem Content="asf" />
-                                    <ComboBoxItem Content="mxf" />
-                                    <ComboBoxItem Content="hevc" />
-                                    <ComboBoxItem Content="gif" />
-                                </ComboBox>
-                                <TextBlock x:Name="FormatHintText" Text="输出扩展名: .mp4" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,12,0,0" FontSize="12" HorizontalAlignment="Center"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="选择输出格式" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="转换完成后的文件将保存为该格式" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="输出格式" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                    <ComboBox Name="FormatComboBox" Width="280" Height="34" Margin="0,12,0,0" SelectionChanged="FormatComboBox_SelectionChanged" HorizontalAlignment="Center">
+                                        <ComboBoxItem Content="mp4" IsSelected="True"/>
+                                        <ComboBoxItem Content="avi" />
+                                        <ComboBoxItem Content="mkv" />
+                                        <ComboBoxItem Content="mov" />
+                                        <ComboBoxItem Content="wmv" />
+                                        <ComboBoxItem Content="flv" />
+                                        <ComboBoxItem Content="webm" />
+                                        <ComboBoxItem Content="mpg" />
+                                        <ComboBoxItem Content="ts" />
+                                        <ComboBoxItem Content="m4v" />
+                                        <ComboBoxItem Content="3gp" />
+                                        <ComboBoxItem Content="vob" />
+                                        <ComboBoxItem Content="ogv" />
+                                        <ComboBoxItem Content="m2ts" />
+                                        <ComboBoxItem Content="rm" />
+                                        <ComboBoxItem Content="rmvb" />
+                                        <ComboBoxItem Content="asf" />
+                                        <ComboBoxItem Content="mxf" />
+                                        <ComboBoxItem Content="hevc" />
+                                        <ComboBoxItem Content="gif" />
+                                        <ComboBoxItem Content="apng（动图）" />
+                                    </ComboBox>
+                                    <TextBlock x:Name="FormatHintText" Text="输出扩展名: .mp4" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,12,0,0" FontSize="12" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
                 </ScrollViewer>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
                     <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="Step2Back_Click">
@@ -146,106 +314,131 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Step 3: codec, resolution, fps -->
             <Grid x:Name="Step3Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
-                    <StackPanel>
-                        <TextBlock Text="设置视频参数" Style="{StaticResource SectionTitleStyle}"/>
-                        <TextBlock Text="视频编码、分辨率和帧率可以分别选择与原视频相同" Style="{StaticResource SectionSubtitleStyle}"/>
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="设置视频参数" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="视频编码、分辨率和帧率可以分别选择与原视频相同" Style="{StaticResource SectionSubtitleStyle}"/>
 
-                        <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,10">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="视频编码" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
-                                    <CheckBox x:Name="CodecSameCheckBox" Grid.Column="1" Content="与原视频相同" VerticalAlignment="Center" Checked="SameOption_Changed" Unchecked="SameOption_Changed"/>
-                                </Grid>
-                                <ComboBox Name="CodecComboBox" Height="34" Margin="0,12,0,0" HorizontalAlignment="Center" Width="300">
-                                    <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="H.264 / AVC" />
-                                    <ComboBoxItem Content="libx264 (常用)" IsSelected="True" />
-                                    <ComboBoxItem Content="h264_nvenc" />
-                                    <ComboBoxItem Content="h264_qsv" />
-                                    <ComboBoxItem Content="h264_vaapi" />
-                                    <ComboBoxItem Content="h264_amf" />
-                                    <ComboBoxItem Content="h264_videotoolbox" />
-                                    <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="H.265 / HEVC" />
-                                    <ComboBoxItem Content="libx265 (常用)" />
-                                    <ComboBoxItem Content="hevc_nvenc" />
-                                    <ComboBoxItem Content="hevc_qsv" />
-                                    <ComboBoxItem Content="hevc_vaapi" />
-                                    <ComboBoxItem Content="hevc_amf" />
-                                    <ComboBoxItem Content="hevc_videotoolbox" />
-                                    <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="VP8 / VP9" />
-                                    <ComboBoxItem Content="libvpx" />
-                                    <ComboBoxItem Content="libvpx-vp9 (常用)" />
-                                    <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="AV1" />
-                                    <ComboBoxItem Content="libaom-av1 (常用)" />
-                                    <ComboBoxItem Content="libsvtav1" />
-                                    <ComboBoxItem Content="librav1e" />
-                                    <ComboBoxItem Content="av1_nvenc" />
-                                    <ComboBoxItem Content="av1_qsv" />
-                                    <ComboBoxItem Content="av1_vaapi" />
-                                    <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="VVC (H.266)" />
-                                    <ComboBoxItem Content="vvc (常用)" />
-                                </ComboBox>
-                            </StackPanel>
-                        </Border>
+                            <Grid MaxWidth="860" Margin="0,14,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
 
-                        <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,0,0,10">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="分辨率" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
-                                    <CheckBox x:Name="ResolutionSameCheckBox" Grid.Column="1" Content="与原视频相同" VerticalAlignment="Center" Checked="SameOption_Changed" Unchecked="SameOption_Changed"/>
-                                </Grid>
-                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center">
-                                    <ComboBox Name="ResolutionComboBox" Width="220" Height="34" SelectionChanged="ResolutionComboBox_SelectionChanged">
-                                        <ComboBoxItem Content="1920x1080 (1080P)" IsSelected="True"/>
-                                        <ComboBoxItem Content="1280x720 (720P)" />
-                                        <ComboBoxItem Content="854x480 (480P)" />
-                                        <ComboBoxItem Content="640x360 (360P)" />
-                                        <ComboBoxItem Content="2560x1440 (2K)" />
-                                        <ComboBoxItem Content="3840x2160 (4K)" />
-                                        <ComboBoxItem Content="7680x4320 (8K)" />
-                                        <ComboBoxItem Content="自定义" />
-                                    </ComboBox>
-                                    <StackPanel x:Name="CustomResolutionPanel" Orientation="Horizontal" Visibility="Collapsed" Margin="10,0,0,0">
-                                        <TextBox Name="CustomResolutionWidthTextBox" Width="70" Height="34" TextChanged="CustomResolution_TextChanged" VerticalContentAlignment="Center"/>
-                                        <TextBlock Text="×" VerticalAlignment="Center" Margin="8,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
-                                        <TextBox Name="CustomResolutionHeightTextBox" Width="70" Height="34" TextChanged="CustomResolution_TextChanged" VerticalContentAlignment="Center"/>
+                                <Border Style="{StaticResource CardBorderStyle}" Margin="0,0,5,10">
+                                    <StackPanel>
+                                        <Grid>
+                                            <TextBlock Text="视频编码" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <TextBlock Text="与原视频相同" FontSize="12" Foreground="{DynamicResource Theme.TextSecondary}" VerticalAlignment="Center"/>
+                                                <CheckBox x:Name="CodecSameCheckBox" Margin="8,0,0,0" VerticalAlignment="Center" Checked="SameOption_Changed" Unchecked="SameOption_Changed"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <ComboBox Name="CodecComboBox" Height="34" Margin="0,10,0,0" HorizontalAlignment="Stretch">
+                                            <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="H.264 / AVC" />
+                                            <ComboBoxItem Content="libx264 (常用)" IsSelected="True" />
+                                            <ComboBoxItem Content="h264_nvenc" />
+                                            <ComboBoxItem Content="h264_qsv" />
+                                            <ComboBoxItem Content="h264_vaapi" />
+                                            <ComboBoxItem Content="h264_amf" />
+                                            <ComboBoxItem Content="h264_videotoolbox" />
+                                            <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="H.265 / HEVC" />
+                                            <ComboBoxItem Content="libx265 (常用)" />
+                                            <ComboBoxItem Content="hevc_nvenc" />
+                                            <ComboBoxItem Content="hevc_qsv" />
+                                            <ComboBoxItem Content="hevc_vaapi" />
+                                            <ComboBoxItem Content="hevc_amf" />
+                                            <ComboBoxItem Content="hevc_videotoolbox" />
+                                            <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="VP8 / VP9" />
+                                            <ComboBoxItem Content="libvpx" />
+                                            <ComboBoxItem Content="libvpx-vp9 (常用)" />
+                                            <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="AV1" />
+                                            <ComboBoxItem Content="libaom-av1 (常用)" />
+                                            <ComboBoxItem Content="libsvtav1" />
+                                            <ComboBoxItem Content="librav1e" />
+                                            <ComboBoxItem Content="av1_nvenc" />
+                                            <ComboBoxItem Content="av1_qsv" />
+                                            <ComboBoxItem Content="av1_vaapi" />
+                                            <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="VVC (H.266)" />
+                                            <ComboBoxItem Content="vvc (常用)" />
+                                        </ComboBox>
                                     </StackPanel>
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
+                                </Border>
 
-                        <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="帧率" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
-                                    <CheckBox x:Name="FpsSameCheckBox" Grid.Column="1" Content="与原视频相同" VerticalAlignment="Center" Checked="SameOption_Changed" Unchecked="SameOption_Changed"/>
-                                </Grid>
-                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center">
-                                    <TextBox Name="FpsTextBox" Width="100" Height="34" Text="30" VerticalContentAlignment="Center"/>
-                                    <TextBlock Text="fps" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
+                                <Border Style="{StaticResource CardBorderStyle}" Grid.Column="1" Margin="5,0,0,10">
+                                    <StackPanel>
+                                        <Grid>
+                                            <TextBlock Text="分辨率" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <TextBlock Text="与原视频相同" FontSize="12" Foreground="{DynamicResource Theme.TextSecondary}" VerticalAlignment="Center"/>
+                                                <CheckBox x:Name="ResolutionSameCheckBox" Margin="8,0,0,0" VerticalAlignment="Center" Checked="SameOption_Changed" Unchecked="SameOption_Changed"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <ComboBox Name="ResolutionComboBox" Height="34" Margin="0,10,0,0" HorizontalAlignment="Stretch" SelectionChanged="ResolutionComboBox_SelectionChanged">
+                                            <ComboBoxItem Content="1920x1080 (1080P)" IsSelected="True"/>
+                                            <ComboBoxItem Content="1280x720 (720P)" />
+                                            <ComboBoxItem Content="854x480 (480P)" />
+                                            <ComboBoxItem Content="640x360 (360P)" />
+                                            <ComboBoxItem Content="2560x1440 (2K)" />
+                                            <ComboBoxItem Content="3840x2160 (4K)" />
+                                            <ComboBoxItem Content="7680x4320 (8K)" />
+                                            <ComboBoxItem Content="自定义" />
+                                        </ComboBox>
+                                        <StackPanel x:Name="CustomResolutionPanel" Orientation="Horizontal" Visibility="Collapsed" Margin="0,10,0,0">
+                                            <TextBox Name="CustomResolutionWidthTextBox" Width="80" Height="30" TextChanged="CustomResolution_TextChanged" VerticalContentAlignment="Center"/>
+                                            <TextBlock Text="×" VerticalAlignment="Center" Margin="8,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
+                                            <TextBox Name="CustomResolutionHeightTextBox" Width="80" Height="30" TextChanged="CustomResolution_TextChanged" VerticalContentAlignment="Center"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource CardBorderStyle}" Grid.Row="1" Margin="0,0,5,0">
+                                    <StackPanel>
+                                        <TextBlock Text="色彩空间" Style="{StaticResource CardTitleStyle}"/>
+                                        <ComboBox x:Name="ColorSpaceCombo" Height="34" Margin="0,10,0,0" HorizontalAlignment="Stretch">
+                                            <ComboBoxItem Content="与原视频相同" IsSelected="True"/>
+                                            <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="── SDR ──" />
+                                            <ComboBoxItem Content="BT.709（高清标准）" />
+                                            <ComboBoxItem Content="BT.601（标清标准）" />
+                                            <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="── HDR（Rec.2100）──" />
+                                            <ComboBoxItem Content="BT.2020（广色域）" />
+                                            <ComboBoxItem Content="HDR10（PQ，10-bit）" />
+                                            <ComboBoxItem Content="HLG（10-bit）" />
+                                        </ComboBox>
+                                        <TextBlock Text="写入对应色彩空间标记，解决画面发灰或过饱和问题；HDR 自动使用 Rec.2100 10-bit" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="11" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource CardBorderStyle}" Grid.Row="1" Grid.Column="1" Margin="5,0,0,0">
+                                    <StackPanel>
+                                        <Grid>
+                                            <TextBlock Text="帧率" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <TextBlock Text="与原视频相同" FontSize="12" Foreground="{DynamicResource Theme.TextSecondary}" VerticalAlignment="Center"/>
+                                                <CheckBox x:Name="FpsSameCheckBox" Margin="8,0,0,0" VerticalAlignment="Center" Checked="SameOption_Changed" Unchecked="SameOption_Changed"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                            <TextBox Name="FpsTextBox" Width="120" Height="34" Text="30" VerticalContentAlignment="Center"/>
+                                            <TextBlock Text="fps（每秒帧数）" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
                 </ScrollViewer>
+
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
                     <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="Step3Back_Click">
                         <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
@@ -256,34 +449,35 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Step 4: bitrate -->
             <Grid x:Name="Step4Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
-                    <StackPanel>
-                        <TextBlock Text="设置码率" Style="{StaticResource SectionTitleStyle}"/>
-                        <TextBlock Text="已根据所选分辨率自动推荐，可手动调整" Style="{StaticResource SectionSubtitleStyle}"/>
-                        <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="码率" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
-                                    <CheckBox x:Name="BitrateSameCheckBox" Grid.Column="1" Content="使用原视频码率" VerticalAlignment="Center" Checked="SameOption_Changed" Unchecked="SameOption_Changed"/>
-                                </Grid>
-                                <StackPanel Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center">
-                                    <TextBox Name="BitrateTextBox" Width="140" Height="34" Text="2000" VerticalContentAlignment="Center"/>
-                                    <TextBlock Text="kbps" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="设置码率" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="已根据所选分辨率自动推荐，可手动调整" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="码率" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
+                                        <CheckBox x:Name="BitrateSameCheckBox" Grid.Column="1" Content="使用原视频码率" VerticalAlignment="Center" Checked="SameOption_Changed" Unchecked="SameOption_Changed"/>
+                                    </Grid>
+                                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center">
+                                        <TextBox Name="BitrateTextBox" Width="140" Height="34" Text="2000" VerticalContentAlignment="Center"/>
+                                        <TextBlock Text="kbps" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
+                                    </StackPanel>
+                                    <TextBlock Text="推荐值会随所选分辨率自动填入，也可手动修改" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,12,0,0" FontSize="12" HorizontalAlignment="Center"/>
                                 </StackPanel>
-                                <TextBlock Text="推荐值会随所选分辨率自动填入，也可手动修改" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,12,0,0" FontSize="12" HorizontalAlignment="Center"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
                 </ScrollViewer>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
                     <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="Step4Back_Click">
@@ -295,7 +489,6 @@
                 </StackPanel>
             </Grid>
 
-            <!-- Step 5: convert -->
             <Grid x:Name="Step5Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -331,6 +524,735 @@
                     <Button Content="开始转换" Style="{StaticResource PrimaryButtonStyle}" Width="150" Margin="16,0,0,0" Click="WizardConvert_Click"/>
                 </StackPanel>
             </Grid>
+
+            <Grid x:Name="T1Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="选择图片文件夹" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="文件夹中的所有图片将按拍摄顺序合成视频（每张图片为一帧）" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Name="TFolderTextBox" IsReadOnly="True" Height="40" VerticalAlignment="Center" FontSize="13"/>
+                                    <Button Grid.Column="1" Content="浏览文件夹" Style="{StaticResource PrimaryButtonStyle}" Width="110" Height="40" Margin="12,0,0,0" Click="T1Browse_Click"/>
+                                </Grid>
+                            </Border>
+                            <TextBlock x:Name="T1InfoText" Text="" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="返回主页" Click="BackToHome_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="T1Next_Click" Margin="16,0,0,0">
+                        <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="T2Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="选择重命名方案" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="合成前会将图片按顺序重命名为 01、02、03…（补零位数由文件数决定）" Style="{StaticResource SectionSubtitleStyle}"/>
+
+                            <Border x:Name="TRenameCard1" Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,22,0,12" MouseLeftButtonDown="TRenameCard1_Click" Cursor="Hand">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton x:Name="TRename1Radio" GroupName="TRenameMode" IsChecked="True" Style="{StaticResource BigDotRadioStyle}" VerticalAlignment="Center" Checked="TRenameMode_Changed" Unchecked="TRenameMode_Changed"/>
+                                        <TextBlock Text="复制到 rename 文件夹" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" Margin="14,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Text="将所有图片复制到源目录下新建的 rename 文件夹中并重命名，原始文件保持不变（需要额外磁盘空间）" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="36,8,0,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border x:Name="TRenameCard2" Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,0,0,12" MouseLeftButtonDown="TRenameCard2_Click" Cursor="Hand">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <RadioButton x:Name="TRename2Radio" GroupName="TRenameMode" Style="{StaticResource BigDotRadioStyle}" VerticalAlignment="Center" Checked="TRenameMode_Changed" Unchecked="TRenameMode_Changed"/>
+                                        <TextBlock Text="直接重命名原文件" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" Margin="14,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Text="直接在源目录中将图片按顺序重命名，不占用额外磁盘空间" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="36,8,0,0" TextWrapping="Wrap"/>
+                                </StackPanel>
+                            </Border>
+
+                            <TextBlock x:Name="TDiskInfoText" Text="" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" HorizontalAlignment="Center" TextAlignment="Center"/>
+                            <TextBlock x:Name="T2NoteText" Text="" Foreground="#FF5AC8FF" FontSize="12" Margin="0,6,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="T2Back_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="T2Next_Click" Margin="16,0,0,0">
+                        <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="T3Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="选择输出格式" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="合成完成后的视频将保存为该格式" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="输出格式" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                    <ComboBox Name="TFormatComboBox" Width="280" Height="34" Margin="0,12,0,0" SelectionChanged="TFormatCombo_SelectionChanged" HorizontalAlignment="Center">
+                                        <ComboBoxItem Content="mp4" IsSelected="True"/>
+                                        <ComboBoxItem Content="avi" />
+                                        <ComboBoxItem Content="mkv" />
+                                        <ComboBoxItem Content="mov" />
+                                        <ComboBoxItem Content="wmv" />
+                                        <ComboBoxItem Content="flv" />
+                                        <ComboBoxItem Content="webm" />
+                                        <ComboBoxItem Content="mpg" />
+                                        <ComboBoxItem Content="ts" />
+                                        <ComboBoxItem Content="m4v" />
+                                        <ComboBoxItem Content="3gp" />
+                                        <ComboBoxItem Content="vob" />
+                                        <ComboBoxItem Content="ogv" />
+                                        <ComboBoxItem Content="m2ts" />
+                                        <ComboBoxItem Content="rm" />
+                                        <ComboBoxItem Content="rmvb" />
+                                        <ComboBoxItem Content="asf" />
+                                        <ComboBoxItem Content="mxf" />
+                                        <ComboBoxItem Content="hevc" />
+                                        <ComboBoxItem Content="gif" />
+                                    </ComboBox>
+                                    <TextBlock x:Name="TFormatHintText" Text="输出扩展名: .mp4" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,12,0,0" FontSize="12" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="T3Back_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="T3Next_Click" Margin="16,0,0,0">
+                        <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="T4Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="设置视频参数" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="编码、分辨率与帧率；分辨率可以与原图相同" Style="{StaticResource SectionSubtitleStyle}"/>
+
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="视频编码" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                    <ComboBox Name="TCodecComboBox" Height="34" Margin="0,12,0,0" HorizontalAlignment="Center" Width="300">
+                                        <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="H.264 / AVC" />
+                                        <ComboBoxItem Content="libx264 (常用)" IsSelected="True" />
+                                        <ComboBoxItem Content="h264_nvenc" />
+                                        <ComboBoxItem Content="h264_qsv" />
+                                        <ComboBoxItem Content="h264_vaapi" />
+                                        <ComboBoxItem Content="h264_amf" />
+                                        <ComboBoxItem Content="h264_videotoolbox" />
+                                        <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="H.265 / HEVC" />
+                                        <ComboBoxItem Content="libx265 (常用)" />
+                                        <ComboBoxItem Content="hevc_nvenc" />
+                                        <ComboBoxItem Content="hevc_qsv" />
+                                        <ComboBoxItem Content="hevc_vaapi" />
+                                        <ComboBoxItem Content="hevc_amf" />
+                                        <ComboBoxItem Content="hevc_videotoolbox" />
+                                        <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="VP8 / VP9" />
+                                        <ComboBoxItem Content="libvpx" />
+                                        <ComboBoxItem Content="libvpx-vp9 (常用)" />
+                                        <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="AV1" />
+                                        <ComboBoxItem Content="libaom-av1 (常用)" />
+                                        <ComboBoxItem Content="libsvtav1" />
+                                        <ComboBoxItem Content="librav1e" />
+                                        <ComboBoxItem Content="av1_nvenc" />
+                                        <ComboBoxItem Content="av1_qsv" />
+                                        <ComboBoxItem Content="av1_vaapi" />
+                                        <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="VVC (H.266)" />
+                                        <ComboBoxItem Content="vvc (常用)" />
+                                    </ComboBox>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,0,0,10">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="分辨率" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
+                                        <CheckBox x:Name="TResSameCheckBox" Grid.Column="1" Content="与图片分辨率相同" IsChecked="True" VerticalAlignment="Center" Checked="TResSame_Changed" Unchecked="TResSame_Changed"/>
+                                    </Grid>
+                                    <StackPanel x:Name="TResPanel" Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center" Visibility="Collapsed" IsEnabled="False">
+                                        <ComboBox Name="TResolutionComboBox" Width="220" Height="34" SelectionChanged="TResolutionCombo_SelectionChanged">
+                                            <ComboBoxItem Content="1920x1080 (1080P)" IsSelected="True"/>
+                                            <ComboBoxItem Content="1280x720 (720P)" />
+                                            <ComboBoxItem Content="854x480 (480P)" />
+                                            <ComboBoxItem Content="640x360 (360P)" />
+                                            <ComboBoxItem Content="2560x1440 (2K)" />
+                                            <ComboBoxItem Content="3840x2160 (4K)" />
+                                            <ComboBoxItem Content="7680x4320 (8K)" />
+                                            <ComboBoxItem Content="自定义" />
+                                        </ComboBox>
+                                        <StackPanel x:Name="TCustomResolutionPanel" Orientation="Horizontal" Visibility="Collapsed" Margin="10,0,0,0">
+                                            <TextBox Name="TCustomResolutionWidthTextBox" Width="70" Height="34" TextChanged="TCustomResolution_TextChanged" VerticalContentAlignment="Center"/>
+                                            <TextBlock Text="×" VerticalAlignment="Center" Margin="8,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
+                                            <TextBox Name="TCustomResolutionHeightTextBox" Width="70" Height="34" TextChanged="TCustomResolution_TextChanged" VerticalContentAlignment="Center"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock x:Name="TResInfoText" Text="" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640">
+                                <StackPanel>
+                                    <TextBlock Text="帧率" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center">
+                                        <TextBox Name="TFpsTextBox" Width="100" Height="34" Text="30" VerticalContentAlignment="Center"/>
+                                        <TextBlock Text="fps" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
+                                    </StackPanel>
+                                    <TextBlock Text="每张图片显示 1/帧率 秒；常用 24 / 25 / 30 / 60" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="T4Back_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="T4Next_Click" Margin="16,0,0,0">
+                        <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="T5Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="设置码率" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="已根据所选分辨率自动推荐，可手动调整" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="码率" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center">
+                                        <TextBox Name="TBitrateTextBox" Width="140" Height="34" Text="6000" VerticalContentAlignment="Center"/>
+                                        <TextBlock Text="kbps" VerticalAlignment="Center" Margin="8,0,0,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
+                                    </StackPanel>
+                                    <TextBlock x:Name="TBitrateHintText" Text="推荐码率会随所选分辨率自动填入，也可手动修改" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,12,0,0" FontSize="12" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="T5Back_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="T5Next_Click" Margin="16,0,0,0">
+                        <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="T6Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <StackPanel>
+                        <TextBlock Text="开始合成" Style="{StaticResource SectionTitleStyle}"/>
+                        <TextBlock Text="确认设置后点击开始：先重命名（带进度条），再合成视频" Style="{StaticResource SectionSubtitleStyle}"/>
+                        <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,12,0,0">
+                            <StackPanel>
+                                <TextBlock Text="合成设置摘要" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="TSummaryTextBlock" TextWrapping="Wrap" Margin="0,8,0,0" Foreground="{DynamicResource Theme.TextPrimary}" FontSize="12" LineHeight="20"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,10,0,0">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="78"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="① 重命名" FontSize="12" Foreground="{DynamicResource Theme.TextSecondary}" VerticalAlignment="Center"/>
+                                    <ProgressBar x:Name="TRenameProgressBar" Grid.Column="1" IsIndeterminate="False" Visibility="Collapsed" Height="10" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="TRenameProgressText" Grid.Column="2" Text="" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Visibility="Collapsed"/>
+                                </Grid>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="78"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="② 合成视频" FontSize="12" Foreground="{DynamicResource Theme.TextSecondary}" VerticalAlignment="Center"/>
+                                    <ProgressBar x:Name="TSynthProgressBar" Grid.Column="1" IsIndeterminate="False" Visibility="Collapsed" Height="10" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="TSynthProgressText" Grid.Column="2" Text="" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Visibility="Collapsed"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock Text="合成日志" Style="{StaticResource CardTitleStyle}" Margin="0,12,0,0" HorizontalAlignment="Center"/>
+                        <TextBox x:Name="TLogTextBox" Width="600" Height="92" Margin="0,6,0,0" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="T6Back_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button x:Name="TStartButton" Content="开始合成" Style="{StaticResource PrimaryButtonStyle}" Width="150" Margin="16,0,0,0" Click="TStart_Click"/>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="S1Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="选择图片文件夹" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="文件夹中的所有图片将堆砌成一张长曝光图片（星轨、流水、车流等）" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Name="SFolderTextBox" IsReadOnly="True" Height="40" VerticalAlignment="Center" FontSize="13"/>
+                                    <Button Grid.Column="1" Content="浏览文件夹" Style="{StaticResource PrimaryButtonStyle}" Width="110" Height="40" Margin="12,0,0,0" Click="S1Browse_Click"/>
+                                </Grid>
+                            </Border>
+                            <TextBlock x:Name="S1InfoText" Text="" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
+
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,14,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="堆砌模式" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                    <ComboBox Name="SModeComboBox" Width="320" Height="34" Margin="0,12,0,0" HorizontalAlignment="Center" SelectionChanged="SModeCombo_SelectionChanged">
+                                        <ComboBoxItem Content="最大值堆砌（星轨、车流灯光）" IsSelected="True"/>
+                                        <ComboBoxItem Content="平均值堆砌（流水丝雾、降噪）" />
+                                        <ComboBoxItem Content="最小值堆砌（暗场合成）" />
+                                    </ComboBox>
+                                    <TextBlock Text="最大值：每个像素取所有图片中的最亮值，适合星轨与车流；平均值：平滑运动轨迹并降噪" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,12,0,0" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="560"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="返回主页" Click="BackToHome_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="S1Next_Click" Margin="16,0,0,0">
+                        <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="S2Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="选择输出格式" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="堆砌结果将保存为该图片格式" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="输出格式" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                    <ComboBox Name="SFormatComboBox" Width="280" Height="34" Margin="0,12,0,0" HorizontalAlignment="Center" SelectionChanged="SFormatCombo_SelectionChanged">
+                                        <ComboBoxItem Content="JPG" IsSelected="True"/>
+                                        <ComboBoxItem Content="PNG" />
+                                        <ComboBoxItem Content="BMP" />
+                                        <ComboBoxItem Content="TIFF" />
+                                        <ComboBoxItem Content="DNG" />
+                                    </ComboBox>
+                                    <TextBlock x:Name="SFormatHintText" Text="JPEG 格式可在下一步设置品质" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,12,0,0" FontSize="12" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="S2Back_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="S2Next_Click" Margin="16,0,0,0">
+                        <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="S3Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="品质与分辨率" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="JPEG 品质与输出分辨率" Style="{StaticResource SectionSubtitleStyle}"/>
+
+                            <Border x:Name="SQualityCard" Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,10">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="JPEG 品质" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="SQualityValueText" Text="90" Grid.Column="1" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+                                    </Grid>
+                                    <Slider x:Name="SQualitySlider" Minimum="1" Maximum="100" Value="90" IsSnapToTickEnabled="True" TickFrequency="1" Margin="0,14,0,0" ValueChanged="SQualitySlider_ValueChanged"/>
+                                    <Grid Margin="0,4,0,0">
+                                        <TextBlock Text="文件更小" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="11" HorizontalAlignment="Left"/>
+                                        <TextBlock Text="画质更好" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="11" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="分辨率" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
+                                        <CheckBox x:Name="SResSameCheckBox" Grid.Column="1" Content="与图片分辨率相同" IsChecked="True" VerticalAlignment="Center" Checked="SResSame_Changed" Unchecked="SResSame_Changed"/>
+                                    </Grid>
+                                    <StackPanel x:Name="SResPanel" Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center" Visibility="Collapsed" IsEnabled="False">
+                                        <ComboBox Name="SResolutionComboBox" Width="220" Height="34" SelectionChanged="SResolutionCombo_SelectionChanged">
+                                            <ComboBoxItem Content="1920x1080 (1080P)" IsSelected="True"/>
+                                            <ComboBoxItem Content="1280x720 (720P)" />
+                                            <ComboBoxItem Content="854x480 (480P)" />
+                                            <ComboBoxItem Content="640x360 (360P)" />
+                                            <ComboBoxItem Content="2560x1440 (2K)" />
+                                            <ComboBoxItem Content="3840x2160 (4K)" />
+                                            <ComboBoxItem Content="7680x4320 (8K)" />
+                                            <ComboBoxItem Content="自定义" />
+                                        </ComboBox>
+                                        <StackPanel x:Name="SCustomResolutionPanel" Orientation="Horizontal" Visibility="Collapsed" Margin="10,0,0,0">
+                                            <TextBox Name="SCustomResolutionWidthTextBox" Width="70" Height="34" VerticalContentAlignment="Center"/>
+                                            <TextBlock Text="×" VerticalAlignment="Center" Margin="8,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
+                                            <TextBox Name="SCustomResolutionHeightTextBox" Width="70" Height="34" VerticalContentAlignment="Center"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock x:Name="SResInfoText" Text="" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="S3Back_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="S3Next_Click" Margin="16,0,0,0">
+                        <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="S4Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <StackPanel>
+                        <TextBlock Text="输出与转换日志" Style="{StaticResource SectionTitleStyle}"/>
+                        <TextBlock Text="确认设置后点击开始堆砌" Style="{StaticResource SectionSubtitleStyle}"/>
+                        <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
+                            <StackPanel>
+                                <TextBlock Text="堆砌设置摘要" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="SSummaryTextBlock" TextWrapping="Wrap" Margin="0,10,0,0" Foreground="{DynamicResource Theme.TextPrimary}" FontSize="13" LineHeight="24"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Grid MaxWidth="640" Margin="0,14,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ProgressBar x:Name="SProgressBar" IsIndeterminate="False" Visibility="Collapsed"/>
+                            <TextBlock x:Name="SProgressTextBlock" Grid.Column="1" Text="" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Visibility="Collapsed"/>
+                        </Grid>
+
+                        <TextBlock Text="堆砌日志" Style="{StaticResource CardTitleStyle}" Margin="0,18,0,0" HorizontalAlignment="Center"/>
+                        <TextBox x:Name="SLogTextBox" Width="600" Height="150" Margin="0,8,0,0" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="S4Back_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button x:Name="SStartButton" Content="开始堆砌" Style="{StaticResource PrimaryButtonStyle}" Width="150" Margin="16,0,0,0" Click="SStart_Click"/>
+                </StackPanel>
+            </Grid>
+            <Grid x:Name="C1Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="选择图片文件" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="支持 JPG、PNG、BMP、TIFF、WebP、WMP、DNG 等格式" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Name="CSourceTextBox" IsReadOnly="True" Height="40" VerticalAlignment="Center" FontSize="13"/>
+                                    <Button Grid.Column="1" Content="浏览文件" Style="{StaticResource PrimaryButtonStyle}" Width="110" Height="40" Margin="12,0,0,0" Click="C1Browse_Click"/>
+                                </Grid>
+                            </Border>
+                            <TextBlock x:Name="C1InfoText" Text="" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center" TextAlignment="Center"/>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="返回主页" Click="BackToHome_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="C1Next_Click" Margin="16,0,0,0">
+                        <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="C2Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="选择输出格式" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="转换后的图片将保存为该格式" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="输出格式" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                    <ComboBox Name="CFormatComboBox" Width="280" Height="34" Margin="0,12,0,0" HorizontalAlignment="Center" SelectionChanged="CFormatCombo_SelectionChanged">
+                                        <ComboBoxItem Content="JPG" IsSelected="True"/>
+                                        <ComboBoxItem Content="PNG" />
+                                        <ComboBoxItem Content="BMP" />
+                                        <ComboBoxItem Content="TIFF" />
+                                        <ComboBoxItem Content="WEBP" />
+                                        <ComboBoxItem Content="WMP" />
+                                        <ComboBoxItem Content="DNG" />
+                                    </ComboBox>
+                                    <TextBlock x:Name="CFormatHintText" Text="JPEG 格式可在下一步设置品质" Foreground="{DynamicResource Theme.TextSecondary}" Margin="0,12,0,0" FontSize="12" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="C2Back_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="C2Next_Click" Margin="16,0,0,0">
+                        <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="C3Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="品质与选项" Style="{StaticResource SectionTitleStyle}"/>
+                            <TextBlock Text="按所选格式显示对应选项" Style="{StaticResource SectionSubtitleStyle}"/>
+
+                            <Border x:Name="CQualityCard" Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,10">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="品质" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
+                                        <TextBlock x:Name="CQualityValueText" Text="90" Grid.Column="1" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+                                    </Grid>
+                                    <Slider x:Name="CQualitySlider" Minimum="1" Maximum="100" Value="90" IsSnapToTickEnabled="True" TickFrequency="1" Margin="0,14,0,0" ValueChanged="CQualitySlider_ValueChanged"/>
+                                    <Grid Margin="0,4,0,0">
+                                        <TextBlock Text="文件更小" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="11" HorizontalAlignment="Left"/>
+                                        <TextBlock Text="画质更好" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="11" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <Border x:Name="CTiffCard" Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,0,0,10" Visibility="Collapsed">
+                                <StackPanel>
+                                    <TextBlock Text="TIFF 压缩算法" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                    <ComboBox x:Name="CTiffCompressionCombo" Width="320" Height="34" Margin="0,12,0,0" HorizontalAlignment="Center">
+                                        <ComboBoxItem Content="LZW（推荐，无损）" IsSelected="True"/>
+                                        <ComboBoxItem Content="无压缩" />
+                                        <ComboBoxItem Content="Zip（无损）" />
+                                        <ComboBoxItem Content="RLE（行程编码）" />
+                                        <ComboBoxItem Content="CCITT G4（仅黑白图）" />
+                                    </ComboBox>
+                                </StackPanel>
+                            </Border>
+
+                            <Border x:Name="CPngCard" Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,0,0,10" Visibility="Collapsed">
+                                <StackPanel>
+                                    <TextBlock Text="PNG 交错" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                    <ComboBox x:Name="CPngInterlaceCombo" Width="320" Height="34" Margin="0,12,0,0" HorizontalAlignment="Center">
+                                        <ComboBoxItem Content="关闭（推荐）" IsSelected="True"/>
+                                        <ComboBoxItem Content="开启（Adam7，网页渐进加载）" />
+                                    </ComboBox>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,0,0,10">
+                                <StackPanel>
+                                    <TextBlock Text="输出色彩空间" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                    <ComboBox x:Name="CColorSpaceCombo" Width="340" Height="34" Margin="0,12,0,0" HorizontalAlignment="Center">
+                                        <ComboBoxItem Content="与原图一致" IsSelected="True"/>
+                                        <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="── SDR 色彩空间 ──" />
+                                        <ComboBoxItem Content="sRGB" />
+                                        <ComboBoxItem Content="Adobe RGB（1998）" />
+                                        <ComboBoxItem Content="Display P3（苹果广色域）" />
+                                        <ComboBoxItem Content="ProPhoto RGB（后期中间空间，16-bit）" />
+                                        <ComboBoxItem Content="ACEScg（线性，影视工作流，16-bit）" />
+                                        <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="── HDR（Rec.2100）──" />
+                                        <ComboBoxItem Content="HDR10（PQ，16-bit PNG）" />
+                                        <ComboBoxItem Content="HLG（16-bit PNG）" />
+                                    </ComboBox>
+                                    <TextBlock Text="选择非默认空间时将把像素值重映射到目标色彩空间；广色域与 HDR 自动以 16-bit PNG 输出" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="11" Margin="0,10,0,0" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="560"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="分辨率" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
+                                        <CheckBox x:Name="CResSameCheckBox" Grid.Column="1" Content="与原图相同" IsChecked="True" VerticalAlignment="Center" Checked="CResSame_Changed" Unchecked="CResSame_Changed"/>
+                                    </Grid>
+                                    <StackPanel x:Name="CResPanel" Orientation="Horizontal" Margin="0,12,0,0" HorizontalAlignment="Center" Visibility="Collapsed" IsEnabled="False">
+                                        <ComboBox Name="CResolutionComboBox" Width="220" Height="34" SelectionChanged="CResolutionCombo_SelectionChanged">
+                                            <ComboBoxItem Content="1920x1080 (1080P)" IsSelected="True"/>
+                                            <ComboBoxItem Content="1280x720 (720P)" />
+                                            <ComboBoxItem Content="854x480 (480P)" />
+                                            <ComboBoxItem Content="640x360 (360P)" />
+                                            <ComboBoxItem Content="2560x1440 (2K)" />
+                                            <ComboBoxItem Content="3840x2160 (4K)" />
+                                            <ComboBoxItem Content="7680x4320 (8K)" />
+                                            <ComboBoxItem Content="自定义" />
+                                        </ComboBox>
+                                        <StackPanel x:Name="CCustomResolutionPanel" Orientation="Horizontal" Visibility="Collapsed" Margin="10,0,0,0">
+                                            <TextBox Name="CCustomResolutionWidthTextBox" Width="70" Height="34" VerticalContentAlignment="Center"/>
+                                            <TextBlock Text="×" VerticalAlignment="Center" Margin="8,0" Foreground="{DynamicResource Theme.TextSecondary}"/>
+                                            <TextBox Name="CCustomResolutionHeightTextBox" Width="70" Height="34" VerticalContentAlignment="Center"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                    <TextBlock x:Name="CResInfoText" Text="" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="C3Back_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button Style="{StaticResource CircleNextButtonStyle}" ToolTip="下一步" Click="C3Next_Click" Margin="16,0,0,0">
+                        <Path Data="M 0 7 L 13 7 M 7 1 L 13 7 L 7 13" Stroke="White" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            <Grid x:Name="C4Panel" Grid.Row="2" Margin="28,4,28,8" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Padding="0,4,8,4">
+                    <StackPanel>
+                        <TextBlock Text="开始转换" Style="{StaticResource SectionTitleStyle}"/>
+                        <TextBlock Text="确认下方设置后，点击开始转换" Style="{StaticResource SectionSubtitleStyle}"/>
+                        <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,12,0,0">
+                            <StackPanel>
+                                <TextBlock Text="转换设置摘要" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="CSummaryTextBlock" TextWrapping="Wrap" Margin="0,8,0,0" Foreground="{DynamicResource Theme.TextPrimary}" FontSize="12" LineHeight="20"/>
+                            </StackPanel>
+                        </Border>
+                        <Grid MaxWidth="640" Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ProgressBar x:Name="CProgressBar" IsIndeterminate="False" Visibility="Collapsed"/>
+                            <TextBlock x:Name="CProgressTextBlock" Grid.Column="1" Text="" Margin="10,0,0,0" VerticalAlignment="Center" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="12" Visibility="Collapsed"/>
+                        </Grid>
+
+                        <TextBlock Text="转换日志" Style="{StaticResource CardTitleStyle}" Margin="0,12,0,0" HorizontalAlignment="Center"/>
+                        <TextBox x:Name="CLogTextBox" Width="600" Height="100" Margin="0,6,0,0" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,12,0,16">
+                    <Button Style="{StaticResource CircleBackButtonStyle}" ToolTip="上一步" Click="C4Back_Click">
+                        <Path Data="M 14 7 L 1 7 M 7 1 L 1 7 L 7 13" Stroke="{DynamicResource Theme.IconForeground}" StrokeThickness="2" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"/>
+                    </Button>
+                    <Button x:Name="CStartButton" Content="开始转换" Style="{StaticResource PrimaryButtonStyle}" Width="150" Margin="16,0,0,0" Click="CStart_Click"/>
+                </StackPanel>
+            </Grid>
+
         </Grid>
     </Border>
 </Window>

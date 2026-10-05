@@ -11,7 +11,13 @@
         <StackPanel Margin="22,18,22,18">
             <TextBlock x:Name="TitleText" Text="提示" FontSize="15" FontWeight="SemiBold" Foreground="{DynamicResource Theme.TextPrimary}" HorizontalAlignment="Center"/>
             <TextBlock x:Name="MessageText" Margin="0,12,0,0" TextWrapping="Wrap" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="13" LineHeight="22" TextAlignment="Center"/>
-            <Button Content="知道了" Style="{StaticResource PrimaryButtonStyle}" Width="120" HorizontalAlignment="Center" Margin="0,20,0,0" Click="Ok_Click"/>
+            <StackPanel x:Name="SingleButtonPanel" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button Content="知道了" Style="{StaticResource PrimaryButtonStyle}" Width="120" Click="Ok_Click"/>
+            </StackPanel>
+            <StackPanel x:Name="ConfirmButtonPanel" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0" Visibility="Collapsed">
+                <Button x:Name="ConfirmYesButton" Content="是" Style="{StaticResource PrimaryButtonStyle}" Width="110" Click="Yes_Click"/>
+                <Button x:Name="ConfirmNoButton" Content="否" Style="{StaticResource SecondaryButtonStyle}" Width="110" Margin="14,0,0,0" Click="No_Click"/>
+            </StackPanel>
         </StackPanel>
     </Border>
 </Window>
