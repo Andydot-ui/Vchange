@@ -44,7 +44,6 @@ A 4-in-1 tool — video conversion, image conversion, timelapse assembly and lon
 - [x] Bitrate is **recommended from the resolution** and can be edited manually; resolution presets up to 8K plus custom width × height
 - [x] Hardware-accelerated encoders: `h264_nvenc` / `h264_qsv` / `h264_amf` / HEVC / AV1
 - [x] **Batch conversion**: multi-select files in the picker; for multiple files choose an output folder and convert sequentially with `i/N` progress, per-file log lines and automatic numbering of name clashes
-- [x] **Color space** options grouped into **SDR / HDR**: BT.709, BT.601, BT.2020, HDR10 (PQ, 10-bit, writes ST 2086 static metadata), HLG (10-bit) — or keep the source color space
 
 ### ⏱ Timelapse assembly
 
@@ -67,7 +66,6 @@ A 4-in-1 tool — video conversion, image conversion, timelapse assembly and lon
 - [x] Image conversion (multi-select **batch conversion** supported): **JPG / PNG / BMP / TIFF / WEBP / WMP / DNG**
 - [x] In batch mode pick an output folder and convert one by one with `i/N` progress; name clashes get automatic numbering
 - [x] Tunables: JPG / WebP quality slider, TIFF compression (LZW / none / Zip / RLE / CCITT G4), PNG interlacing, output resolution
-- [x] **Output color space** grouped into **SDR / HDR**: sRGB, Adobe RGB, Display P3, ProPhoto RGB, ACEScg, HDR10 (PQ), HLG; wide-gamut and HDR targets automatically render to **16-bit PNG**
 - [x] Defaults to *match the source image* — pixels untouched
 - [x] Animated images (GIF / APNG) are handled by the video converter
 

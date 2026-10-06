@@ -109,6 +109,11 @@ namespace Vchange
                     result.Error = "已取消";
                     return result;
                 }
+                catch (UnauthorizedAccessException)
+                {
+                    result.Error = $"没有权限写入输出位置：{o.OutputPath}\n请换一个保存位置（例如“下载”或“文档”文件夹）后重试。";
+                    return result;
+                }
                 catch (Exception ex)
                 {
                     result.Error = ex.Message;

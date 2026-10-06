@@ -212,14 +212,15 @@ namespace Vchange
                 _ => "max"
             };
 
-            var saveDlg = new SaveFileDialog
+            var saveDlg = new SaveFileDialogEx
             {
-                InitialDirectory = Directory.Exists(_sFolder) ? _sFolder : null,
-                FileName = $"stacked.{fmt}",
+                InitialDirectory = GetWritableSaveDir(Directory.Exists(_sFolder) ? _sFolder : null),
+                FileName = $"stacked_{DateTime.Now:yyyyMMdd_HHmmss}.{fmt}",
                 Filter = fmt.ToUpper() + $"文件|*.{fmt}"
             };
-            if (saveDlg.ShowDialog() != true) return;
-            string outputPath = saveDlg.FileName;
+            string? outputPath = saveDlg.ShowDialog(this);
+            if (outputPath == null) return;
+            string outPath = outputPath;
 
             _sBusy = true;
             SStartButton.IsEnabled = false;
@@ -272,7 +273,10 @@ namespace Vchange
                 SProgressBar.Value = 0;
                 SProgressTextBlock.Text = "堆砌失败";
                 AppendLog($"堆砌失败：{result.Error}");
-                ShowMessage($"堆砌失败：{result.Error}");
+                var saveErr = result.Error ?? "";
+                ShowMessage(saveErr.Contains("权限") || saveErr.Contains("denied", StringComparison.OrdinalIgnoreCase)
+                    ? saveErr + "\n请换一个保存位置（例如“下载”或“文档”文件夹）后重试。"
+                    : $"堆砌失败：{saveErr}");
             }
 
             _sBusy = false;

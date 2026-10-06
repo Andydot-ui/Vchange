@@ -44,7 +44,6 @@ English: [**README_EN.md**](README_EN.md)
 - [x] 码率根据分辨率**自动推荐**，也可手动调整；分辨率支持常见预设与自定义（宽 × 高）
 - [x] 硬件加速编码：`h264_nvenc` / `h264_qsv` / `h264_amf` / HEVC / AV1
 - [x] **批量转换**：浏览框可多选文件，多文件时选择输出文件夹逐个转换，进度显示 `i/N`、日志逐条记录，同名输出自动加序号
-- [x] **色彩空间**选项按 **SDR / HDR** 分组：BT.709、BT.601、BT.2020、HDR10（PQ，10-bit，写入 ST 2086 静态元数据）、HLG（10-bit），也可保持与原视频相同
 
 ### ⏱ 延时合成
 
@@ -67,7 +66,6 @@ English: [**README_EN.md**](README_EN.md)
 - [x] 图片格式互转（支持多选**批量转换**）：**JPG / PNG / BMP / TIFF / WEBP / WMP / DNG**
 - [x] 批量时选择输出文件夹逐个转换，进度显示 `i/N`，同名输出自动加序号
 - [x] 可调选项：JPG / WebP 品质滑杆、TIFF 压缩算法（LZW / 无 / Zip / RLE / CCITT G4）、PNG 交错、输出分辨率
-- [x] **输出色彩空间**按 **SDR / HDR** 分组：sRGB、Adobe RGB、Display P3、ProPhoto RGB、ACEScg、HDR10（PQ）、HLG；广色域与 HDR 自动以 **16-bit PNG** 输出
 - [x] 默认「与原图一致」，不改变像素值
 - [x] 动图（GIF / APNG）的转换归入视频转换
 
@@ -170,7 +168,7 @@ Vchange/
 ├─ TimelapseFlow.cs               # 延时合成流程（重命名 + 合成）
 ├─ ImageStacker.cs                # 长曝光堆砌引擎（最大值 / 平均 / 最小值）
 ├─ StackingFlow.cs                # 图片堆砌流程
-├─ ImageConverter.cs              # 图片格式转换与色彩空间重映射引擎
+├─ ImageConverter.cs              # 图片格式转换引擎（多帧 / ffmpeg 回退）
 ├─ ImageConvertFlow.cs            # 图片转换流程
 ├─ TiffWriter.cs                  # TIFF 编码器（纯 C#）
 ├─ DngWriter.cs                   # 16-bit 线性 DNG 写入器（不含 EXIF）

@@ -394,14 +394,14 @@ namespace Vchange
             }
             var format = ((ComboBoxItem)TFormatComboBox.SelectedItem).Content?.ToString() ?? "mp4";
 
-            var saveDlg = new SaveFileDialog
+            var saveDlg = new SaveFileDialogEx
             {
-                InitialDirectory = Directory.Exists(_tFolder) ? _tFolder : null,
-                FileName = "timelapse." + format,
+                InitialDirectory = GetWritableSaveDir(Directory.Exists(_tFolder) ? _tFolder : null),
+                FileName = $"timelapse_{DateTime.Now:yyyyMMdd_HHmmss}.{format}",
                 Filter = $"{format.ToUpper()}文件|*.{format}"
             };
-            if (saveDlg.ShowDialog() != true) return;
-            string outputPath = saveDlg.FileName;
+            string? outputPath = saveDlg.ShowDialog(this);
+            if (outputPath == null) return;
 
             _tBusy = true;
             TStartButton.IsEnabled = false;
@@ -440,6 +440,10 @@ namespace Vchange
                         renameResult = mode == 1
                             ? RenameEngine.CopyToRenameDir(folder, files, (d, t, f) => report.Report((d, t, f)))
                             : RenameEngine.RenameInPlace(folder, files, (d, t, f) => report.Report((d, t, f)));
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        renameError = $"没有权限写入文件夹：{folder}\n请确认文件夹未被占用，或以管理员身份运行。";
                     }
                     catch (Exception ex)
                     {

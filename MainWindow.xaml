@@ -402,24 +402,7 @@
                                     </StackPanel>
                                 </Border>
 
-                                <Border Style="{StaticResource CardBorderStyle}" Grid.Row="1" Margin="0,0,5,0">
-                                    <StackPanel>
-                                        <TextBlock Text="色彩空间" Style="{StaticResource CardTitleStyle}"/>
-                                        <ComboBox x:Name="ColorSpaceCombo" Height="34" Margin="0,10,0,0" HorizontalAlignment="Stretch">
-                                            <ComboBoxItem Content="与原视频相同" IsSelected="True"/>
-                                            <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="── SDR ──" />
-                                            <ComboBoxItem Content="BT.709（高清标准）" />
-                                            <ComboBoxItem Content="BT.601（标清标准）" />
-                                            <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="── HDR（Rec.2100）──" />
-                                            <ComboBoxItem Content="BT.2020（广色域）" />
-                                            <ComboBoxItem Content="HDR10（PQ，10-bit）" />
-                                            <ComboBoxItem Content="HLG（10-bit）" />
-                                        </ComboBox>
-                                        <TextBlock Text="写入对应色彩空间标记，解决画面发灰或过饱和问题；HDR 自动使用 Rec.2100 10-bit" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="11" Margin="0,10,0,0" TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                </Border>
-
-                                <Border Style="{StaticResource CardBorderStyle}" Grid.Row="1" Grid.Column="1" Margin="5,0,0,0">
+                                <Border Style="{StaticResource CardBorderStyle}" Grid.Row="1" Grid.ColumnSpan="2">
                                     <StackPanel>
                                         <Grid>
                                             <TextBlock Text="帧率" Style="{StaticResource CardTitleStyle}" VerticalAlignment="Center"/>
@@ -1152,25 +1135,6 @@
                                         <ComboBoxItem Content="关闭（推荐）" IsSelected="True"/>
                                         <ComboBoxItem Content="开启（Adam7，网页渐进加载）" />
                                     </ComboBox>
-                                </StackPanel>
-                            </Border>
-
-                            <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,0,0,10">
-                                <StackPanel>
-                                    <TextBlock Text="输出色彩空间" Style="{StaticResource CardTitleStyle}" HorizontalAlignment="Center"/>
-                                    <ComboBox x:Name="CColorSpaceCombo" Width="340" Height="34" Margin="0,12,0,0" HorizontalAlignment="Center">
-                                        <ComboBoxItem Content="与原图一致" IsSelected="True"/>
-                                        <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="── SDR 色彩空间 ──" />
-                                        <ComboBoxItem Content="sRGB" />
-                                        <ComboBoxItem Content="Adobe RGB（1998）" />
-                                        <ComboBoxItem Content="Display P3（苹果广色域）" />
-                                        <ComboBoxItem Content="ProPhoto RGB（后期中间空间，16-bit）" />
-                                        <ComboBoxItem Content="ACEScg（线性，影视工作流，16-bit）" />
-                                        <ComboBoxItem IsEnabled="False" FontWeight="Bold" Content="── HDR（Rec.2100）──" />
-                                        <ComboBoxItem Content="HDR10（PQ，16-bit PNG）" />
-                                        <ComboBoxItem Content="HLG（16-bit PNG）" />
-                                    </ComboBox>
-                                    <TextBlock Text="选择非默认空间时将把像素值重映射到目标色彩空间；广色域与 HDR 自动以 16-bit PNG 输出" Foreground="{DynamicResource Theme.TextSecondary}" FontSize="11" Margin="0,10,0,0" HorizontalAlignment="Center" TextAlignment="Center" TextWrapping="Wrap" MaxWidth="560"/>
                                 </StackPanel>
                             </Border>
 

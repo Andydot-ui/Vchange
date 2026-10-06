@@ -156,18 +156,6 @@ namespace Vchange
                     ? $"{CCustomResolutionWidthTextBox.Text}×{CCustomResolutionHeightTextBox.Text}"
                     : (CResolutionComboBox.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "未选择");
 
-            string csName = CColorSpaceCombo.SelectedIndex switch
-            {
-                0 => "与原图一致",
-                2 => "sRGB",
-                3 => "Adobe RGB（1998）",
-                4 => "Display P3（苹果广色域）",
-                5 => "ProPhoto RGB（16-bit PNG）",
-                6 => "ACEScg（线性，16-bit PNG）",
-                8 => "HDR10（Rec.2100 PQ，16-bit PNG）",
-                9 => "HLG（Rec.2100 HLG，16-bit PNG）",
-                _ => "与原图一致"
-            };
             string extra = fmt switch
             {
                 "jpg" => $"品质 {(int)CQualitySlider.Value}",
@@ -188,7 +176,6 @@ namespace Vchange
                 $"源文件：{srcDesc}\n" +
                 $"原图分辨率：{resDesc}\n" +
                 $"输出格式：{fmt.ToUpper()}（{extra}）\n" +
-                $"色彩空间：{csName}\n" +
                 $"输出分辨率：{res}";
         }
 
@@ -230,23 +217,20 @@ namespace Vchange
                 }
             }
 
-            bool force16Png = CColorSpaceCombo.SelectedIndex is 5 or 6 or 8 or 9;
-            if (force16Png && fmt != "png")
-                fmt = "png"; // 广色域/HDR 以 16-bit PNG 输出
-
             // 输出路径：单文件弹出保存对话框；多文件选择输出文件夹批量输出
             var outputs = new List<string>();
             if (_cSources.Count == 1)
             {
                 var srcDir = Path.GetDirectoryName(_cSources[0]);
-                var saveDlg = new SaveFileDialog
+                var saveDlg = new SaveFileDialogEx
                 {
-                    InitialDirectory = Directory.Exists(srcDir) ? srcDir : null,
+                    InitialDirectory = GetWritableSaveDir(srcDir),
                     FileName = Path.GetFileNameWithoutExtension(_cSources[0]) + "_converted." + fmt,
                     Filter = fmt.ToUpper() + $"文件|*.{fmt}"
                 };
-                if (saveDlg.ShowDialog() != true) return;
-                outputs.Add(saveDlg.FileName);
+                string? picked = saveDlg.ShowDialog(this);
+                if (picked == null) return;
+                outputs.Add(picked);
             }
             else
             {
@@ -296,17 +280,6 @@ namespace Vchange
                         _ => "lzw"
                     },
                     PngInterlace = CPngInterlaceCombo != null && CPngInterlaceCombo.SelectedIndex == 1,
-                    ColorSpace = CColorSpaceCombo.SelectedIndex switch
-                    {
-                        2 => "srgb",
-                        3 => "adobergb",
-                        4 => "displayp3",
-                        5 => "prophoto",
-                        6 => "acescg",
-                        8 => "rec2020pq",
-                        9 => "rec2020hlg",
-                        _ => "same"
-                    },
                     Width = width,
                     Height = height
                 };

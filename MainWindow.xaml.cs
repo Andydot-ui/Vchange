@@ -636,6 +636,41 @@ namespace Vchange
             base.OnClosing(e);
         }
 
+        /// <summary>
+        /// 返回一个“确定可写”的推荐保存目录：优先用户指定目录（校验可写性），
+        /// 失败时回退到 下载 → 文档 → 桌面。避免对话框默认落在受保护的库根目录。
+        /// </summary>
+        internal static string GetWritableSaveDir(string? preferred)
+        {
+            foreach (var dir in new[]
+            {
+                preferred,
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads"),
+                Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)
+            })
+            {
+                if (string.IsNullOrWhiteSpace(dir) || !Directory.Exists(dir)) continue;
+                try
+                {
+                    var probe = Path.Combine(dir, $"$vc_write_test_{Guid.NewGuid():N}.tmp");
+                    File.WriteAllText(probe, "t");
+                    File.Delete(probe);
+                    return dir;
+                }
+                catch { /* 不可写，尝试下一个 */ }
+            }
+            return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        }
+
+        /// <summary>把保存/写入相关异常翻译为友好的中文提示。</summary>
+        internal static string FriendlySaveError(Exception ex, string path)
+        {
+            return ex is UnauthorizedAccessException
+                ? $"没有权限写入：{path}\n请换一个保存位置（例如“下载”或“文档”文件夹）后重试。"
+                : $"保存文件失败：{ex.Message}\n文件路径：{path}\n请尝试更换保存位置。";
+        }
+
         private static string WindowPosFile => Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Vchange", "window.txt");
 
@@ -925,15 +960,16 @@ namespace Vchange
             else if (inputs.Count == 1)
             {
                 var srcDir = Path.GetDirectoryName(inputs[0]);
-                var saveDlg = new SaveFileDialog
+                var saveDlg = new SaveFileDialogEx
                 {
-                    InitialDirectory = Directory.Exists(srcDir) ? srcDir : null,
+                    InitialDirectory = GetWritableSaveDir(srcDir),
                     FileName = Path.GetFileNameWithoutExtension(inputs[0]) + "." + format,
                     Filter = $"{format.ToUpper()}文件|*.{format}"
                 };
-                if (saveDlg.ShowDialog() != true)
+                string? picked = saveDlg.ShowDialog(this);
+                if (picked == null)
                     return;
-                outputs.Add(saveDlg.FileName);
+                outputs.Add(picked);
             }
             else
             {
@@ -1012,31 +1048,10 @@ namespace Vchange
                 }
             }
 
-            // 色彩空间标记（与原视频相同 = 不写入）
-            string? colorSpace = (ColorSpaceCombo?.SelectedItem as ComboBoxItem)?.Content?.ToString();
-            bool hdrOutput = colorSpace?.StartsWith("HDR") == true;
-            string? csArgs = colorSpace switch
-            {
-                "BT.709（高清标准）" => "-color_primaries bt709 -color_trc bt709 -colorspace bt709",
-                "BT.601（标清标准）" => "-color_primaries smpte170m -color_trc smpte170m -colorspace smpte170m",
-                "BT.2020（广色域）" => "-color_primaries bt2020 -color_trc bt2020_10 -colorspace bt2020nc",
-                "HDR10（BT.2020 PQ，10-bit）" => "-color_primaries bt2020 -color_trc smpte2084 -colorspace bt2020nc",
-                "HLG（BT.2020 HLG，10-bit）" => "-color_primaries bt2020 -color_trc arib-std-b67 -colorspace bt2020nc",
-                _ => null
-            };
-
             // 组装单个文件的 ffmpeg 参数（闭包复用上面的全部校验结果）
             string BuildArgs(string inputPath, string outputPath)
             {
                 var argsList = new List<string>();
-                if (csArgs != null)
-                    argsList.Add(csArgs);
-
-                // HDR10：写入 SMPTE ST 2086 静态元数据（libx265 支持 master-display 与 MaxCLL/MaxFALL）
-                if (hdrOutput && codec.StartsWith("libx265"))
-                {
-                    argsList.Add("-x265-params \"master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16350)L(max=10000000,min=0):max-cll=1000,400\"");
-                }
                 argsList.Add($"-i \"{inputPath}\"");
                 argsList.Add($"-c:v {codec}");
                 if (!useSourceBitrate)
@@ -1045,11 +1060,9 @@ namespace Vchange
                     argsList.Add($"-vf \"scale={width}:{height}\"");
                 if (!useSourceFps)
                     argsList.Add($"-r {fps}");
-                // gif/apng 用 RGB 像素；HDR 输出 10-bit；其余统一 yuv420p 保证兼容性
+                // gif/apng 用 RGB 像素；其余统一 yuv420p 保证兼容性
                 if (format == "gif" || format == "apng")
                     argsList.Add("-pix_fmt rgb24");
-                else if (hdrOutput)
-                    argsList.Add("-pix_fmt yuv420p10le");
                 else
                     argsList.Add("-pix_fmt yuv420p");
                 argsList.Add($"\"{outputPath}\"");
