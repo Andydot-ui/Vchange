@@ -122,7 +122,7 @@ English: [**README_EN.md**](README_EN.md)
 3. 在首页选择要使用的工具，按向导完成操作即可
 
 > [!TIP]
-> GitHub 下载速度慢？可使用高速镜像：[**123 云盘 · Vchange.exe**](https://1828395166.share.123pan.cn/123pan/DA7Sjv-BaZvv)
+> GitHub 下载速度慢？可使用高速镜像：[**123 云盘 · Vchange.exe**](https://1828395166.share.123pan.cn/123pan/DA7Sjv-Xs0dv)
 >
 > [!IMPORTANT]
 > **高速链接仅对最新版本有效**：每次发布新版本后，旧版本的高速下载链接会失效。请始终以本 README 与[项目官网](https://andydot-ui.github.io/Vchange/)中的最新链接为准，历史版本请从 [Releases](https://github.com/Andydot-ui/Vchange/releases) 页面下载。
@@ -187,9 +187,9 @@ Vchange/
 ## ❓ 常见问题
 
 <details>
-<summary><b>v1.2.0 新增了什么？</b></summary>
+<summary><b>v1.2.1 新增了什么？</b></summary>
 
-**视频转换与图片转换全面支持批量**：多选文件 → 选输出文件夹 → 逐个转换（`i/N` 进度、逐条日志、同名自动加序号）。同时修复延时合成 / 图片堆砌在**纯 DNG 文件夹**上误报「没有找到图片文件」（现已识别 `.dng` / `.wdp` / `.jxr`），保存对话框默认打开源文件夹。
+修复四种工作流程保存对话框的文件名预填与起始目录行为：现在会自动填写建议文件名，并优先打开源文件夹；同时移除图片转换中容易引起困惑的色彩空间选项。此前 v1.2.0 加入的视频与图片批量转换、纯 DNG 文件夹识别等功能也一并保留。
 </details>
 
 <details>

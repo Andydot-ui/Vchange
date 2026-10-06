@@ -122,7 +122,7 @@ A 4-in-1 tool — video conversion, image conversion, timelapse assembly and lon
 3. Pick a tool on the home screen and follow the wizard
 
 > [!TIP]
-> Slow GitHub download? Use the high-speed mirror: [**123 Cloud · Vchange.exe**](https://1828395166.share.123pan.cn/123pan/DA7Sjv-BaZvv)
+> Slow GitHub download? Use the high-speed mirror: [**123 Cloud · Vchange.exe**](https://1828395166.share.123pan.cn/123pan/DA7Sjv-Xs0dv)
 >
 > [!IMPORTANT]
 > **The high-speed link only works for the latest release**: whenever a new version is published, the mirror link of older versions stops working. Always take the link from this README or the [project site](https://andydot-ui.github.io/Vchange/); older versions are available on the [Releases](https://github.com/Andydot-ui/Vchange/releases) page.
@@ -187,9 +187,9 @@ Vchange/
 ## ❓ FAQ
 
 <details>
-<summary><b>What's new in v1.2.0?</b></summary>
+<summary><b>What's new in v1.2.1?</b></summary>
 
-**Video and image conversion now fully support batching**: multi-select files → pick an output folder → convert sequentially with `i/N` progress, per-file logs and automatic numbering of name clashes. Also fixes timelapse / stacking reporting "no images found" for folders containing **only DNG files** (`.dng` / `.wdp` / `.jxr` are now recognized), and save dialogs default to the source folder.
+Fixes the save dialogs in all four workflows so suggested filenames are prefilled and the source folder is preferred as the starting location. Also removes the image converter's confusing color-space options. The batch conversion and DNG-folder support introduced in v1.2.0 are included.
 </details>
 
 <details>
