@@ -400,9 +400,9 @@ namespace Vchange
                 FileName = $"timelapse_{DateTime.Now:yyyyMMdd_HHmmss}.{format}",
                 Filter = $"{format.ToUpper()}文件|*.{format}"
             };
-            string? outputPath = saveDlg.ShowDialog(this)
+            string? outputPath = saveDlg.ShowDialog(this);
             if (saveDlg.Diagnostics.Count > 0)
-             TLogTextBox.AppendText("对话框诊断: " + string.Join("; ", saveDlg.Diagnostics) + Environment.NewLine);;
+                TLogTextBox.AppendText("对话框诊断: " + string.Join("; ", saveDlg.Diagnostics) + Environment.NewLine);
             if (outputPath == null) return;
 
             _tBusy = true;

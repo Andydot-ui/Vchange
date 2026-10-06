@@ -966,9 +966,9 @@ namespace Vchange
                     FileName = Path.GetFileNameWithoutExtension(inputs[0]) + "." + format,
                     Filter = $"{format.ToUpper()}文件|*.{format}"
                 };
-                string? picked = saveDlg.ShowDialog(this)
-            if (saveDlg.Diagnostics.Count > 0)
-             LogTextBox.AppendText("对话框诊断: " + string.Join("; ", saveDlg.Diagnostics) + Environment.NewLine);;
+                string? picked = saveDlg.ShowDialog(this);
+                if (saveDlg.Diagnostics.Count > 0)
+                    LogTextBox.AppendText("对话框诊断: " + string.Join("; ", saveDlg.Diagnostics) + Environment.NewLine);
                 if (picked == null)
                     return;
                 outputs.Add(picked);

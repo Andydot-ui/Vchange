@@ -228,9 +228,9 @@ namespace Vchange
                     FileName = Path.GetFileNameWithoutExtension(_cSources[0]) + "_converted." + fmt,
                     Filter = fmt.ToUpper() + $"文件|*.{fmt}"
                 };
-                string? picked = saveDlg.ShowDialog(this)
-            if (saveDlg.Diagnostics.Count > 0)
-             CLogTextBox.AppendText("对话框诊断: " + string.Join("; ", saveDlg.Diagnostics) + Environment.NewLine);;
+                string? picked = saveDlg.ShowDialog(this);
+                if (saveDlg.Diagnostics.Count > 0)
+                    CLogTextBox.AppendText("对话框诊断: " + string.Join("; ", saveDlg.Diagnostics) + Environment.NewLine);
                 if (picked == null) return;
                 outputs.Add(picked);
             }
