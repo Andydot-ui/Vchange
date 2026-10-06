@@ -218,7 +218,9 @@ namespace Vchange
                 FileName = $"stacked_{DateTime.Now:yyyyMMdd_HHmmss}.{fmt}",
                 Filter = fmt.ToUpper() + $"文件|*.{fmt}"
             };
-            string? outputPath = saveDlg.ShowDialog(this);
+            string? outputPath = saveDlg.ShowDialog(this)
+            if (saveDlg.Diagnostics.Count > 0)
+             SLogTextBox.AppendText("对话框诊断: " + string.Join("; ", saveDlg.Diagnostics) + Environment.NewLine);;
             if (outputPath == null) return;
             string outPath = outputPath;
 

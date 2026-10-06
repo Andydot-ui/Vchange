@@ -21,10 +21,22 @@ namespace Vchange
         public string Filter = "";
         public bool OverwritePrompt = true;
 
+        /// <summary>诊断：每次对话框调用的 COM 返回码（失败排查用）。</summary>
+        public List<string> Diagnostics { get; } = new();
+
         /// <summary>显示对话框；用户确认返回完整文件路径，取消返回 null。</summary>
-        public string? ShowDialog(Window? owner)
+        public string? ShowDialog(Window? owner) => ShowDialogCore(
+            owner != null ? new WindowInteropHelper(owner).Handle : IntPtr.Zero);
+
+        /// <summary>显示对话框（原生句柄版本）。</summary>
+        public string? ShowDialogCore(IntPtr hwndOwner)
         {
             IFileSaveDialog dlg = (IFileSaveDialog)new FileSaveDialogRCW();
+
+            void Check(string what, int hr)
+            {
+                if (hr != 0) Diagnostics.Add($"{what} failed: 0x{hr:X8}");
+            }
 
             // FOS_OVERWRITEPROMPT | FOS_FORCEFILESYSTEM | FOS_PATHMUSTEXIST
             dlg.GetOptions(out uint fos);
@@ -43,8 +55,8 @@ namespace Vchange
                     };
                     IntPtr pSpec = Marshal.AllocHGlobal(Marshal.SizeOf<COMDLG_FILTERSPEC>());
                     Marshal.StructureToPtr(spec, pSpec, false);
-                    dlg.SetFileTypes(1, pSpec);
-                    dlg.SetFileTypeIndex(1);
+                    Check("SetFileTypes", dlg.SetFileTypes(1, pSpec));
+                    Check("SetFileTypeIndex", dlg.SetFileTypeIndex(1));
                 }
             }
 
@@ -52,17 +64,20 @@ namespace Vchange
             if (!string.IsNullOrEmpty(InitialDirectory) && Directory.Exists(InitialDirectory))
             {
                 var folderItem = CreateShellItem(InitialDirectory);
-                if (folderItem != null) dlg.SetFolder(folderItem);
+                if (folderItem != null)
+                    Check("SetFolder", dlg.SetFolder(folderItem));
+                else
+                    Diagnostics.Add("CreateShellItem failed for " + InitialDirectory);
             }
 
-            if (!string.IsNullOrEmpty(FileName))
-                dlg.SetFileName(FileName);
-
             if (!string.IsNullOrEmpty(Title))
-                dlg.SetTitle(Title);
+                Check("SetTitle", dlg.SetTitle(Title));
 
-            IntPtr hwnd = owner != null ? new WindowInteropHelper(owner).Handle : IntPtr.Zero;
-            int hr = dlg.Show(hwnd);
+            // 文件名：最后设置，紧贴 Show
+            if (!string.IsNullOrEmpty(FileName))
+                Check("SetFileName", dlg.SetFileName(FileName));
+
+            int hr = dlg.Show(hwndOwner);
             if (hr != 0) return null; // 用户取消
 
             dlg.GetResult(out IShellItem result);
@@ -101,6 +116,7 @@ namespace Vchange
             [PreserveSig] int GetOptions(out uint pfos);
             [PreserveSig] int SetDefaultFolder(IShellItem psi);
             [PreserveSig] int SetFolder(IShellItem psi);
+            [PreserveSig] int GetFolder(out IShellItem ppsi);
             [PreserveSig] int GetCurrentSelection(out IShellItem ppsi);
             [PreserveSig] int SetFileName([MarshalAs(UnmanagedType.LPWStr)] string pszName);
             [PreserveSig] int SetTitle([MarshalAs(UnmanagedType.LPWStr)] string pszTitle);
