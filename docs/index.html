@@ -444,6 +444,211 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
         <p>视频转换、延时合成、图片堆砌、图片转换——同一套向导式界面，同一套参数逻辑。</p>
       </div>
       <div class="modes">
+        <div class="cell reveal">
+          <div class="cell-icon" aria-hidden="true">🎬</div>
+          <h3>视频转换</h3>
+          <p>将视频转换为 mp4 / mkv / mov 等 21 种格式，编码、分辨率、帧率、码率分别可调，也可全部保持与原视频相同。支持硬件加速编码与多选文件<b>批量转换</b>。</p>
+          <div class="cell-tags"><span>21 种格式</span><span>NVENC / QSV / AMF</span><span>批量转换</span></div>
+        </div>
+        <div class="cell reveal d1">
+          <div class="cell-icon" aria-hidden="true">⏱️</div>
+          <h3>延时合成</h3>
+          <p>把延时摄影的图片序列按补零文件名自动重命名（复制或就地重命名），再按指定帧率合成视频。重命名与合成两条进度条一上一下，完成后自动播放待你确认。</p>
+          <div class="cell-tags"><span>自动补零重命名</span><span>双进度条</span><span>合成后自动播放</span></div>
+        </div>
+        <div class="cell reveal">
+          <div class="cell-icon" aria-hidden="true">🌌</div>
+          <h3>图片堆砌</h3>
+          <p>星轨、流水、车流的长曝光堆砌：最大值、平均值、最小值三种合成方式，输出 JPG / PNG / BMP / TIFF / DNG（16-bit 线性 DNG），全程进度条可见。</p>
+          <div class="cell-tags"><span>最大值 / 平均 / 最小值</span><span>16-bit DNG</span><span>品质滑杆</span></div>
+        </div>
+        <div class="cell reveal d1">
+          <div class="cell-icon" aria-hidden="true">🖼️</div>
+          <h3>图片转换</h3>
+          <p>图片格式互转（支持多选<b>批量转换</b>）：JPG / PNG / BMP / TIFF / WebP / WMP / DNG。可调品质滑杆、TIFF 压缩算法、PNG 交错与输出分辨率，按原图像素进行格式转换。</p>
+          <div class="cell-tags"><span>WebP</span><span>TIFF 压缩可选</span><span>批量转换</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Dark statement: numbers + engine ================= -->
+  <section class="section dark" id="engine">
+    <div class="wrap">
+      <div class="stats">
+        <div class="reveal">
+          <div class="stat-num">4</div>
+          <div class="stat-label">大核心功能，一个 exe 全部搞定</div>
+        </div>
+        <div class="reveal d1">
+          <div class="stat-num">21</div>
+          <div class="stat-label">种视频输出格式，另有 7 种图片格式</div>
+        </div>
+        <div class="reveal d2">
+          <div class="stat-num">0</div>
+          <div class="stat-label">项配置 —— 下载、打开、开始转换</div>
+        </div>
+      </div>
+      <div class="engine-head reveal">
+        <p class="eyebrow">动力核心</p>
+        <h2>完整版 ffmpeg，<br>内置于身。</h2>
+        <p>Vchange 将 217&nbsp;MB 的 ffmpeg&nbsp;9 完整版直接嵌入主程序——无需单独下载，无需配置环境变量。首次转换时自动释放，此后立即可用。</p>
+        <div class="chips" aria-label="支持的编码器">
+          <span class="chip">libx264</span>
+          <span class="chip">libx265</span>
+          <span class="chip">h264_nvenc</span>
+          <span class="chip">h264_qsv</span>
+          <span class="chip">h264_amf</span>
+          <span class="chip">hevc_nvenc</span>
+          <span class="chip">av1_nvenc</span>
+          <span class="chip">h264_vaapi</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Gallery ================= -->
+  <section class="section" id="gallery">
+    <div class="wrap gallery-head reveal">
+      <h2>每一步，<br>都清晰明了。</h2>
+      <p>以视频转换为例：选择文件、设置参数、确认、转换。随时返回上一步，从不迷失——延时合成、图片堆砌与图片转换采用同样的向导式界面。</p>
+    </div>
+    <div class="gallery" id="galleryTrack" tabindex="0" aria-label="转换流程截图，可左右滑动浏览">
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">01</span><span class="shot-title">选择文件</span></div>
+          <img src="./screenshots/1-file.png" loading="lazy" alt="第一步：选择要转换的视频文件">
+          <figcaption class="shot-desc">浏览或拖入视频，即刻开始。</figcaption>
+        </div>
+      </figure>
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">02</span><span class="shot-title">输出格式</span></div>
+          <img src="./screenshots/2-format.png" loading="lazy" alt="第二步：从 21 种视频格式中选择输出格式">
+          <figcaption class="shot-desc">21 种输出格式，一目了然。</figcaption>
+        </div>
+      </figure>
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">03</span><span class="shot-title">视频参数</span></div>
+          <img src="./screenshots/3-params.png" loading="lazy" alt="第三步：设置编码、分辨率与帧率">
+          <figcaption class="shot-desc">编码、分辨率、帧率自由组合，可保持与原视频一致。</figcaption>
+        </div>
+      </figure>
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">04</span><span class="shot-title">码率</span></div>
+          <img src="./screenshots/4-bitrate.png" loading="lazy" alt="第四步：设置目标码率">
+          <figcaption class="shot-desc">按分辨率智能推荐，亦可手动精调。</figcaption>
+        </div>
+      </figure>
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">05</span><span class="shot-title">确认摘要</span></div>
+          <img src="./screenshots/5-summary.png" loading="lazy" alt="第五步：确认全部转换设置">
+          <figcaption class="shot-desc">转换之前，一览全部设置。</figcaption>
+        </div>
+      </figure>
+      <figure class="shot">
+        <div class="shot-card">
+          <div class="shot-meta"><span class="shot-num">06</span><span class="shot-title">开始转换</span></div>
+          <img src="./screenshots/6-done.png" loading="lazy" alt="第六步：实时查看转换进度与日志">
+          <figcaption class="shot-desc">实时百分比、速度与 ffmpeg 原始日志。</figcaption>
+        </div>
+      </figure>
+    </div>
+    <div class="gallery-nav">
+      <button class="gbtn" id="gPrev" aria-label="上一张">‹</button>
+      <button class="gbtn" id="gNext" aria-label="下一张">›</button>
+    </div>
+  </section>
+
+  <!-- ================= Bento features ================= -->
+  <section class="section section-alt" id="features">
+    <div class="wrap wrap-wide">
+      <div class="section-head reveal">
+        <p class="eyebrow">功能亮点</p>
+        <h2>强大，却从不复杂。</h2>
+        <p>该有的全都有，不该有的一样也没有。</p>
+      </div>
+      <div class="bento">
+        <div class="cell span2 reveal">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2.2"/></svg>
+          </div>
+          <h3>向导式转换流程</h3>
+          <p>分步操作，清晰的步骤指示器，流畅的页面切换动画。随时返回上一步修改，一切尽在掌控；单文件与多选批量都支持。</p>
+          <div class="steps-viz" aria-hidden="true">
+            <i class="done" data-label="文件"></i><i class="done" data-label="格式"></i><i class="done" data-label="参数"></i><i class="done" data-label="码率"></i><i class="done" data-label="摘要"></i><i data-label="转换"></i>
+          </div>
+        </div>
+        <div class="cell reveal d1">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v10"/></svg>
+          </div>
+          <h3>开箱即用</h3>
+          <p>单文件 exe，内嵌 .NET 运行时与完整版 ffmpeg。不装任何东西，下载即用。</p>
+        </div>
+        <div class="cell reveal">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.5"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.5"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.5"/></svg>
+          </div>
+          <h3>21 种视频格式</h3>
+          <p>从 mp4 到 webm，从 mov 到 gif / apng，常用与专业容器一应俱全；图片另有 7 种输出格式。</p>
+          <div class="cell-tags"><span>mp4</span><span>mkv</span><span>mov</span><span>webm</span><span>hevc</span><span>gif</span><span>apng</span></div>
+        </div>
+        <div class="cell span2 reveal d1">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5L13 2z"/></svg>
+          </div>
+          <h3>硬件加速编码</h3>
+          <p>NVIDIA、Intel、AMD 显卡硬编码全面支持，h264、HEVC 乃至 AV1，转码快人一步。分辨率最高支持 8K，亦可自定义宽 × 高。</p>
+          <div class="cell-tags"><span>NVENC</span><span>Quick Sync</span><span>AMF</span><span>VAAPI</span><span>AV1</span></div>
+        </div>
+        <div class="cell reveal">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/></svg>
+          </div>
+          <h3>随系统深浅色</h3>
+          <p>深色 / 浅色主题自动跟随系统，Windows 11 亚克力毛玻璃窗口，图标同频切换。</p>
+        </div>
+        <div class="cell reveal d1">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg>
+          </div>
+          <h3>实时进度与日志</h3>
+          <p>百分比、转换速度与 ffmpeg 原始输出实时呈现，出问题时原因一目了然。</p>
+        </div>
+        <div class="cell reveal d2">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3z"/><path d="M9 12l2 2 4-4.5"/></svg>
+          </div>
+          <h3>纯粹，且开源</h3>
+          <p>无广告、无捆绑、无遥测。以 GPL-3.0 许可证开源，代码尽可审阅。</p>
+        </div>
+        <div class="cell span2 reveal">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/><circle cx="19" cy="18" r="2.2"/><path d="M17 3.5a8.5 8.5 0 0 1 3.5 6.5"/></svg>
+          </div>
+          <h3>延时合成流水线</h3>
+          <p>图片序列先按补零规则重命名，再合成视频。磁盘空间不足时自动改用就地重命名；重命名与合成两条进度条一上一下实时显示；合成完成后调用默认播放器播放，确认无误再清理临时的 rename 文件夹。</p>
+          <div class="cell-tags"><span>复制 rename 方案</span><span>就地重命名</span><span>空间不足自动降级</span><span>合成后自动播放</span></div>
+        </div>
+        <div class="cell reveal d1">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17c2-3 4-4.5 6-4.5S13 15 15 15s3.5-1.5 6-4"/><path d="M3 12c2-3 4-4.5 6-4.5S13 10 15 10s3.5-1.5 6-4"/><path d="M3 22c2-3 4-4.5 6-4.5S13 20 15 20s3.5-1.5 6-4"/></svg>
+          </div>
+          <h3>长曝光图片堆砌</h3>
+          <p>最大值堆星轨车流、平均值堆流水降噪、最小值堆暗场合成，一张一张叠出长曝光效果。</p>
+          <div class="cell-tags"><span>最大值</span><span>平均值</span><span>最小值</span><span>16-bit DNG</span></div>
+        </div>
+        <div class="cell span2 reveal d2">
+          <div class="cell-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18"/><path d="M3.5 9h17M3.5 15h17"/></svg>
+          </div>
+          <h3>图片格式与品质控制</h3>
+          <p>根据用途选择图片格式与输出参数：调整 JPG / WebP 品质、TIFF 压缩、PNG 交错及输出分辨率；转换结果不写入 EXIF 元数据。</p>
+          <div class="cell-tags"><span>JPG / WebP 品质</span><span>TIFF 压缩</span><span>PNG 交错</span><span>不写入 EXIF</span></div>
         </div>
         <div class="cell reveal">
           <div class="cell-icon" aria-hidden="true">
@@ -501,7 +706,11 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
           <dt>分辨率预设</dt>
           <dd>360p · 480p · 720p · 1080p · 1440p · 4K · 8K（7680 × 4320），支持自定义宽 × 高；码率按分辨率自动推荐，可手动调整</dd>
         </div>
-                <div class="spec-row">
+        <div class="spec-row">
+          <dt>图片与元数据</dt>
+          <dd>图片转换保留原图像素色彩，不提供额外色彩空间重映射；堆砌与图片转换输出不含 EXIF 元数据</dd>
+        </div>
+        <div class="spec-row">
           <dt>界面</dt>
           <dd>简体中文 · 深色 / 浅色主题跟随系统 · Windows 11 亚克力毛玻璃 · 自绘无边框圆角窗口 · 记住窗口位置</dd>
         </div>
@@ -535,7 +744,7 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
           <div class="dl-file">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
             <div>
-              <b>Vchange.exe（约 372 MB）—— 推荐</b>
+              <b>Vchange.exe（约 371.6 MiB）—— 推荐</b>
               <span>单文件绿色版，内置 .NET 8 运行时与完整版 ffmpeg，下载后双击直接使用。</span>
             </div>
           </div>
@@ -562,7 +771,7 @@ footer { background: var(--bg-alt); border-top: 1px solid var(--hairline); paddi
       <div class="faq reveal">
         <details>
           <summary>v1.2.1 新增了什么？<span class="plus" aria-hidden="true"></span></summary>
-          <div class="faq-body">修复视频转换、延时合成、图片堆砌与图片转换的保存对话框：自动预填建议文件名，并优先打开源文件夹；移除图片转换中容易引起困惑的色彩空间选项。此前版本加入的批量转换与 DNG 文件夹识别功能也一并保留。<a href="https://github.com/Andydot-ui/Vchange/releases/latest">查看完整更新 ›</a></div>
+          <div class="faq-body"><b>修复保存对话框并优化图片转换选项</b>：视频转换、延时合成、图片堆砌与图片转换现在会预填建议文件名，并优先打开源文件夹；移除图片转换中的色彩空间选项。v1.2.0 的批量转换以 <code>i/N</code> 显示进度，并修复延时合成 / 图片堆砌在<b>纯 DNG 文件夹</b>上误报「没有找到图片文件」（识别 <code>.dng</code> / <code>.wdp</code> / <code>.jxr</code>）；这些功能也一并保留。<a href="https://github.com/Andydot-ui/Vchange/releases/latest">查看完整更新 ›</a></div>
         </details>
         <details>
           <summary>转换失败怎么办？<span class="plus" aria-hidden="true"></span></summary>
