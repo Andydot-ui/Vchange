@@ -238,7 +238,7 @@
                     <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="选择要转换的视频文件" Style="{StaticResource SectionTitleStyle}"/>
-                            <TextBlock Text="支持 mp4、avi、mkv、mov、wmv、flv、webm 等常见格式" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <TextBlock Text="支持 mp4、avi、mkv、mov、wmv、flv、webm 等常见格式，可多选文件批量转换" Style="{StaticResource SectionSubtitleStyle}"/>
                             <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -1040,7 +1040,7 @@
                     <Grid MinHeight="{Binding ViewportHeight, RelativeSource={RelativeSource AncestorType=ScrollViewer}}">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="选择图片文件" Style="{StaticResource SectionTitleStyle}"/>
-                            <TextBlock Text="支持 JPG、PNG、BMP、TIFF、WebP、WMP、DNG 等格式" Style="{StaticResource SectionSubtitleStyle}"/>
+                            <TextBlock Text="支持 JPG、PNG、BMP、TIFF、WebP、WMP、DNG 等格式，可多选文件批量转换" Style="{StaticResource SectionSubtitleStyle}"/>
                             <Border Style="{StaticResource CardBorderStyle}" MaxWidth="640" Margin="0,18,0,0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>

@@ -39,6 +39,13 @@ namespace Vchange
         private int _imageConvertStep = 1;
         private string? _autoOutputPath;
 
+        // 批量转换：视频流程已选择的输入文件（>=1 个）
+        private List<string> _inputFiles = new();
+        // >1 表示批量模式：进度文字显示 “i/N · ” 前缀
+        private int _batchTotal;
+        private int _batchIndex;
+        private bool _convertBusy;
+
         // 面板与步骤指示器
         private Grid[] _convertPanels = Array.Empty<Grid>();
         private Grid[] _timelapsePanels = Array.Empty<Grid>();
@@ -83,6 +90,7 @@ namespace Vchange
                 if (cliArgs[i] == "--input" && i + 1 < cliArgs.Length)
                 {
                     InputFileTextBox.Text = cliArgs[++i];
+                    _inputFiles = new List<string> { InputFileTextBox.Text };
                     ShowConvertStep(1);
                 }
                 else if (cliArgs[i] == "--output" && i + 1 < cliArgs.Length)
@@ -684,21 +692,57 @@ namespace Vchange
         {
             var dlg = new OpenFileDialog
             {
-                Title = "选择视频文件",
-                Filter = "视频/动图文件|*.mp4;*.avi;*.mkv;*.mov;*.wmv;*.flv;*.webm;*.gif;*.png|所有文件|*.*"
+                Title = "选择视频文件（可多选，批量转换）",
+                Filter = "视频/动图文件|*.mp4;*.avi;*.mkv;*.mov;*.wmv;*.flv;*.webm;*.gif;*.png|所有文件|*.*",
+                Multiselect = true
             };
             if (dlg.ShowDialog() == true)
             {
-                InputFileTextBox.Text = dlg.FileName;
+                _inputFiles = dlg.FileNames.ToList();
+                InputFileTextBox.Text = DescribeFiles(_inputFiles);
             }
+        }
+
+        /// <summary>把已选文件列表转成显示文本：单个显示完整路径，多个显示数量与文件名。</summary>
+        private static string DescribeFiles(List<string> files)
+        {
+            if (files.Count == 1) return files[0];
+            var shown = string.Join("、", files.Take(3).Select(Path.GetFileName));
+            if (files.Count > 3) shown += " 等";
+            return $"已选择 {files.Count} 个文件：{shown}";
+        }
+
+        /// <summary>
+        /// 为批量输出规划互不冲突的路径：同名或已存在则追加序号，多输入同名文件也不会互相覆盖。
+        /// </summary>
+        private static List<string> PlanOutputs(string dir, List<string> inputs, string format, string suffix = "")
+        {
+            var used = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var result = new List<string>();
+            foreach (var f in inputs)
+            {
+                string stem = Path.GetFileNameWithoutExtension(f) + suffix;
+                string cand = Path.Combine(dir, stem + "." + format);
+                int i = 1;
+                while (File.Exists(cand) || used.Contains(cand))
+                    cand = Path.Combine(dir, $"{stem} ({i++}).{format}");
+                used.Add(cand);
+                result.Add(cand);
+            }
+            return result;
         }
 
         private void Step1Next_Click(object sender, RoutedEventArgs e)
         {
-            // Ensure a file is selected before proceeding
-            if (string.IsNullOrWhiteSpace(InputFileTextBox.Text) || !File.Exists(InputFileTextBox.Text))
+            // Ensure files are selected before proceeding
+            if (_inputFiles.Count == 0)
             {
                 ShowMessage("请先选择有效的输入文件。");
+                return;
+            }
+            if (_inputFiles.Any(f => !File.Exists(f)))
+            {
+                ShowMessage("所选文件中有文件不存在，请重新选择。");
                 return;
             }
             ShowConvertStep(2);
@@ -797,8 +841,19 @@ namespace Vchange
             string fps = FpsSameCheckBox.IsChecked == true ? "与原视频相同" : FpsTextBox.Text + " fps";
             string bitrate = BitrateSameCheckBox.IsChecked == true ? "与原视频相同" : BitrateTextBox.Text + " kbps";
 
+            string inputDesc;
+            if (_inputFiles.Count == 1)
+            {
+                inputDesc = _inputFiles[0];
+            }
+            else
+            {
+                var names = string.Join("、", _inputFiles.Take(3).Select(Path.GetFileName));
+                inputDesc = $"共 {_inputFiles.Count} 个文件（{names}{(_inputFiles.Count > 3 ? " 等" : "")}）";
+            }
+
             SummaryTextBlock.Text =
-                $"输入文件：{InputFileTextBox.Text}\n" +
+                $"输入文件：{inputDesc}\n" +
                 $"输出格式：{fmt}\n" +
                 $"视频编码：{codec}\n" +
                 $"分辨率：{res}\n" +
@@ -829,9 +884,25 @@ namespace Vchange
 
         private async void WizardConvert_Click(object sender, RoutedEventArgs e)
         {
-            // Same implementation as the enhanced conversion logic
-            var inputPath = InputFileTextBox.Text;
-            if (string.IsNullOrWhiteSpace(inputPath) || !File.Exists(inputPath))
+            if (_convertBusy) return;   // 转换进行中，忽略重复点击
+            _convertBusy = true;
+            try
+            {
+                await RunWizardConvertAsync();
+            }
+            finally
+            {
+                _convertBusy = false;
+                _batchTotal = 0;
+                _batchIndex = 0;
+            }
+        }
+
+        /// <summary>向导“开始转换”：单文件弹出保存对话框，多文件选输出文件夹逐个批量转换。</summary>
+        private async Task RunWizardConvertAsync()
+        {
+            var inputs = _inputFiles;
+            if (inputs.Count == 0 || inputs.Any(f => !File.Exists(f)))
             {
                 ShowMessage("请选择有效的输入文件。");
                 return;
@@ -845,22 +916,31 @@ namespace Vchange
             var formatRaw = ((ComboBoxItem)FormatComboBox.SelectedItem).Content?.ToString() ?? "mp4";
             var format = formatRaw.StartsWith("apng") ? "apng" : formatRaw;
 
-            // 输出路径：自动化参数优先，否则弹出保存对话框
-            string outputPath;
-            if (!string.IsNullOrEmpty(_autoOutputPath))
+            // 输出路径：单文件弹出保存对话框（自动化参数优先）；多文件选择输出文件夹
+            var outputs = new List<string>();
+            if (!string.IsNullOrEmpty(_autoOutputPath) && inputs.Count == 1)
             {
-                outputPath = _autoOutputPath;
+                outputs.Add(_autoOutputPath);
             }
-            else
+            else if (inputs.Count == 1)
             {
+                var srcDir = Path.GetDirectoryName(inputs[0]);
                 var saveDlg = new SaveFileDialog
                 {
-                    FileName = Path.GetFileNameWithoutExtension(inputPath) + "." + format,
+                    InitialDirectory = Directory.Exists(srcDir) ? srcDir : null,
+                    FileName = Path.GetFileNameWithoutExtension(inputs[0]) + "." + format,
                     Filter = $"{format.ToUpper()}文件|*.{format}"
                 };
                 if (saveDlg.ShowDialog() != true)
                     return;
-                outputPath = saveDlg.FileName;
+                outputs.Add(saveDlg.FileName);
+            }
+            else
+            {
+                var folderDlg = new OpenFolderDialog { Title = "选择输出文件夹" };
+                if (folderDlg.ShowDialog() != true)
+                    return;
+                outputs.AddRange(PlanOutputs(folderDlg.FolderName, inputs, format));
             }
 
             // Determine whether to use source values
@@ -945,35 +1025,38 @@ namespace Vchange
                 _ => null
             };
 
-            // Build ffmpeg arguments conditionally
-            var argsList = new List<string>();
-            if (csArgs != null)
-                argsList.Add(csArgs);
-
-            // HDR10：写入 SMPTE ST 2086 静态元数据（libx265 支持 master-display 与 MaxCLL/MaxFALL）
-            if (hdrOutput && codec.StartsWith("libx265"))
+            // 组装单个文件的 ffmpeg 参数（闭包复用上面的全部校验结果）
+            string BuildArgs(string inputPath, string outputPath)
             {
-                argsList.Add("-x265-params \"master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16350)L(max=10000000,min=0):max-cll=1000,400\"");
-            }
-            argsList.Add($"-i \"{inputPath}\"");
-            argsList.Add($"-c:v {codec}");
-            if (!useSourceBitrate)
-                argsList.Add($"-b:v {bitrate}k");
-            if (!useSourceResolution)
-                argsList.Add($"-vf \"scale={width}:{height}\"");
-            if (!useSourceFps)
-                argsList.Add($"-r {fps}");
-            // gif/apng 用 RGB 像素；HDR 输出 10-bit；其余统一 yuv420p 保证兼容性
-            if (format == "gif" || format == "apng")
-                argsList.Add("-pix_fmt rgb24");
-            else if (hdrOutput)
-                argsList.Add("-pix_fmt yuv420p10le");
-            else
-                argsList.Add("-pix_fmt yuv420p");
-            argsList.Add($"\"{outputPath}\"");
+                var argsList = new List<string>();
+                if (csArgs != null)
+                    argsList.Add(csArgs);
 
-            // -y 覆盖输出；-hide_banner 精简日志；-nostats/-progress 输出可解析进度
-            var args = "-y -hide_banner -nostdin -nostats -progress pipe:1 " + string.Join(" ", argsList);
+                // HDR10：写入 SMPTE ST 2086 静态元数据（libx265 支持 master-display 与 MaxCLL/MaxFALL）
+                if (hdrOutput && codec.StartsWith("libx265"))
+                {
+                    argsList.Add("-x265-params \"master-display=G(13250,34500)B(7500,3000)R(34000,16000)WP(15635,16350)L(max=10000000,min=0):max-cll=1000,400\"");
+                }
+                argsList.Add($"-i \"{inputPath}\"");
+                argsList.Add($"-c:v {codec}");
+                if (!useSourceBitrate)
+                    argsList.Add($"-b:v {bitrate}k");
+                if (!useSourceResolution)
+                    argsList.Add($"-vf \"scale={width}:{height}\"");
+                if (!useSourceFps)
+                    argsList.Add($"-r {fps}");
+                // gif/apng 用 RGB 像素；HDR 输出 10-bit；其余统一 yuv420p 保证兼容性
+                if (format == "gif" || format == "apng")
+                    argsList.Add("-pix_fmt rgb24");
+                else if (hdrOutput)
+                    argsList.Add("-pix_fmt yuv420p10le");
+                else
+                    argsList.Add("-pix_fmt yuv420p");
+                argsList.Add($"\"{outputPath}\"");
+
+                // -y 覆盖输出；-hide_banner 精简日志；-nostats/-progress 输出可解析进度
+                return "-y -hide_banner -nostdin -nostats -progress pipe:1 " + string.Join(" ", argsList);
+            }
 
             // 初始化进度显示，并清空上一次的转换日志
             _activeProgressBar = ConvertProgressBar;
@@ -985,23 +1068,51 @@ namespace Vchange
             ConvertProgressBar.Value = 0;
             ProgressTextBlock.Text = "0%";
             LogTextBox.Clear();
-            _expectedDuration = null;
 
-            bool ok = await RunFfmpegAsync(args);
+            // 批量顺序转换：逐个执行，进度显示 “i/N · 百分比”
+            _batchTotal = inputs.Count;
+            int okCount = 0, failCount = 0;
+            for (int i = 0; i < inputs.Count; i++)
+            {
+                _batchIndex = i + 1;
+                _expectedDuration = null;
+                ConvertProgressBar.Value = 0;
+                ProgressTextBlock.Text = inputs.Count > 1 ? $"{i + 1}/{inputs.Count} · 0%" : "0%";
+                AppendLog($"[{i + 1}/{inputs.Count}] 开始：{Path.GetFileName(inputs[i])} → {Path.GetFileName(outputs[i])}");
 
-            if (ok)
+                bool ok = await RunFfmpegAsync(BuildArgs(inputs[i], outputs[i]), showErrors: inputs.Count == 1);
+                if (ok)
+                {
+                    okCount++;
+                    AppendLog($"[{i + 1}/{inputs.Count}] 完成：{Path.GetFileName(outputs[i])}");
+                }
+                else
+                {
+                    failCount++;
+                    AppendLog($"[{i + 1}/{inputs.Count}] 转换失败：{Path.GetFileName(inputs[i])}");
+                }
+            }
+
+            if (failCount == 0)
             {
                 ConvertProgressBar.Value = 100;
-                ProgressTextBlock.Text = "已完成 100%";
+                ProgressTextBlock.Text = inputs.Count == 1 ? "已完成 100%" : $"批量完成 {okCount}/{inputs.Count}";
             }
-            else
+            else if (inputs.Count == 1)
             {
                 ConvertProgressBar.Value = 0;
                 ProgressTextBlock.Text = "转换失败";
             }
+            else
+            {
+                ConvertProgressBar.Value = okCount * 100.0 / inputs.Count;
+                ProgressTextBlock.Text = $"完成 {okCount}/{inputs.Count}（{failCount} 个失败）";
+            }
+            if (inputs.Count > 1)
+                AppendLog($"输出文件夹：{Path.GetDirectoryName(outputs[0])}");
         }
 
-        private async Task<bool> RunFfmpegAsync(string arguments)
+        private async Task<bool> RunFfmpegAsync(string arguments, bool showErrors = true)
         {
             _mediaDuration = null;
             _currentTime = TimeSpan.Zero;
@@ -1069,12 +1180,14 @@ namespace Vchange
                 if (exitCode == 0)
                     return true;
 
-                ShowMessage($"执行失败（退出码 {exitCode}），详情请查看日志。");
+                if (showErrors)
+                    ShowMessage($"执行失败（退出码 {exitCode}），详情请查看日志。");
                 return false;
             }
             catch (Exception ex)
             {
-                ShowMessage($"执行 ffmpeg 时出错: {ex.Message}");
+                if (showErrors)
+                    ShowMessage($"执行 ffmpeg 时出错: {ex.Message}");
                 return false;
             }
         }
@@ -1108,6 +1221,8 @@ namespace Vchange
 
         private void UpdateProgressUi()
         {
+            // 批量模式显示 “i/N · ” 前缀
+            string prefix = _batchTotal > 1 ? $"{_batchIndex}/{_batchTotal} · " : "";
             // 优先使用 ffmpeg 报告的时长；延时合成为图片序列（无输入时长），使用预估值
             TimeSpan? total = _mediaDuration ?? _expectedDuration;
             if (total.HasValue && total.Value.TotalSeconds > 0.1)
@@ -1116,12 +1231,12 @@ namespace Vchange
                 _activeProgressBar.IsIndeterminate = false;
                 _activeProgressBar.Value = pct;
                 _activeProgressText.Text = string.IsNullOrEmpty(_currentSpeed)
-                    ? $"{pct:0}%"
-                    : $"{pct:0}% · {_currentSpeed}";
+                    ? $"{prefix}{pct:0}%"
+                    : $"{prefix}{pct:0}% · {_currentSpeed}";
             }
             else if (!string.IsNullOrEmpty(_currentSpeed))
             {
-                _activeProgressText.Text = _currentSpeed;
+                _activeProgressText.Text = prefix + _currentSpeed;
             }
         }
 

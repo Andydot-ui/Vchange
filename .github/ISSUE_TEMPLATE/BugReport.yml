@@ -72,7 +72,7 @@ body:
     id: version
     attributes:
       label: Vchange 版本
-      description: 例如 v1.1.0（可在 [Releases](https://github.com/Andydot-ui/Vchange/releases) 页面查看）。
+      description: 例如 v1.2.0（可在 [Releases](https://github.com/Andydot-ui/Vchange/releases) 页面查看）。
     validations:
       required: true
   - type: input

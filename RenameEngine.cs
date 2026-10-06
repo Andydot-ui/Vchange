@@ -29,7 +29,8 @@ namespace Vchange
     {
         public static readonly string[] ImageExtensions =
         {
-            ".jpg", ".jpeg", ".jpe", ".png", ".bmp", ".tif", ".tiff", ".webp", ".gif", ".jxl"
+            ".jpg", ".jpeg", ".jpe", ".png", ".bmp", ".tif", ".tiff", ".webp", ".gif", ".jxl",
+            ".dng", ".wdp", ".jxr"
         };
 
         /// <summary>列出目录下所有图片并按自然顺序排序。</summary>

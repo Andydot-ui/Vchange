@@ -43,6 +43,7 @@ English: [**README_EN.md**](README_EN.md)
 - [x] 视频编码、分辨率、帧率可**分别选择与原视频相同**
 - [x] 码率根据分辨率**自动推荐**，也可手动调整；分辨率支持常见预设与自定义（宽 × 高）
 - [x] 硬件加速编码：`h264_nvenc` / `h264_qsv` / `h264_amf` / HEVC / AV1
+- [x] **批量转换**：浏览框可多选文件，多文件时选择输出文件夹逐个转换，进度显示 `i/N`、日志逐条记录，同名输出自动加序号
 - [x] **色彩空间**选项按 **SDR / HDR** 分组：BT.709、BT.601、BT.2020、HDR10（PQ，10-bit，写入 ST 2086 静态元数据）、HLG（10-bit），也可保持与原视频相同
 
 ### ⏱ 延时合成
@@ -63,7 +64,8 @@ English: [**README_EN.md**](README_EN.md)
 
 ### 🖼 图片转换
 
-- [x] 单张图片格式互转：**JPG / PNG / BMP / TIFF / WEBP / WMP / DNG**
+- [x] 图片格式互转（支持多选**批量转换**）：**JPG / PNG / BMP / TIFF / WEBP / WMP / DNG**
+- [x] 批量时选择输出文件夹逐个转换，进度显示 `i/N`，同名输出自动加序号
 - [x] 可调选项：JPG / WebP 品质滑杆、TIFF 压缩算法（LZW / 无 / Zip / RLE / CCITT G4）、PNG 交错、输出分辨率
 - [x] **输出色彩空间**按 **SDR / HDR** 分组：sRGB、Adobe RGB、Display P3、ProPhoto RGB、ACEScg、HDR10（PQ）、HLG；广色域与 HDR 自动以 **16-bit PNG** 输出
 - [x] 默认「与原图一致」，不改变像素值
@@ -122,7 +124,7 @@ English: [**README_EN.md**](README_EN.md)
 3. 在首页选择要使用的工具，按向导完成操作即可
 
 > [!TIP]
-> GitHub 下载速度慢？可使用高速镜像：[**123 云盘 · Vchange.exe**](https://1828395166.share.123pan.cn/123pan/DA7Sjv-PfZvv)
+> GitHub 下载速度慢？可使用高速镜像：[**123 云盘 · Vchange.exe**](https://1828395166.share.123pan.cn/123pan/DA7Sjv-BaZvv)
 >
 > [!IMPORTANT]
 > **高速链接仅对最新版本有效**：每次发布新版本后，旧版本的高速下载链接会失效。请始终以本 README 与[项目官网](https://andydot-ui.github.io/Vchange/)中的最新链接为准，历史版本请从 [Releases](https://github.com/Andydot-ui/Vchange/releases) 页面下载。
@@ -187,9 +189,15 @@ Vchange/
 ## ❓ 常见问题
 
 <details>
-<summary><b>v1.1.0 新增了什么？</b></summary>
+<summary><b>v1.2.0 新增了什么？</b></summary>
 
-新增**延时合成**、**图片堆砌**、**图片转换**三个工具（主页四选一入口），视频与图片新增**色彩空间 / HDR** 选项（SDR / HDR 分组，Rec.2100 PQ / HLG），并优化了切换动画、卡片强调动画与页面排版。完整说明见 [Releases](https://github.com/Andydot-ui/Vchange/releases)。
+**视频转换与图片转换全面支持批量**：多选文件 → 选输出文件夹 → 逐个转换（`i/N` 进度、逐条日志、同名自动加序号）。同时修复延时合成 / 图片堆砌在**纯 DNG 文件夹**上误报「没有找到图片文件」（现已识别 `.dng` / `.wdp` / `.jxr`），保存对话框默认打开源文件夹。
+</details>
+
+<details>
+<summary><b>首次运行提示「无法验证发布者」怎么办？</b></summary>
+
+正常现象：程序未购买商业代码签名证书，Windows 对未知发布者会要求确认，**并非病毒误报**。蓝色框点「更多信息 → 仍要运行」，灰色框点「运行」即可。若遇到无法创建解包目录而闪退，把 exe 移到**英文路径**（如下载文件夹）再运行。
 </details>
 
 <details>

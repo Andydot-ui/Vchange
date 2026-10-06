@@ -6,6 +6,7 @@ obj/
 # 发布的单文件 exe（体积大，不入库）
 发布/
 publish/
+Release/
 
 # 内嵌用的完整版 ffmpeg（217MB，超出 GitHub 限制；发布前手动放入）
 Resources/ffmpeg.exe

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,11 +10,12 @@ using Microsoft.Win32;
 namespace Vchange
 {
     /// <summary>
-    /// 图片格式转换流程：选择图片 → 输出格式 → 品质与选项（品质/压缩/交错/分辨率）→ 输出与日志。
+    /// 图片格式转换流程：选择图片（可多选批量）→ 输出格式 → 品质与选项（品质/压缩/交错/分辨率）→ 输出与日志。
     /// </summary>
     public partial class MainWindow
     {
-        private string _cSource = "";
+        /// <summary>已选的源图片（1 个或多个；多个时按顺序批量转换）。</summary>
+        private List<string> _cSources = new();
         private int _cFirstW, _cFirstH;
         private bool _cBusy;
 
@@ -23,27 +25,35 @@ namespace Vchange
         {
             var dlg = new OpenFileDialog
             {
-                Title = "选择图片文件",
-                Filter = "图片文件|*.jpg;*.jpeg;*.jpe;*.png;*.bmp;*.tif;*.tiff;*.gif;*.wdp;*.jxr;*.webp;*.dng|所有文件|*.*"
+                Title = "选择图片文件（可多选，批量转换）",
+                Filter = "图片文件|*.jpg;*.jpeg;*.jpe;*.png;*.bmp;*.tif;*.tiff;*.gif;*.wdp;*.jxr;*.webp;*.dng|所有文件|*.*",
+                Multiselect = true
             };
             if (dlg.ShowDialog() != true) return;
 
-            _cSource = dlg.FileName;
-            CSourceTextBox.Text = _cSource;
+            _cSources = dlg.FileNames.ToList();
+            CSourceTextBox.Text = DescribeFiles(_cSources);
 
             _cFirstW = _cFirstH = 0;
-            (_cFirstW, _cFirstH) = await Task.Run(() => TryGetImageSize(_cSource));
+            (_cFirstW, _cFirstH) = await Task.Run(() => TryGetImageSize(_cSources[0]));
 
-            C1InfoText.Text = _cFirstW > 0
-                ? $"原图分辨率：{_cFirstW}×{_cFirstH}"
-                : "已选择文件（无法预读尺寸）";
+            C1InfoText.Text = _cSources.Count > 1
+                ? $"已选 {_cSources.Count} 张图片" + (_cFirstW > 0 ? $"（首张 {_cFirstW}×{_cFirstH}）" : "")
+                : _cFirstW > 0
+                    ? $"原图分辨率：{_cFirstW}×{_cFirstH}"
+                    : "已选择文件（无法预读尺寸）";
         }
 
         private void C1Next_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(_cSource) || !File.Exists(_cSource))
+            if (_cSources.Count == 0)
             {
                 ShowMessage("请先选择有效的图片文件。");
+                return;
+            }
+            if (_cSources.Any(f => !File.Exists(f)))
+            {
+                ShowMessage("所选文件中有文件不存在，请重新选择。");
                 return;
             }
             ShowImageConvertStep(2);
@@ -167,9 +177,16 @@ namespace Vchange
                 _ => "无附加选项"
             };
 
+            string srcDesc = _cSources.Count == 1
+                ? _cSources[0]
+                : $"共 {_cSources.Count} 个文件（{string.Join("、", _cSources.Take(3).Select(Path.GetFileName))}{(_cSources.Count > 3 ? " 等" : "")}）";
+            string resDesc = _cSources.Count == 1
+                ? $"{_cFirstW}×{_cFirstH}"
+                : $"{_cFirstW}×{_cFirstH}（首张）";
+
             CSummaryTextBlock.Text =
-                $"源文件：{_cSource}\n" +
-                $"原图分辨率：{_cFirstW}×{_cFirstH}\n" +
+                $"源文件：{srcDesc}\n" +
+                $"原图分辨率：{resDesc}\n" +
                 $"输出格式：{fmt.ToUpper()}（{extra}）\n" +
                 $"色彩空间：{csName}\n" +
                 $"输出分辨率：{res}";
@@ -188,7 +205,7 @@ namespace Vchange
         private async void CStart_Click(object sender, RoutedEventArgs e)
         {
             if (_cBusy) return;
-            if (string.IsNullOrWhiteSpace(_cSource) || !File.Exists(_cSource))
+            if (_cSources.Count == 0 || _cSources.Any(f => !File.Exists(f)))
             {
                 ShowMessage("请先选择有效的图片文件。");
                 return;
@@ -217,13 +234,26 @@ namespace Vchange
             if (force16Png && fmt != "png")
                 fmt = "png"; // 广色域/HDR 以 16-bit PNG 输出
 
-            var saveDlg = new SaveFileDialog
+            // 输出路径：单文件弹出保存对话框；多文件选择输出文件夹批量输出
+            var outputs = new List<string>();
+            if (_cSources.Count == 1)
             {
-                FileName = Path.GetFileNameWithoutExtension(_cSource) + "_converted." + fmt,
-                Filter = fmt.ToUpper() + $"文件|*.{fmt}"
-            };
-            if (saveDlg.ShowDialog() != true) return;
-            string outputPath = saveDlg.FileName;
+                var srcDir = Path.GetDirectoryName(_cSources[0]);
+                var saveDlg = new SaveFileDialog
+                {
+                    InitialDirectory = Directory.Exists(srcDir) ? srcDir : null,
+                    FileName = Path.GetFileNameWithoutExtension(_cSources[0]) + "_converted." + fmt,
+                    Filter = fmt.ToUpper() + $"文件|*.{fmt}"
+                };
+                if (saveDlg.ShowDialog() != true) return;
+                outputs.Add(saveDlg.FileName);
+            }
+            else
+            {
+                var folderDlg = new OpenFolderDialog { Title = "选择输出文件夹" };
+                if (folderDlg.ShowDialog() != true) return;
+                outputs.AddRange(PlanOutputs(folderDlg.FolderName, _cSources, fmt, "_converted"));
+            }
 
             _cBusy = true;
             CStartButton.IsEnabled = false;
@@ -238,70 +268,101 @@ namespace Vchange
             CProgressBar.Value = 0;
             CProgressTextBlock.Text = "0%";
 
-            var options = new ImageConvertOptions
-            {
-                SourcePath = _cSource,
-                OutputPath = outputPath,
-                Format = fmt,
-                Quality = (int)CQualitySlider.Value,
-                TiffCompression = CTiffCompressionCombo.SelectedIndex switch
-                {
-                    1 => "none",
-                    2 => "zip",
-                    3 => "rle",
-                    4 => "ccitt4",
-                    _ => "lzw"
-                },
-                PngInterlace = CPngInterlaceCombo != null && CPngInterlaceCombo.SelectedIndex == 1,
-                ColorSpace = CColorSpaceCombo.SelectedIndex switch
-                {
-                    2 => "srgb",
-                    3 => "adobergb",
-                    4 => "displayp3",
-                    5 => "prophoto",
-                    6 => "acescg",
-                    8 => "rec2020pq",
-                    9 => "rec2020hlg",
-                    _ => "same"
-                },
-                Width = width,
-                Height = height
-            };
+            int total = _cSources.Count;
+            int okCount = 0, failCount = 0;
+            string lastError = "";
 
-            AppendLog($"开始转换：{Path.GetFileName(_cSource)} → {fmt.ToUpper()}");
-
-            var progress = new Progress<ImageConvertProgress>(p =>
+            for (int i = 0; i < total; i++)
             {
-                if (p.FrameCount > 1)
+                string src = _cSources[i];
+                string outp = outputs[i];
+                int idx = i + 1;
+                CProgressBar.Value = 0;
+                CProgressTextBlock.Text = total > 1 ? $"{idx}/{total} · 0%" : "0%";
+                AppendLog($"[{idx}/{total}] 开始转换：{Path.GetFileName(src)} → {fmt.ToUpper()}");
+
+                var options = new ImageConvertOptions
                 {
-                    double pct = p.Frame * 100.0 / Math.Max(1, p.FrameCount);
-                    CProgressBar.Value = pct;
-                    CProgressTextBlock.Text = $"{pct:0}%  ·  {p.Stage} {p.Frame}/{p.FrameCount} 帧";
+                    SourcePath = src,
+                    OutputPath = outp,
+                    Format = fmt,
+                    Quality = (int)CQualitySlider.Value,
+                    TiffCompression = CTiffCompressionCombo.SelectedIndex switch
+                    {
+                        1 => "none",
+                        2 => "zip",
+                        3 => "rle",
+                        4 => "ccitt4",
+                        _ => "lzw"
+                    },
+                    PngInterlace = CPngInterlaceCombo != null && CPngInterlaceCombo.SelectedIndex == 1,
+                    ColorSpace = CColorSpaceCombo.SelectedIndex switch
+                    {
+                        2 => "srgb",
+                        3 => "adobergb",
+                        4 => "displayp3",
+                        5 => "prophoto",
+                        6 => "acescg",
+                        8 => "rec2020pq",
+                        9 => "rec2020hlg",
+                        _ => "same"
+                    },
+                    Width = width,
+                    Height = height
+                };
+
+                var progress = new Progress<ImageConvertProgress>(p =>
+                {
+                    string prefix = total > 1 ? $"{idx}/{total} · " : "";
+                    if (p.FrameCount > 1)
+                    {
+                        double pct = p.Frame * 100.0 / Math.Max(1, p.FrameCount);
+                        CProgressBar.Value = pct;
+                        CProgressTextBlock.Text = $"{prefix}{pct:0}%  ·  {p.Stage} {p.Frame}/{p.FrameCount} 帧";
+                    }
+                    else
+                    {
+                        CProgressTextBlock.Text = prefix + p.Stage + "…";
+                    }
+                });
+
+                var result = await ImageConverter.ConvertAsync(options, progress);
+
+                if (result.Success)
+                {
+                    okCount++;
+                    AppendLog($"[{idx}/{total}] 转换完成：{outp}" +
+                        (result.FrameCount > 1 ? $"（共 {result.FrameCount} 帧）" : ""));
+                    if (result.Warning != null)
+                        AppendLog("注意：" + result.Warning);
+                    if (total == 1)
+                        TryOpenWithDefaultPlayer(outp);
                 }
                 else
                 {
-                    CProgressTextBlock.Text = p.Stage + "…";
+                    failCount++;
+                    lastError = result.Error ?? "";
+                    AppendLog($"[{idx}/{total}] 转换失败：{lastError}");
                 }
-            });
+            }
 
-            var result = await ImageConverter.ConvertAsync(options, progress);
-
-            if (result.Success)
+            if (failCount == 0)
             {
                 CProgressBar.Value = 100;
-                CProgressTextBlock.Text = "已完成 100%";
-                AppendLog($"转换完成：{outputPath}" +
-                    (result.FrameCount > 1 ? $"（共 {result.FrameCount} 帧）" : ""));
-                if (result.Warning != null)
-                    AppendLog("注意：" + result.Warning);
-                TryOpenWithDefaultPlayer(outputPath);
+                CProgressTextBlock.Text = total == 1 ? "已完成 100%" : $"批量完成 {okCount}/{total}";
+                if (total > 1)
+                    AppendLog($"输出文件夹：{Path.GetDirectoryName(outputs[0])}");
             }
-            else
+            else if (total == 1)
             {
                 CProgressBar.Value = 0;
                 CProgressTextBlock.Text = "转换失败";
-                AppendLog($"转换失败：{result.Error}");
-                ShowMessage($"转换失败：{result.Error}");
+                ShowMessage($"转换失败：{lastError}");
+            }
+            else
+            {
+                CProgressBar.Value = okCount * 100.0 / total;
+                CProgressTextBlock.Text = $"完成 {okCount}/{total}（{failCount} 个失败）";
             }
 
             _cBusy = false;

@@ -43,6 +43,7 @@ A 4-in-1 tool — video conversion, image conversion, timelapse assembly and lon
 - [x] Codec, resolution and frame rate can each be kept **same as the source video**
 - [x] Bitrate is **recommended from the resolution** and can be edited manually; resolution presets up to 8K plus custom width × height
 - [x] Hardware-accelerated encoders: `h264_nvenc` / `h264_qsv` / `h264_amf` / HEVC / AV1
+- [x] **Batch conversion**: multi-select files in the picker; for multiple files choose an output folder and convert sequentially with `i/N` progress, per-file log lines and automatic numbering of name clashes
 - [x] **Color space** options grouped into **SDR / HDR**: BT.709, BT.601, BT.2020, HDR10 (PQ, 10-bit, writes ST 2086 static metadata), HLG (10-bit) — or keep the source color space
 
 ### ⏱ Timelapse assembly
@@ -63,7 +64,8 @@ A 4-in-1 tool — video conversion, image conversion, timelapse assembly and lon
 
 ### 🖼 Image conversion
 
-- [x] Convert single images between **JPG / PNG / BMP / TIFF / WEBP / WMP / DNG**
+- [x] Image conversion (multi-select **batch conversion** supported): **JPG / PNG / BMP / TIFF / WEBP / WMP / DNG**
+- [x] In batch mode pick an output folder and convert one by one with `i/N` progress; name clashes get automatic numbering
 - [x] Tunables: JPG / WebP quality slider, TIFF compression (LZW / none / Zip / RLE / CCITT G4), PNG interlacing, output resolution
 - [x] **Output color space** grouped into **SDR / HDR**: sRGB, Adobe RGB, Display P3, ProPhoto RGB, ACEScg, HDR10 (PQ), HLG; wide-gamut and HDR targets automatically render to **16-bit PNG**
 - [x] Defaults to *match the source image* — pixels untouched
@@ -122,7 +124,7 @@ A 4-in-1 tool — video conversion, image conversion, timelapse assembly and lon
 3. Pick a tool on the home screen and follow the wizard
 
 > [!TIP]
-> Slow GitHub download? Use the high-speed mirror: [**123 Cloud · Vchange.exe**](https://1828395166.share.123pan.cn/123pan/DA7Sjv-PfZvv)
+> Slow GitHub download? Use the high-speed mirror: [**123 Cloud · Vchange.exe**](https://1828395166.share.123pan.cn/123pan/DA7Sjv-BaZvv)
 >
 > [!IMPORTANT]
 > **The high-speed link only works for the latest release**: whenever a new version is published, the mirror link of older versions stops working. Always take the link from this README or the [project site](https://andydot-ui.github.io/Vchange/); older versions are available on the [Releases](https://github.com/Andydot-ui/Vchange/releases) page.
@@ -187,9 +189,15 @@ Vchange/
 ## ❓ FAQ
 
 <details>
-<summary><b>What's new in v1.1.0?</b></summary>
+<summary><b>What's new in v1.2.0?</b></summary>
 
-Three new tools — **timelapse assembly**, **image stacking** and **image conversion** (four entries on the home screen) — plus **color space / HDR** options for video and images (SDR / HDR groups, Rec.2100 PQ / HLG), smoother transitions, card highlight animations and layout polish. See [Releases](https://github.com/Andydot-ui/Vchange/releases) for the full notes.
+**Video and image conversion now fully support batching**: multi-select files → pick an output folder → convert sequentially with `i/N` progress, per-file logs and automatic numbering of name clashes. Also fixes timelapse / stacking reporting "no images found" for folders containing **only DNG files** (`.dng` / `.wdp` / `.jxr` are now recognized), and save dialogs default to the source folder.
+</details>
+
+<details>
+<summary><b>First run warns about an "unknown publisher"?</b></summary>
+
+Expected: the program has no commercial code-signing certificate, so Windows asks for confirmation on unknown publishers — it is **not a virus false positive**. Click **More info → Run anyway** (blue dialog) or **Run** (gray dialog). If the app exits immediately complaining about extraction, move the exe to an **ASCII path** (e.g. your Downloads folder) and run it there.
 </details>
 
 <details>
